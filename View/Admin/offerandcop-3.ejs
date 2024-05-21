@@ -1,0 +1,141 @@
+<%- include('./layouts/header.ejs') %>
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="content-title">Offers and Coupons</h2>
+                <div class="card mb-4">                   
+                    <div class="card-body">
+                        <!-- Existing Offers Section -->
+                        <div class="table-responsive">
+                            <h3>Existing Offers</h3>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Image</th>
+                                        <th>Discount</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dummy Offer Data -->
+                                    <tr>
+                                        <td>Offer 1</td>
+                                        <td>Offer 1 Description</td>
+                                        <td><img src="/img/banner.png" alt="Offer 1 Image" width="50px"></td>
+                                        <td>20%</td>
+                                        <td>2024-04-20</td>
+                                        <td>2024-05-20</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Edit</button>
+                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Add more rows for other offers -->
+                                    <tr>
+                                        <td>Offer 2</td>
+                                        <td>Offer 2 Description</td>
+                                        <td><img src="/img/feature_3.png" alt="Offer 2 Image" width="50px"></td>
+                                        <td>15%</td>
+                                        <td>2024-04-25</td>
+                                        <td>2024-05-25</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Edit</button>
+                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Add more rows for other offers -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Add New Offer Button -->
+                        <a href="/admin/addoffer"><button class="btn btn-primary float-start">Add New Offer</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <h3>Existing Coupons</h3>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Code</th>
+                                        <th>Description</th>
+                                        <th>Discount</th>
+                                        <th>Count</th>
+                                        <th>Eligible Amount</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dummy Coupon Data -->
+                                    <tr>
+                                        <td>Coupon 1</td>
+                                        <td>XYZ123</td>
+                                        <td>Coupon 1 Description</td>
+                                        <td>$10 off</td>
+                                        <td>100</td>
+                                        <td>$50</td>
+                                        <td>2024-05-01</td>
+                                        <td>2024-06-01</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Edit</button>
+                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Add more rows for other coupons -->
+                                    <tr>
+                                        <td>Coupon 2</td>
+                                        <td>ABC456</td>
+                                        <td>Coupon 2 Description</td>
+                                        <td>$15 off</td>
+                                        <td>200</td>
+                                        <td>$100</td>
+                                        <td>2024-05-05</td>
+                                        <td>2024-06-05</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Edit</button>
+                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Add more rows for other coupons -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Add New Coupon Button -->
+                        <a href="/admin/addcoupon"><button class="btn btn-primary float-start">Add New Coupon</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+<%- include('./layouts/footer.ejs') %>
+
+

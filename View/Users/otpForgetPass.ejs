@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification</title>
+  <link rel="icon" href="/img/favicon.png">
+  <style>
+    body {
+      font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      background-image: url('/img/zz.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .otp-box {
+      background-color: #fdd45b00;
+      padding: 20px;
+      margin-right: 200px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #120d10;
+    }
+
+    .otp-input {
+      width: 50px;
+      height: 50px;
+      margin: 0 10px;
+      text-align: center;
+      font-size: 1.2em;
+      background-color: #FDD55B;
+      border: 1px solid #000000;
+      border-radius: 5px;
+    }
+
+    .otp-input:focus {
+      outline: none;
+      background-color: #ffbf00;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      margin-bottom: 5px;
+    }
+
+    #timer {
+      margin-bottom: 10px;
+    }
+ 
+    #submitBut {
+      margin-top: 20px;
+      background-color: #0fb400; 
+      border: none;
+      color: rgb(255, 255, 255);
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.641);
+    }
+    #submitBut:hover{
+      box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.129);
+      transition: 0.4s;
+    }
+
+    #resendButton {
+      margin-top: 20px;
+      background-color: #0fb400; 
+      border: none;
+      color: rgb(255, 255, 255);
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.641);
+    }
+    #resendButton:hover{
+      box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.129);
+      transition: 0.4s;
+    }
+
+    #resendButton[disabled] {
+      background-color: #105b09; 
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="otp-box">
+      <img src="/img/logo.png" alt="logo" class="logo" >
+      <h2>RESET PASSWORD OTP VERIFICATION</h2>
+      <form id="otpForm">
+        <input type="text" maxlength="1" class="otp-input" id="one"   required>
+        <input type="text" maxlength="1" class="otp-input" id="two"   required>
+        <input type="text" maxlength="1" class="otp-input" id="three" required>
+        <input type="text" maxlength="1" class="otp-input" id="four"  required>
+        <input type="hidden" id="userEmail" name="userEmail" value="<%= email %>">
+        <input type="hidden" id="userName" name="userEmail" value="<%= name %>">
+        <div>
+          <button id="resendButton" onclick="resendOTP()" disabled>Resend OTP</button>
+          <button id="submitBut" type="button"  >Submit</button>
+        </div>
+      </form>
+      <% if(typeof message !== "undefined") { %>
+        <p style="color: rgb(255, 0, 0);"><%= message %></p>
+      <% } %>
+      <p id="timer">Resend OTP in - <span id="countdown" style="color: rgb(161, 43, 43);">60</span></p>
+      <p style="color: rgb(255, 0, 0);" id="otpex">Your OTP Expired</p>
+      <p style="color: rgb(255, 0, 0);" id="errorMsg"></p>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+
+var countdownTime = 60;
+var timer = document.getElementById('timer');
+var countdown = document.getElementById('countdown');
+var resendButton = document.getElementById('resendButton');
+var otpex = document.getElementById("otpex");
+    otpex.style.display = "none";
+var countdownInterval;
+
+startTimer();
+
+function startTimer(){
+  countdownInterval = setInterval(function() {
+    countdownTime--;
+    countdown.textContent = countdownTime;
+    if (countdownTime <= 0){
+      clearInterval(countdownInterval);
+      timer.style.display = "none";
+      resendButton.removeAttribute("disabled");
+      otpex.style.display = "block";
+    }
+  }, 1000);
+}
+
+function resendOTP() {
+  countdownTime = 60;
+  countdown.textContent = countdownTime;
+  timer.style.display = "block";
+  resendButton.setAttribute("disabled", true);
+  startTimer();
+  otpex.style.display = "none";
+    
+}
+
+
+  document.getElementById('submitBut').addEventListener('click', function(event) {
+
+    event.preventDefault();
+
+    let err = document.getElementById('errorMsg');
+
+    let one = document.getElementById('one').value;
+    let two = document.getElementById('two').value;
+    let three = document.getElementById('three').value;
+    let four = document.getElementById('four').value;
+    let email = document.getElementById('userEmail').value;
+    console.log(email)
+
+    let data = {
+      one:one,
+      two:two,
+      three:three,
+      four:four,
+      email:email
+    };
+
+    axios.post('/otpVerificationForget', data) 
+    
+      .then(function(response){
+        if (response.data.done) {
+          window.location.href = `/forgetPass?email=${email}`;
+        } else if (response.data.error) {
+          err.style.display = 'block';
+          err.innerHTML = response.data.error;
+        }
+      })
+      .catch(function(error){
+        console.error('Error:', error);
+      });
+
+  });
+ 
+  document.getElementById('resendButton').addEventListener('click',function(){
+        
+         let userEmail = document.getElementById('userEmail').value;
+         let userName = document.getElementById('userName').value;
+
+         let Data = {
+           email:userEmail,
+           name:userName
+         }
+
+         console.log(userEmail,"Form axios ")
+         axios.post("/otpResend",Data)
+  })
+
+  </script>
+</body>
+</html>

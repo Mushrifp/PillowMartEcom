@@ -1,0 +1,102 @@
+<%- include('./layouts/header.ejs') %>
+<main class="main-wrap">
+    </header>
+    <section class="content-main">
+        <div class="content-header">
+            <h2 class="content-title">Users list</h2>
+        </div>
+        <div class="card mb-4">
+            <header class="card-header">
+                <div class="row gx-3">
+                    <div class="col-lg-4 col-md-6 me-auto">
+                        <input type="text" placeholder="Search..." class="form-control" />
+                    </div>
+                </div>
+            </header>
+            <!-- user-list.ejs -->
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>OTP Verification</th>
+                                <th>Block User</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            <% for (let i = 0; i < userData.length; i++) { %>
+                                <tr >
+                                    <td width="23%">
+                                        <div class="info pl-3">
+                                            <h6 class="mb-0 title"><%= userData[i].name %></h6>
+                                        </div>
+                                    </td>
+                                    <td><%= userData[i].email %></td>
+                                    <td><%= userData[i].mobile %></td>
+                                    <td>
+                                        <% if (userData[i].isVerified === true) { %>
+                                            <span class="badge rounded-pill alert-success">verified</span>
+                                        <% } else { %>
+                                            <span class="badge rounded-pill alert-danger">not Verified</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <form action="/admin/blockUnblockUser" method="post">
+                                            <input type="hidden" name="userId" value="<%= userData[i]._id %>">
+                                            <% if (userData[i].isAdminBlocked === false) { %>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action" id="unblockRadio<%= i %>" value="unblock" checked>
+                                                    <label class="form-check-label" for="unblockRadio<%= i %>">Unblock</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action" id="blockRadio<%= i %>" value="block">
+                                                    <label class="form-check-label" for="blockRadio<%= i %>">Block</label>
+                                                </div>
+                                            <% } else { %>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action" id="unblockRadio<%= i %>" value="unblock">
+                                                    <label class="form-check-label" for="unblockRadio<%= i %>">Unblock</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action" id="blockRadio<%= i %>" value="block" checked>
+                                                    <label class="form-check-label" for="blockRadio<%= i %>">Block</label>
+                                                </div>
+                                            <% } %>
+                                            <div class="text-center mt-3"> 
+                                                <button type="submit" class="btn btn-primary" style="margin-left: -30px;" >Save</button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% } %> 
+                        </tbody>
+                        
+                    </table>
+                    
+                </div>
+            </div>
+
+            <!-- card-body end// -->
+        </div>
+        <!-- card end// -->
+    </section>
+    <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+<%- include('./layouts/footer.ejs') %>

@@ -1,0 +1,114 @@
+<%- include('./layouts/header.ejs') %>
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Edit Product</h2>
+                    <button class="btn btn-md rounded font-sm hover-up"><a href="/admin/product" style="color: black;" >Go Back</a></button>
+                </div>
+            </div>
+        </div>
+        <% if(typeof message !== "undefined") { %>
+            <h4 style="color: rgb(0, 153, 255);" ><%= message %></h4>
+        <% } %>
+        <form action="/admin/editProduct" method="post" enctype="multipart/form-data">
+            <div class="row" >
+                <div class="col-lg-6" style="width: 500px; width: 600px;">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label for="product_title" class="form-label">Product title</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="title" name="productTitle"  value="<%=  currentData.productTitle %>" />
+                            </div>
+                            <div>
+                                <label class="form-label">Description</label>
+                                <input type="text" placeholder="Type here" class="form-control" name="description"  value="<%=  currentData.description %>" >
+                            </div>
+                            <div class="image-preview">
+                                <label class="form-label">Images 1</label>
+                                <input class="form-control" type="file" name="images0" accept="image/*" />
+                                <br>
+                                <div>
+                                    <img src="productImages/<%= currentData.image[0] %>" alt="Product Image" class="img-fluid">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="image-preview">
+                                <label class="form-label">Images 2</label>
+                                <input class="form-control" type="file" name="images1" accept="image/*" />
+                                <br>
+                                <div>
+                                    <img src="productImages/<%= currentData.image[1] %>" alt="Product Image" class="img-fluid">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="image-preview">
+                                <label class="form-label">Images 3</label>
+                                <input class="form-control" type="file" name="images2" accept="image/*" />
+                                <br>
+                                <div>
+                                    <img src="productImages/<%= currentData.image[2] %>" alt="Product Image" class="img-fluid">
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <!-- card end// -->
+                </div>
+                <div class="col-lg-3" >
+                    <div class="card mb-4" style="width: 400px;">
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="form-label">Price</label>
+                                <input type="number" placeholder="Type here" class="form-control" name="price"  value="<%=  currentData.price %>" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Stock</label>
+                                <input type="number" placeholder="Type here" class="form-control" name="stock"  value="<%=  currentData.stock %>" />
+                            </div>
+                            <h5 class="mb-3">Size</h5>
+                             <select class="form-control" name="size" required>
+                                 <option value="<%=  currentData.size %>"><%=  currentData.size %></option>
+                                 <option value="small">Small</option>
+                                 <option value="medium">Medium</option>
+                                 <option value="large">Large</option>
+                             </select>
+                             <br>
+                            <h5 class="mb-3">Categories</h5>
+                            <select class="form-control" name="category" required>
+                                <option><%=  currentData.category %></option>
+                                <% categoryData.forEach(category => { %>
+                                    <option value="<%= category.name %>"><%= category.name %></option>
+                                <% }) %>
+                            </select>
+                            <div class="mt-3">
+                                <input type="hidden" name="id" value="<%= currentData._id %>">
+                                <button type="submit" class="btn btn-md rounded font-sm hover-up">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- card end// -->
+                </div>
+            </div>
+        </form>
+    </section>
+    
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<%- include('./layouts/footer.ejs') %>
+
+

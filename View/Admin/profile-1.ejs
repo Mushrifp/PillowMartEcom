@@ -1,0 +1,109 @@
+<%- include("./layouts/header.ejs") %>
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </header>
+            <section class="content-main">
+                <div class="content-header">
+                    <h2 class="content-title">Profile setting</h2>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row gx-5">
+                            <div class="col-lg-9">
+                                <section class="content-body p-xl-4">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-lg-8">
+                                                <div class="row gx-3">
+                                                    <div class="col-6 mb-3">
+                                                        <label class="form-label">First name</label>
+                                                        <input class="form-control" type="text" placeholder="Type here" />
+                                                    </div>
+                                                    <!-- col .// -->
+                                                    <div class="col-6 mb-3">
+                                                        <label class="form-label">Last name</label>
+                                                        <input class="form-control" type="text" placeholder="Type here" />
+                                                    </div>
+                                                    <!-- col .// -->
+                                                    <div class="col-lg-6 mb-3">
+                                                        <label class="form-label">Email</label>
+                                                        <input class="form-control" type="email" placeholder="example@mail.com" />
+                                                    </div>
+                                                    <!-- col .// -->
+                                                    <div class="col-lg-6 mb-3">
+                                                        <label class="form-label">Phone</label>
+                                                        <input class="form-control" type="tel" placeholder="+1234567890" />
+                                                    </div>
+                                                    <!-- col .// -->
+                                                    <div class="col-lg-12 mb-3">
+                                                        <label class="form-label">Address</label>
+                                                        <input class="form-control" type="text" placeholder="Type here" />
+                                                    </div>
+                                                    <!-- col .// -->
+                                                    <div class="col-lg-6 mb-3">
+                                                        <label class="form-label">Birthday</label>
+                                                        <input class="form-control" type="date" />
+                                                    </div>
+                                                    <!-- col .// -->
+                                                </div>
+                                                <!-- row.// -->
+                                            </div>
+                                            <!-- col.// -->
+                                            <aside class="col-lg-4">
+                                                <figure class="text-lg-center">
+                                                    <img class="img-lg mb-3 img-avatar" src="assets/imgs/people/avatar-1.png" alt="User Photo" />
+                                                    <figcaption>
+                                                        <a class="btn btn-light rounded font-md" href="#"> <i class="icons material-icons md-backup font-md"></i> Upload </a>
+                                                    </figcaption>
+                                                </figure>
+                                            </aside>
+                                            <!-- col.// -->
+                                        </div>
+                                        <!-- row.// -->
+                                        <br />
+                                        <button class="btn btn-primary" type="submit">Save changes</button>
+                                    </form>
+                                    <!-- row.// -->
+                                </section>
+                                <!-- content-body .// -->
+                            </div>
+                            <!-- col.// -->
+                        </div>
+                        <!-- row.// -->
+                    </div>
+                    <!-- card body end// -->
+                </div>
+                <!-- card end// -->
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/assets/js/vendors/select2.min.js"></script>
+        <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/assets/js/main.js?v=1.1" type="text/javascript"></script>
+    </body>
+</html>

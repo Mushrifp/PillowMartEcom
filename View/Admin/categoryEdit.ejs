@@ -1,0 +1,119 @@
+<style>
+    .buttonSave {
+ --color: #00A97F;
+ padding: 0.8em 1.7em;
+ background-color: transparent;
+ border-radius: .3em;
+ position: relative;
+ overflow: hidden;
+ cursor: pointer;
+ transition: .5s;
+ font-weight: 600;
+ font-size: 11px;
+ border: 1px solid;
+ font-family: inherit;
+ text-transform: uppercase;
+ color: var(--color);
+ z-index: 1;
+}
+
+.buttonSave::before, .buttonSave::after {
+ content: '';
+ display: block;
+ width: 50px;
+ height: 50px;
+ transform: translate(-50%, -50%);
+ position: absolute;
+ border-radius: 50%;
+ z-index: -1;
+ background-color: var(--color);
+ transition: 1s ease;
+}
+
+.buttonSave::before {
+ top: -1em;
+ left: -1em;
+}
+
+.buttonSave::after {
+ left: calc(100% + 1em);
+ top: calc(100% + 1em);
+}
+
+.buttonSave:hover::before, .buttonSave:hover::after {
+ height: 410px;
+ width: 410px;
+}
+
+.buttonSave:hover {
+ color: rgb(10, 25, 30);
+}
+
+.buttonSave:active {
+ filter: brightness(.8);
+}
+
+</style>
+<%- include('./layouts/header.ejs') %>
+<main class="main-wrap">
+    <section class="content-main">
+
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Edit Categories</h2>
+            </div>
+        </div>
+
+        <div class="edit-category-container">
+            <div class="edit-category-body">
+                <form action="/admin/editCategory" method="post" >
+                    <div class="mb-3">
+                        <label for="edit_category_name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="edit_category_name" name="name" value="<%= typeof CategoryData !== "undefined" ? CategoryData.name : "" %>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_category_description" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="edit_category_description" name="description" value="<%= typeof CategoryData !== "undefined" ? CategoryData.description : "" %>">
+                    </div>
+                    <input type="hidden" id="edit_category_id" name="id" value="<%= typeof CategoryData !== "undefined" ? CategoryData.id : "" %>">
+                    <button type="submit" class="buttonSave" >Save changes</button>
+                </form>
+                
+                <% if(typeof message != 'undefined'){ %>
+                    <h3 style="color: red;"><%= message %></h3>  
+                    <% } %>
+                <br>
+                <a href="/admin/category"><button type="submit" class="buttonSave" >Go Back</button></a>
+            </div>
+        </div>
+        
+
+    </section>
+    <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<%- include('./layouts/footer.ejs') %>
+
+
+
+
+
+
+
+
+
+
+

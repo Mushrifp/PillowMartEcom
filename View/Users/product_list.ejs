@@ -1,0 +1,362 @@
+
+<style>
+    #product-imageh {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+    }
+    .InputContainer {
+        width: 210px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to bottom,rgb(227, 213, 255),rgb(255, 231, 231));
+        border-radius: 30px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    .input {
+        width: 200px;
+        height: 40px;
+        caret-color: rgb(255, 106, 248);
+        background: linear-gradient(to bottom,rgb(227, 213, 255),rgb(255, 231, 231));
+        padding-left: 15px;
+        letter-spacing: 0.8px;
+        color: rgb(19, 19, 19);
+        font-size: 13.4px;
+    }
+</style>
+
+<%- include('./layout/header.ejs') %>
+<!--::header part start::-->
+<%- include('./layout/navbar.ejs') %>
+<section class="breadcrumb_part" style="height:100px">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb_iner">
+                    <h2  id="RvText">Product</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<header>
+
+    <div class="p-3 text-center bg-white border-bottom">
+      <div class="container">
+        <div class="row gy-3">
+            <div class="single_sedebar">
+                <form action="/search" method="get">
+                    <div class="InputContainer">
+                        <input type="text" name="search" placeholder="Search Here" class="form-control input" style="border:none; margin-left: 10px;">
+                    </div>
+                </form>
+            </div>
+
+          <div class="single_sedebar" style="margin-left: 30px;">
+            <div class="select_option">
+                <div class="select_option_list">Category ><i class="right fas "></i> </div>
+                <div class="select_option_dropdown">
+                    <% for(let i=0; i < cate.length; i++) { %>
+                        <p><a href="/categoryLoad?id=<%= cate[i]._id %>"><%= cate[i].name %></a></p>
+                    <% } %>
+                </div>
+                
+            </div>
+        </div>
+         <!-- filter-->
+         <div class="single_sedebar" style="margin-left: 30px;">
+            <div class="select_option">
+                <div class="select_option_list">Filter ><i class="right fas "></i> </div>
+                <div class="select_option_dropdown">
+                    <p><a href="/LowToHigh">Low to High</a></p>
+                    <p><a href="/HighToLow">High to Low</a></p>
+                </div>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+  </header>
+<!-- product list part start -->
+<section class="">
+    <div class="container">
+        <div class="row justify-content-center" style="margin-top: 50px;">
+            <!-- content -->
+            <div class="col-lg-12">
+                <% if ( Data.length != 0) { %>
+                    <% for (let i = 0; i < Data.length; i++) { %>
+                        <div class="row justify-content-center mb-3">
+                            <div class="col-md-12">
+                                <div class="card shadow-0 border rounded-3">
+                                    <div class="card-body">
+                                        <div class="row g-0">
+                                            <div class="col-xl-3 col-md-4 d-flex justify-content-center">
+                                                <div class="bg-image productZoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0" id="productEffect"  >
+                                                    <% if (Data[i].image && Data[i].image.length > 0) { %>
+                                                        <a href="/single-product?id=<%= Data[i]._id %>"><img id="product-imageh" src="/productImages/<%= Data[i].image[0] %>" class="w-100" style="border-radius: 5px;"  /></a>
+                                                    <% } else { %>
+                                                        <a href="/single-product"><span></span></a>
+                                                    <% } %>
+                                                    <a href="">
+                                                        <div class="hover-overlay">
+                                                            <div class="mask" style="background-color: rgb(0, 255, 123);"></div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-md-5 col-sm-7">
+                                                <a href="/single-product?id=<%= Data[i]._id %>"><h5><%= Data[i].productTitle %></h5></a>
+                                                <div class="text-muted">Category : <%= Data[i].category %></div>
+                                                <p class="text mb-4 mb-md-0"><%= Data[i].description %></p>
+                                            </div>
+                                            <div class="col-xl-3 col-md-3 col-sm-5">
+                                                <div class="d-flex flex-row align-items-center mb-1">
+                                                    <h4 class="mb-1 me-1" style="color: green;">Price :</h4>
+                                                    <h4 class="mb-1 me-1">$<%= Data[i].price %></h4>
+                                                </div>
+                                                <div class="mt-4">
+                                                    <button class="btn_3" ><a style="color: black;" href="/single-product?id=<%= Data[i]._id %>">Details </a></button>
+                                                    <br>
+                                                    <br>
+                                                    <button id="wishButton" class="btn_3" type="button" >Wishlist</button>
+                                                    <input type="hidden" id="SendID" value="<%= Data[i]._id %>" >
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div class="row justify-content-center mb-3">
+                        <div class="col-md-12">
+                            <div class="card shadow-0 border rounded-3">
+                                <div class="card-body">
+                                    <div class="col-12 text-center">
+                                        <p>No product data available.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+    
+    <!-- client review part here -->
+    <section class="client_review">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="client_review_slider owl-carousel">
+                        <div class="single_client_review">
+                            <div class="client_img">
+                                <img src="/img/client.png" alt="#">
+                            </div>
+                            <p>"Working in conjunction with humanitarian aid agencies, we have supported programmes to help alleviate human suffering.</p>
+                            <h5>- Micky Mouse</h5>
+                        </div>
+                        <div class="single_client_review">
+                            <div class="client_img">
+                                <img src="/img/client_1.png" alt="#">
+                            </div>
+                            <p>"Working in conjunction with humanitarian aid agencies, we have supported programmes to help alleviate human suffering.</p>
+                            <h5>- Micky Mouse</h5>
+                        </div>
+                        <div class="single_client_review">
+                            <div class="client_img">
+                                <img src="/img/client_2.png" alt="#">
+                            </div>
+                            <p>"Working in conjunction with humanitarian aid agencies, we have supported programmes to help alleviate human suffering.</p>
+                            <h5>- Micky Mouse</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- client review part end -->
+
+    <!-- feature part here -->
+    <section class="feature_part section_padding">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-lg-6">
+                    <div class="feature_part_tittle">
+                        <h3>Credibly innovate granular
+                        internal or organic sources
+                        whereas standards.</h3>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="feature_part_content">
+                        <p>Seamlessly empower fully researched growth strategies and interoperable internal or “organic” sources. Credibly innovate granular internal or “organic” sources whereas high standards in web-readiness.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single_feature_part">
+                        <img src="img/icon/feature_icon_1.svg" alt="#">
+                        <h4>Credit Card Support</h4>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single_feature_part">
+                        <img src="img/icon/feature_icon_2.svg" alt="#">
+                        <h4>Online Order</h4>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single_feature_part">
+                        <img src="img/icon/feature_icon_3.svg" alt="#">
+                        <h4>Free Delivery</h4>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single_feature_part">
+                        <img src="img/icon/feature_icon_4.svg" alt="#">
+                        <h4>Product with Gift</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- feature part end -->
+
+    <!-- subscribe part here -->
+    <section class="subscribe_part section_padding">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="subscribe_part_content">
+                        <h2>Get promotions & updates!</h2>
+                        <p>Seamlessly empower fully researched growth strategies and interoperable internal or “organic” sources credibly innovate granular internal .</p>
+                        <div class="subscribe_form">
+                            <input type="email" placeholder="Enter your mail">
+                            <a href="#" class="btn_1">Subscribe</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- subscribe part end -->
+
+    <!--::footer_part start::-->
+    <footer class="footer_part">
+            <div class="footer_iner">
+                <div class="container">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-lg-8">
+                            <div class="footer_menu">
+                                <div class="footer_logo">
+                                    <a href="index.html"><img src="img/logo.png" alt="#"></a>
+                                </div>
+                                <div class="footer_menu_item">
+                                    <a href="index.html">Home</a>
+                                    <a href="about.html">About</a>
+                                    <a href="product_list.html">Products</a>
+                                    <a href="#">Pages</a>
+                                    <a href="blog.html">Blog</a>
+                                    <a href="contact.html">Contact</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="social_icon">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                                <a href="#"><i class="fab fa-google-plus-g"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright_part">
+                <div class="container">
+                    <div class="row ">
+                        <div class="col-lg-12">
+                            <div class="copyright_text">
+                                <P><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P>
+                                <div class="copyright_link">
+                                    <a href="#">Turms & Conditions</a>
+                                    <a href="#">FAQ</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </footer>
+    <!--::footer_part end::-->
+
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        var notyf = new Notyf();
+
+        const id = document.getElementById("SendID").value;
+    document.getElementById("wishButton").addEventListener("click",function(event){
+         axios.post(`/cart/addToWishlist?id=${id}`)
+         .then(function(response){
+                if(response.data.added){
+                    notyf.success('Added Success');
+                }else if(response.data.notAdded){
+                    notyf.error('You Need To Login');
+                }else if(response.data.failed){
+                    notyf.error('Not Added');
+                }
+              })
+              .catch(function(error){
+                console.error('Error:',error);
+              });
+    })
+    
+    
+    </script>
+
+
+
+    <!-- jquery plugins here-->
+    <script src="js/jquery-1.12.1.min.js"></script>
+    <!-- popper js -->
+    <script src="js/popper.min.js"></script>
+    <!-- bootstrap js -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- easing js -->
+    <script src="js/jquery.magnific-popup.js"></script>
+    <!-- swiper js -->
+    <script src="js/swiper.min.js"></script>
+    <!-- swiper js -->
+    <script src="js/mixitup.min.js"></script>
+    <!-- particles js -->
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <!-- slick js -->
+    <script src="js/slick.min.js"></script>
+    <script src="js/jquery.counterup.min.js"></script>
+    <script src="js/waypoints.min.js"></script>
+    <script src="js/contact.js"></script>
+    <script src="js/jquery.ajaxchimp.min.js"></script>
+    <script src="js/jquery.form.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/mail-script.js"></script>
+    <!-- custom js -->
+    <script src="js/custom.js"></script>
+
+</body>
+
+</html>

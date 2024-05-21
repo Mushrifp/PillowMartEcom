@@ -1,0 +1,85 @@
+<%- include('./layouts/header.ejs') %>
+<main class="main-wrap">
+
+    <header class="main-header navbar">
+        <div class="col-search">
+            <form class="searchform">
+                <div class="input-group">
+                    <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                    <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                </div>
+            </form>
+        </div>
+        <div class="col-nav">
+            <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
+            <ul class="nav">
+                <li class="dropdown nav-item">
+                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar-1.png" alt="User" /></a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                        <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="content-main">
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Coupon</h2>
+                    <div>
+                        <button class="btn btn-md rounded font-sm hover-up">Create</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label">Coupon Name</label>
+                            <input type="text" placeholder="Type here" class="form-control" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Coupon Code</label>
+                            <input type="text" placeholder="Type here" class="form-control" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Discount Amount</label>
+                            <input type="text" placeholder="Type here" class="form-control" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Eligible Amount</label>
+                            <input type="text" placeholder="Type here" class="form-control" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Count</label>
+                            <input type="text" placeholder="Type here" class="form-control" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="text" placeholder="Type here" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+<%- include('./layouts/footer.ejs') %>

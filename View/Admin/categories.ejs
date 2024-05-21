@@ -1,0 +1,168 @@
+<style>
+    .btn2 {
+      display: inline-block;
+      width: 100%;
+      padding: 5px 15px;
+      border: 2px solid #000000;
+      text-transform: uppercase;
+      color: #000000;
+      text-decoration: none;
+      transition: 0.3s;
+      background-color: transparent;
+      cursor: pointer;
+      position: relative;
+      border-radius: 10px;
+      background-image: linear-gradient(to right, rgb(58, 244, 61) , rgb(37, 126, 221));
+    }
+
+    .btn2::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      width: calc(100% + 10px);
+      height: calc(100% + 10px);
+      background-color: #ffffff;
+      transition: 0.3s ease-out;
+      z-index: -1;
+      border-radius: 10px;
+    }
+
+    .btn2:hover::before {
+      transform: translate(-5px, -5px);
+      transition-delay: 0s;
+    }
+
+    .btn2:hover {
+      border: 2px solid #ffffff;
+      background-image: linear-gradient(to right, rgb(255, 255, 255) , rgb(255, 255, 255));
+
+    }
+
+    .btn2 span {
+      position: relative;
+      z-index: 3;
+    }
+
+    button {
+      text-decoration: none;
+      border: none;
+      background-color: transparent;
+    }
+    #hov{
+       background-color: #00b006;
+       color: #ffffff;
+       box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    }
+    #hov:hover{
+       background-color: #005c03;
+       box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+      
+
+    }
+</style>
+<%- include('./layouts/header.ejs') %>
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Categories</h2>
+            </div>
+            <div>
+                <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Create New Category</h4>
+                <form action="/admin/newCategory" method="post">
+                    <div class="mb-3">
+                        <label for="product_name" class="form-label">Name</label>
+                        <input type="text" placeholder="Type here" class="form-control" id="product_name" name="name" value="<%= typeof pdName != 'undefined' ? pdName : "" %>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <input type="text" placeholder="Type here" class="form-control" id="product_description" name="description" value="<%= typeof pdDescription != 'undefined' ? pdDescription : "" %>" required>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <% if(typeof message != 'undefined'){ %>
+                        <div class="alert " style="background-color: rgba(24, 24, 24, 0.911); color:#fefefe" role="alert">
+                            <%= message %>
+                        </div>
+                        <% } %>
+                        <button type="submit" class="btn2"><span>Create</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- category list from the database -->
+        <div class="card" >
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9" style="width: 100%;"> 
+                        <div class="table-responsive"  >
+                             <table class="table table-hover">
+                                <thead >
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <% if(categoryData.length != 0 ){ %>
+                                    <% for(let i = 0; i < categoryData.length; i++) { %>
+                                        <tbody>
+                                            <tr>
+                                                <td><b><%= categoryData[i].name %></b></td>
+                                                <td><%= categoryData[i].description %></td>
+                                                <td class="text-end">
+                                                    <a class="btn btn-success  btn-sm font-sm" href="/admin/editCategoryLoad?id=<%= categoryData[i]._id %>">Edit</a>
+                                                    <a class="btn btn-danger btn-sm font-sm" href="/admin/deleteCategory?id=<%= categoryData[i]._id %>">Delete</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    <% } %>
+                                <% }else{ %>
+                                    <td><b>No data</b></td>
+                                    <td>No data</td>
+                                <% } %>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- .col// -->
+                </div>
+                <!-- .row // -->
+            </div>
+            <!-- card body .// -->
+        </div>
+        <!-- card .// -->
+    </section>
+    <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+<%- include('./layouts/footer.ejs') %>
+
+
+
+
+
+
+
+
+
+
+

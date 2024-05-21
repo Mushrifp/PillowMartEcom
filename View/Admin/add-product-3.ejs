@@ -1,0 +1,155 @@
+<style>
+    .image-preview {
+        margin-top: 10px;
+        max-width: 200px;
+        max-height: 200px; 
+        overflow: hidden;
+    }
+
+    .preview-image {
+        width: 100%;
+        height: auto;
+    }
+</style>
+<%- include('./layouts/header.ejs') %>
+
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Product</h2>
+                </div>
+            </div>
+        </div>
+        <form action="/admin/addProduct" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label for="product_title" class="form-label">Product title</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="title" name="title" required value="<%= typeof title !== "undefined" ? title : "" %>" />
+                            </div>
+                            <div>
+                                <label class="form-label">Description</label>
+                                <input type="text" placeholder="Type here" class="form-control" name="description" required  value="<%= typeof description !== "undefined" ? description : "" %>" />
+                            </div>
+                            <div>
+                                <label class="form-label">Images 1</label>
+                                <input class="form-control" type="file" name="images"  accept="image/*" required data-preview-id="imagePreview1" />
+                                <div class="image-preview" id="imagePreview1"></div>
+                            </div>
+                            <div>
+                                <label class="form-label">Images 2</label>
+                                <input class="form-control" type="file" name="images"  accept="image/*" required data-preview-id="imagePreview2" />
+                                <div class="image-preview" id="imagePreview2"></div>
+                            </div>
+                            <div>
+                                <label class="form-label">Images 3</label>
+                                <input class="form-control" type="file" name="images"  accept="image/*"  required data-preview-id="imagePreview3" />
+                                <div class="image-preview" id="imagePreview3"></div>
+                            </div>
+
+                            <% if(typeof message !== "undefined") { %>
+                                <h4 style="color: rgb(0, 153, 255);" ><%= message %></h4>
+                            <% } %>
+
+                        </div>
+                    </div>
+                    <!-- card end// -->
+                </div>
+                <div class="col-lg-3">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="form-label">Price</label>
+                                <input type="number" placeholder="Type here" class="form-control" name="price" required value="<%= typeof price !== "undefined" ? price : "" %>"/>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Stock</label>
+                                <input type="number" placeholder="Type here" class="form-control" name="stock" required value="<%= typeof stock !== "undefined" ? stock : "" %>"/>
+                            </div>
+                            <h5 class="mb-3">Size</h5>
+                            <select class="form-control" name="size" required>
+                                <option value="">Select Size</option>
+                                <option value="small">Small</option>
+                                <option value="medium">Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                            <br>
+                            <h5 class="mb-3">Categories</h5>
+                            <select class="form-control" name="category" required>
+                                <option value="">Select Category</option>
+                                <% categoryData.forEach(category => { %>
+                                    <option value="<%= category.name %>"><%= category.name %></option>
+                                <% }) %>
+                            </select>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-md rounded font-sm hover-up">Create</button>
+                                <button class="btn btn-md rounded font-sm hover-up"><a href="/admin/product" style="color: black;" >Go Back</a></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- card end// -->
+                </div>
+            </div>
+        </form>
+    </section>
+    
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<script>
+    document.querySelectorAll('input[type="file"]').forEach(function(input){
+        input.addEventListener('change',function(event){
+            const imagePreviewId = this.getAttribute('data-preview-id');
+            previewImage(event,imagePreviewId);
+        });
+    });
+
+    function previewImage(event,imagePreviewId){
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+        const imagePreview = document.getElementById(imagePreviewId);
+
+        if (file){
+            const reader = new FileReader();
+
+            reader.readAsDataURL(file);
+
+            reader.onload = function (){
+                const imgElement = document.createElement('img');
+                imgElement.src = reader.result;
+                imgElement.className = 'preview-image';
+                imagePreview.innerHTML = '';
+                imagePreview.appendChild(imgElement);
+            };
+        }else{
+            imagePreview.innerHTML = '';
+        }
+    }
+</script>
+<script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/vendors/select2.min.js"></script>
+<script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+<script src="/assets/js/vendors/chart.js"></script>
+<!-- Main Script -->
+<script src="/assets/js/main.js?v=1.1" type="text/javascript"></script>
+<script src="/assets/js/custom-chart.js" type="text/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset</title>
+  <style>
+    body{
+      font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      background-image: url('/img/zz.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .singup {
+      color: #000;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: block;
+      font-weight: bold;
+      font-size: x-large;
+      margin-top: 1.5em;
+    }
+
+    .card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 350px;
+      width: 350px;
+      flex-direction: column;
+      gap: 35px;
+      border-radius: 15px;
+      border-radius: 8px;
+      margin-right: 200px;
+      margin-top: 25px;
+    }
+
+    .inputBox {
+      position: relative;
+      width: 250px;
+    }
+
+    .inputBox input {
+      width: 100%;
+      padding: 10px;
+      outline: none;
+      border: none;
+      color: #000;
+      font-size: 1em;
+      background: transparent;
+      border-left: 2px solid #000;
+      border-bottom: 2px solid #000;
+      transition: 0.1s;
+      border-bottom-left-radius: 8px;
+    }
+
+    .inputBox span {
+      margin-top: 5px;
+      position: absolute;
+      left: 0;
+      transform: translateY(-4px);
+      margin-left: 10px;
+      padding: 10px;
+      pointer-events: none;
+      font-size: 12px;
+      color: #000;
+      text-transform: uppercase;
+      transition: 0.5s;
+      letter-spacing: 3px;
+      border-radius: 8px;
+    }
+
+    .inputBox input:valid~span,
+    .inputBox input:focus~span {
+      transform: translateX(113px) translateY(-15px);
+      font-size: 0.8em;
+      padding: 5px 10px;
+      background: #000;
+      letter-spacing: 0.2em;
+      color: #fff;
+      border: 2px;
+    }
+
+    .inputBox input:valid,
+    .inputBox input:focus {
+      border: 2px solid #000;
+      border-radius: 8px;
+    }
+
+    .enter {
+      height: 45px;
+      width: 200px;
+      border-radius: 5px;
+      border: 2px solid #000;
+      cursor: pointer;
+      background-color: transparent;
+      transition: 0.5s;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 2px;
+      /* margin-top: -20px; */
+      margin-bottom: 30px;
+    }
+
+    .enter:hover {
+      background-color: rgb(0, 0, 0);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <form action="/passChanging" method="post">
+    <div class="card">
+      <a class="singup">Reset your Password</a>
+      <div class="inputBox">
+        <input type="text" name="new_password" required="required" value="<%= typeof pass !== "undefined" ? pass : "" %>">
+        <input type="hidden" name="email" value="<%= mail %>" >
+        <span>Enter New Password</span>
+      </div>
+
+      <div class="inputBox">
+        <input type="text" name="confirm_password" required="required" value="<%= typeof ConfirmPass !== "undefined" ? ConfirmPass : "" %>">
+        <span>Confirm Password</span>
+        
+      </div> 
+      <button class="enter" type="submit">Enter</button>
+      <% if(typeof message != "undefined"){ %>
+        <h3 style="color: red; margin-top: -40px;" ><%= message %></h3>
+   <% } %>
+      
+      
+    </div>
+  </form>
+
+</body>
+</html>
