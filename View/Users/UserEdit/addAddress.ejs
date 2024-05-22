@@ -82,7 +82,9 @@
                 <h2>Add Address</h2>
                 <% if(typeof message != 'undefined'){ %>
                     <h3 style="color: red;" ><%= message %></h3>
-              <% } %>
+              <% }else if(doneMessage){ %>
+                    <h3 style="color: rgb(81, 255, 0);" ><%= doneMessage %></h3>
+                <% } %>
                 <form id="addressForm" action="/user/addAddress" method="post" >
                     <div class="form-group">
                       <label for="name">Name:</label>

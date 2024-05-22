@@ -255,79 +255,83 @@ const insertUser = async (req, res) => {
 
         if (!existingName) {
             if (!existingEmail) {
-                let existingNumber = await userData.findOne({ name: req.body.number })
+                let existingNumber = await userData.findOne({ mobile: req.body.number })
 
-                if (!existingNumber) {
-                    let passwordCheck = await StrongPassword(req.body.password)
-
-                    if (passwordCheck) {
-
-
-                        if (req.body.retypePassword == req.body.password) {
-
-                            const user = new userData({
-                                name: req.body.name,
-                                email: req.body.email,
-                                password: hPassword,
-                                mobile: req.body.number
-                            })
-
-                            await user.save();
-                            console.log("data inserted : " + user)
-
-
-
-                            const otp = Math.floor(1000 + Math.random() * 9000);
-
-                            const otpStore = new OTP({
-                                otp: otp,
-                                email: req.body.email
-                            })
-
-                            await otpStore.save()
-
-                            await otpStore.collection.createIndex({ "otp": 1 }, { expireAfterSeconds: 60 });
-
-                            const transporter = nodemailer.createTransport({
-                                host: process.env.EMAIL_HOST,
-                                port: process.env.EMAIL_PORT,
-                                secure: false,
-                                requireTLS: true,
-                                auth: {
-                                    user: process.env.EMAIL_USER,
-                                    pass: process.env.EMAIL_PASSWORD
-                                },
-
-                            });
-
-                            console.log(req.body.email)
-
-                            const mailOptions = {
-                                from: process.env.EMAIL_FROM,
-                                to: req.body.email,
-                                subject: "Pillow Mart Otp Verification",
-                                html: "<h3> Hello  " + req.body.name + "  This is from PILLOW MART Here is your OTP : " + otp + " :  Thank you </h3>"
-                            };
-
-                            transporter.sendMail(mailOptions, function (error, info) {
-                                if (error) {
-                                    console.log(error);
-                                } else {
-                                    console.log("Mail sent successfully :- ", info.response + " :Send to " + req.body.email);
-                                }
-                            });
-
-                            res.render("otp", { message: "Check Your Mail , Enter Your OTP ", email: req.body.email, name: req.body.name })
-
+                if(req.body.number.length == 10 ){
+                    if (!existingNumber) {
+                        let passwordCheck = await StrongPassword(req.body.password)
+    
+                        if (passwordCheck) {
+    
+    
+                            if (req.body.retypePassword == req.body.password){
+                                let userName = req.body.name.trimEnd();
+                                const user = new userData({
+                                    name: userName,
+                                    email: req.body.email,
+                                    password: hPassword,
+                                    mobile: req.body.number
+                                })
+    
+                                await user.save();
+                                console.log("data inserted : " + user)
+    
+    
+    
+                                const otp = Math.floor(1000 + Math.random() * 9000);
+    
+                                const otpStore = new OTP({
+                                    otp: otp,
+                                    email: req.body.email
+                                })
+    
+                                await otpStore.save()
+    
+                                await otpStore.collection.createIndex({ "otp": 1 }, { expireAfterSeconds: 60 });
+    
+                                const transporter = nodemailer.createTransport({
+                                    host: process.env.EMAIL_HOST,
+                                    port: process.env.EMAIL_PORT,
+                                    secure: false,
+                                    requireTLS: true,
+                                    auth: {
+                                        user: process.env.EMAIL_USER,
+                                        pass: process.env.EMAIL_PASSWORD
+                                    },
+    
+                                });
+    
+                                console.log(req.body.email)
+    
+                                const mailOptions = {
+                                    from: process.env.EMAIL_FROM,
+                                    to: req.body.email,
+                                    subject: "Pillow Mart Otp Verification",
+                                    html: "<h3> Hello  " + req.body.name + "  This is from PILLOW MART Here is your OTP : " + otp + " :  Thank you </h3>"
+                                };
+    
+                                transporter.sendMail(mailOptions, function (error, info) {
+                                    if (error) {
+                                        console.log(error);
+                                    } else {
+                                        console.log("Mail sent successfully :- ", info.response + " :Send to " + req.body.email);
+                                    }
+                                });
+    
+                                res.render("otp", { message: "Check Your Mail , Enter Your OTP ", email: req.body.email, name: req.body.name })
+    
+                            } else {
+                                res.render("register", { message: "Retyped Password not matching", currentName: req.body.name, currentEmail: req.body.email, currentPass: req.body.password, currentPhone: req.body.number })
+                            }
+    
                         } else {
-                            res.render("register", { message: "Retyped Password not matching", currentName: req.body.name, currentEmail: req.body.email, currentPass: req.body.password, currentPhone: req.body.number })
+                            res.render("register", { message: "minimum of 8 characters,one uppercase ,lowercase letter one number, and one special character.", currentName: req.body.name, currentEmail: req.body.email, currentPass: req.body.password, currentPhone: req.body.number })
                         }
-
                     } else {
-                        res.render("register", { message: "minimum of 8 characters,one uppercase ,lowercase letter one number, and one special character.", currentName: req.body.name, currentEmail: req.body.email, currentPass: req.body.password, currentPhone: req.body.number })
+                        res.render("register", { message: "This Number is already taken choose another one", currentName: req.body.name, currentEmail: req.body.email, currentPass: req.body.password, currentPhone: req.body.number })
                     }
-                } else {
-                    res.render("register", { message: "This Number is already taken choose another one", currentName: req.body.name, currentEmail: req.body.email, currentPass: req.body.password, currentPhone: req.body.number })
+                }else{
+                res.render("register", { message: "Enter a Valid Number", currentName: req.body.name, currentEmail: req.body.email, currentPass: req.body.password, currentPhone: req.body.number })
                 }
 
             } else {
@@ -607,7 +611,6 @@ const search = async (req,res)=>{
 // Load Checkout page
 const loadCheckout = async (req,res)=>{
     try {
-        console.log("Enterd to the checkout")
         const userSession = await userData.findOne({ _id:req.session.user_id});
         const productsData = req.body.products;
 
@@ -641,7 +644,7 @@ const CheckOutData = [];
     }
 }
 
-// Load proceed to pay 
+// Load confirmation 
 const loadProceed = async (req,res)=>{
     try {
          res.render("confirmation")

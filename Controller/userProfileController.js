@@ -51,13 +51,15 @@ const password = async (req, res) => {
 const LoadAddress = async (req, res) => {
   try {
     const addressData = await address.findOne({UserID:req.session.user_id})
-
+    if(addressData){
     const Data = []
     for(let i=0;i<addressData.userAddress.length;i++){
       Data.push(addressData.userAddress[i])
     }
-
     res.render("address",{Data});
+  }else{
+    res.render("address",{NoData:"No Adress"});
+  }
   } catch (error) {
     console.log(error);
   }
@@ -84,43 +86,50 @@ const wallet = async (req, res) => {
 // edit profile name and email and number
 const profileEdit = async (req, res) => {
     try {
-        const user = await userData.findOne({ _id:req.session.user_id});
-        if (!user) {
-             res.status(404).send("User not found");
+      const user = await userData.findOne({_id:req.session.user_id});
+      if (!user) {
+          res.status(404).send("User not found");
+      }
+
+      if (req.body.name&&req.body.name !== user.name){
+        const existName = await userData.findOne({name:req.body.name});
+        if(existName){
+            res.render("profile",{message:"This name is already in use",user});
+        }else{
+          await userData.updateOne({_id:req.session.user_id},{$set:{name:req.body.name}})
+          res.redirect("/user/profile")
         }
-
-
-        if(req.body.name && req.body.name !== user.name){
-            const existingName = await userData.findOne({name:req.body.name});
-            if (existingName) {
-                 res.render("profile",{message:"This name is already in use",user});
-            }
-            await userData.findOneAndUpdate({ _id:req.session.user_id},{$set:{name:req.body.name}}
-            );
-            user.name = req.body.name;
+      }
+  
+      if(req.body.email&&req.body.email !== user.email){
+        const existEmail = await userData.findOne({email:req.body.email});
+        if(existEmail){
+            res.render("profile",{message:"This email is already in use",user});
+       }else{
+         await userData.updateOne({_id:req.session.user_id},{$set:{email:req.body.email}})
+         res.redirect("/user/profile")
         }
+      }
+      
+      if (req.body.mobile&&req.body.mobile.length == 10) {
+          const existMobile = await userData.findOne({mobile:req.body.mobile});
+          if (existMobile) {
+              res.render("profile",{message:"This phone number is already in use",user});
+          }else{
+            await userData.updateOne({_id:req.session.user_id},{$set:{mobile:req.body.mobile}})
+            res.redirect("/user/profile")
+          }
+      }else{
+          res.render("profile",{message:"Enter a valid NUmber",user});
+      }
 
-        if(req.body.email && req.body.email !== user.email){
-            const existingEmail = await userData.findOne({email:req.body.email});
-            if (existingEmail) {
-                return res.render("profile",{message:"This email is already in use",user});
-            }
-            await userData.findOneAndUpdate({_id:req.session.user_id},{$set:{email:req.body.email}});
-            user.email = req.body.email;
-        }
-
-        if (req.body.mobile && req.body.mobile !== user.mobile){
-            await userData.findOneAndUpdate({_id:req.session.user_id},{$set:{mobile:req.body.mobile}});
-            user.mobile = req.body.mobile;
-        }
-
-        res.render("profile",{message:"Profile updated successfully",user});
-        console.log("Profile data updated successfully");
-    } catch (error) {
-        console.log(error);
-        res.status(500).send("Internal Server Error");
-    }
-};
+     
+  
+  } catch (error){
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+}; 
 
 // profile password changing
 const profilePasswordEdit = async (req,res)=>{
@@ -161,8 +170,15 @@ const profilePasswordEdit = async (req,res)=>{
 // user Adding New Address
 const addAddress = async (req,res)=>{
       try{ 
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        let result = '';
+        for (let i = 0; i < 7; i++) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
 
   const Data={
+      Code:result,
       name: req.body.name,
       Bname: req.body.Bname,
       phone: req.body.phone,
@@ -170,13 +186,7 @@ const addAddress = async (req,res)=>{
       address: req.body.address,
       town: req.body.town,
       pincode: req.body.pincode
-  }
-
-  const existingAddress = await address.findOne({UserID:req.session.user_id,userAddress:{$elemMatch:{Bname:req.body.Bname}}})
-
-    if(existingAddress){
-      res.render("addAddress",{message:"ALready exits Type",Data})
-    }else{
+  } 
    
     if(req.body.phone.length != 10){
           res.render("addAddress",{message:"Enter Valid Number",Data})
@@ -208,7 +218,6 @@ const addAddress = async (req,res)=>{
        res.render("addAddress",{message:"failed Try again "})
      }
     }
-  } 
       }catch(error){
         console.log(error)
       }

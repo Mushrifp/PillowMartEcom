@@ -5,10 +5,7 @@ const Address = new mongoose.Schema({
         type:ObjectId,
         required:true
     }, 
-    userAddress:[{
-        type:[],
-        required:true
-    }]
+    userAddress:[{}]
 
 })
   
