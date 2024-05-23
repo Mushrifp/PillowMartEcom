@@ -24,8 +24,6 @@ user_router.get("/about", userController.loadAbout);
 user_router.get("/product", userController.loadProduct);
 user_router.get("/login", auth.isLogout, userController.loadLogin); 
 user_router.get("/register", auth.isLogout, userController.loadRegister); 
-// user_router.get("/cart", auth.isLogin, userController.loadCart);
-// user_router.get("/addCart", auth.isLogin, userController.addCart);
 user_router.get("/contact", userController.loadContact)
 user_router.get("/wishlist",  auth.isLogin, userController.loadWishlist);
 user_router.get("/single-product", userController.singleProduct);

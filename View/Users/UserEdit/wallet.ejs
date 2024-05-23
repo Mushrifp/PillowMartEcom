@@ -79,7 +79,9 @@
         </div>
         <div class="content">
             <div class="form-container">
-                <h2>Edit wallet</h2>
+                <% if(typeof userDatas != 'undefined'){ %>
+                    <h2>Welcome <%= userDatas.name  %> </h2>
+                    <% } %>
                 <form>
                     <div class="form-group">
                          !!!

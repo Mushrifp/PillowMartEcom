@@ -41,7 +41,8 @@ const profile = async (req, res) => {
 // Load password
 const password = async (req, res) => {
   try {
-    res.render("password");
+    const userDatas = await userData.findOne({ _id: req.session.user_id });
+    res.render("password",{userDatas});
   } catch (error) {
     console.log(error);
   }
@@ -51,14 +52,16 @@ const password = async (req, res) => {
 const LoadAddress = async (req, res) => {
   try {
     const addressData = await address.findOne({UserID:req.session.user_id})
+    const userDatas = await userData.findOne({ _id: req.session.user_id });
+
     if(addressData){
     const Data = []
     for(let i=0;i<addressData.userAddress.length;i++){
       Data.push(addressData.userAddress[i])
     }
-    res.render("address",{Data});
+    res.render("address",{Data,userDatas});
   }else{
-    res.render("address",{NoData:"No Adress"});
+    res.render("address",{NoData:"No Adress",userDatas});
   }
   } catch (error) {
     console.log(error);
@@ -68,7 +71,9 @@ const LoadAddress = async (req, res) => {
 // Load order
 const order = async (req, res) => {
   try {
-    res.render("order");
+    const userDatas = await userData.findOne({ _id: req.session.user_id });
+
+    res.render("order",{userDatas});
   } catch (error) {
     console.log(error);
   }
@@ -77,7 +82,9 @@ const order = async (req, res) => {
 //  Load wallet
 const wallet = async (req, res) => {
   try {
-    res.render("wallet");
+    const userDatas = await userData.findOne({ _id: req.session.user_id });
+
+    res.render("wallet",{userDatas});
   } catch (error) {
     console.log(error);
   }
@@ -110,7 +117,7 @@ const profileEdit = async (req, res) => {
          res.redirect("/user/profile")
         }
       }
-      
+
       if (req.body.mobile&&req.body.mobile.length == 10) {
           const existMobile = await userData.findOne({mobile:req.body.mobile});
           if (existMobile) {
@@ -201,7 +208,7 @@ const addAddress = async (req,res)=>{
     if(addressData){
       const done =  await address.findOneAndUpdate({UserID:req.session.user_id},{$addToSet:{userAddress:Data}})
       if(done){
-        res.render("addAddress",{message:"Created Successfully"})
+        res.render("addAddress",{doneMessage:"Created Successfully"})
      }else{
        res.render("addAddress",{message:"failed Try again "})
      }
@@ -213,7 +220,7 @@ const addAddress = async (req,res)=>{
       }) 
        const save = NewAddress.save();
        if(save){
-        res.render("addAddress",{message:"Created Successfully"})
+        res.render("addAddress",{doneMessage:"Created Successfully"})
      }else{
        res.render("addAddress",{message:"failed Try again "})
      }
@@ -226,7 +233,9 @@ const addAddress = async (req,res)=>{
 // load add address
 const loadAddAddress = async (req,res)=>{
     try {
-        res.render("addAddress")
+      const userDatas = await userData.findOne({ _id: req.session.user_id });
+
+        res.render("addAddress",{userDatas})
     } catch (error) {
        console.log(error)
     }
@@ -236,7 +245,7 @@ const loadAddAddress = async (req,res)=>{
 const removeAddress = async (req,res)=>{
     try{
 
-      const done = await address.updateOne({UserID:req.session.user_id},{$pull:{userAddress:{Bname:req.query.name}}});
+      const done = await address.updateOne({UserID:req.session.user_id},{$pull:{userAddress:{Code:req.query.Code}}});
             if(done){
          const addressData = await address.findOne({UserID:req.session.user_id})
 
@@ -262,32 +271,67 @@ const removeAddress = async (req,res)=>{
     }
 }
 
+// edit address
 const editAddress = async (req,res)=>{
    try{
-    console.log(req.query.name)
-    const addressData = await address.findOne({UserID:req.session.user_id,userAddress:{$elemMatch:{Bname:req.query.name}}})
-    const addressDatas = await address.findOne({UserID:req.session.user_id})
+    const addressData = await address.findOne({UserID:req.session.user_id})
 
-    if(addressData){
-      const Data = []
-      for(let i=0;i<addressData.userAddress.length;i++){
-        Data.push(addressData.userAddress[i])
+  let data = addressData.userAddress
+  let dataToSend ={};
+    for(let i=0;i<data.length;i++){
+      if(data[i].Code == req.query.Code){
+        dataToSend=data[i]
       }
-
-      res.render("editAddress",{Data}); 
-    }else{
-      const Data = []
-      for(let i=0;i<addressDatas.userAddress.length;i++){
-        Data.push(addressDatas.userAddress[i])
-      }
-
-      res.render("address",{Data}); 
       
     }
+
+    res.render("editAddress",{Data:dataToSend})
    }catch(error){
     console.log(error)
-   }
+   } 
 }
+
+// Update edited address
+const updateAddress = async (req, res) => {
+  try {
+    console.log("update Address");
+  const Data = {
+    name:req.body.name,
+    Bname:req.body.Bname,
+    phone:req.body.phone,
+    email: req.body.email,
+    address: req.body.address,
+    town:req.body.town,
+    pincode:req.body.pincode
+  }
+    if(req.body.phone.length !== 10){
+      res.render("editAddress",{message:"Enter Valid Number",Data})
+    }
+
+    if(req.body.pincode.length !== 6){
+      res.render("editAddress",{message:"Enter Valid pincode",Data})
+    }
+
+ const updateFields = {
+   'userAddress.$.name':req.body.name,
+   'userAddress.$.Bname':req.body.Bname,
+   'userAddress.$.phone':req.body.phone,
+   'userAddress.$.email':req.body.email,
+   'userAddress.$.address':req.body.address,
+   'userAddress.$.town':req.body.town,
+   'userAddress.$.pincode':req.body.pincode
+ };
+
+    const done = await address.findOneAndUpdate({UserID:req.session.user_id,'userAddress.Code':req.body.Code},{$set:updateFields})
+    done ? console.log("update Adsress") : console.log("Not updated")
+     res.render("editAddress", { doneMessage: "Saved Changes", Data });
+
+  } catch (error) {
+      console.log(error);
+  }
+};
+
+
 
 module.exports = {
   profile,
@@ -300,5 +344,6 @@ module.exports = {
   addAddress,
   loadAddAddress,
   removeAddress,
-  editAddress
+  editAddress,
+  updateAddress,
 };

@@ -67,7 +67,9 @@
     <div class="container">
         <div class="sidebar">
             <div class="user-profile">
-                <h2>Welcome user</h2>
+                <% if(typeof userDatas != 'undefined'){ %>
+                    <h2>Welcome <%= userDatas.name  %> </h2>
+                    <% } %>
                 <ul>
                     <li class="Hove"><a href="/user/profile">Edit Profile</a></li>
                     <li class="active Hove"><a href="/user/address">Edit Address</a></li>
@@ -90,8 +92,8 @@
                             <div class="address-box" id="address-box-<%= index %>" style="box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;  border-radius: 10px;  height: 55px;  background-color: rgb(223, 223, 223); position: relative; padding-right: 100px;">
                                 <h3 style="color: rgb(0, 0, 0); margin-left: 10px; padding-top: 10px;"><%= address.Bname %></h3>
                                 <div class="button-container" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
-                                    <button type="button" class="btn btn-secondary" style="box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; margin-right: 5px;"><a style="color: rgb(255, 255, 255);" href="/user/editAddress?name=<%= address.Bname %>">Edit</a></button>
-                                    <button type="button" class="btn btn-danger" style="box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;" ><a style="color: rgb(255, 255, 255);" href="/user/removeAddress?name=<%= address.Bname %>">remove</a></button>
+                                    <button type="button" class="btn btn-secondary" style="box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; margin-right: 5px;"><a style="color: rgb(255, 255, 255);" href="/user/editAddress?Code=<%= address.Code %>">Edit</a></button>
+                                    <button type="button" class="btn btn-danger" style="box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;" ><a style="color: rgb(255, 255, 255);" href="/user/removeAddress?Code=<%= address.Code %>">remove</a></button>
                                 </div>
                             </div>
                             <br>

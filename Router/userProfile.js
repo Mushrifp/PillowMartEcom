@@ -23,6 +23,7 @@ user.get("/loadAddAddress",userProfileController.loadAddAddress)
 user.post("/addAddress",userProfileController.addAddress)
 user.get("/removeAddress",userProfileController.removeAddress)
 user.get("/editAddress",userProfileController.editAddress)
+user.post("/updateAddress",userProfileController.updateAddress)
 
 
 

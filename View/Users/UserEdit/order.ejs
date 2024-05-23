@@ -67,7 +67,9 @@
     <div class="container">
         <div class="sidebar">
             <div class="user-profile">
-                <h2>Welcome user</h2>
+                <% if(typeof userDatas != 'undefined'){ %>
+                    <h2>Welcome <%= userDatas.name  %> </h2>
+                    <% } %>
                 <ul>
                     <li class="Hove"><a href="/user/profile">Edit Profile</a></li>
                     <li class="Hove" ><a href="/user/address">Edit Address</a></li>

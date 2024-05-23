@@ -67,7 +67,9 @@
     <div class="container">
         <div class="sidebar">
             <div class="user-profile">
-                <h2>Welcome user</h2>
+                <% if(typeof userDatas != 'undefined'){ %>
+                    <h2>Welcome <%= userDatas.name  %> </h2>
+                    <% } %>
                 <ul>
                     <li class="Hove"><a href="/user/profile">Edit Profile</a></li>
                     <li class="active Hove" ><a href="/user/address">Edit Address</a></li>
@@ -80,10 +82,13 @@
         <div class="content">
             <div class="form-container">
                 <h2>Edit Address</h2>
-                <% if(typeof message != 'undefined'){ %>
-                    <h3 style="color: red;" ><%= message %></h3>
+                <% if(typeof doneMessage != 'undefined'){ %>
+                    <h3 style="color: rgb(0, 156, 44);" ><%= doneMessage %></h3>
               <% } %>
-                <form id="addressForm" action="/user/addAddress" method="post" >
+             <% if(typeof message != 'undefined'){ %>
+                <h3 style="color: rgb(183, 0, 0);" ><%= message %></h3>
+            <% } %>
+                <form id="addressForm" action="/user/updateAddress" method="post" >
                     <div class="form-group">
                       <label for="name">Name:</label>
                       <input type="text" class="form-control" id="name" name="name" value="<%= typeof Data !== "undefined" ? Data.name : "" %>" required>
@@ -113,6 +118,7 @@
                       <input type="number" class="form-control" id="pincode" name="pincode" value="<%= typeof Data !== "undefined" ? Data.pincode : "" %>" required>
                     </div>
                     <div class="modal-footer">
+                        <input type="hidden" name="Code" value="<%= typeof Data !== "undefined" ? Data.Code : "" %>">
                         <button type="submit" class="btn btn-primary" >Submit</button>
                       </div>
                   </form>
@@ -151,8 +157,8 @@
                     <div class="col-lg-12">
                         <div class="copyright_text">
                             <P><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P>
+                                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P>
                             <div class="copyright_link">
                                 <a href="#">Turms & Conditions</a>
                                 <a href="#">FAQ</a>

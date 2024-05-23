@@ -67,7 +67,9 @@
     <div class="container">
         <div class="sidebar">
             <div class="user-profile">
-                <h2>Welcome user</h2>
+                <% if(typeof userDatas != 'undefined'){ %>
+                    <h2>Welcome <%= userDatas.name  %> </h2>
+                    <% } %>
                 <ul>
                     <li class="Hove"><a href="/user/profile">Edit Profile</a></li>
                     <li class="active Hove" ><a href="/user/address">Edit Address</a></li>
@@ -80,11 +82,12 @@
         <div class="content">
             <div class="form-container">
                 <h2>Add Address</h2>
-                <% if(typeof message != 'undefined'){ %>
-                    <h3 style="color: red;" ><%= message %></h3>
-              <% }else if(doneMessage){ %>
-                    <h3 style="color: rgb(81, 255, 0);" ><%= doneMessage %></h3>
-                <% } %>
+                <% if(typeof doneMessage != 'undefined'){ %>
+                    <h3 style="color: rgb(0, 156, 44);" ><%= doneMessage %></h3>
+              <% } %>
+             <% if(typeof message != 'undefined'){ %>
+                <h3 style="color: rgb(183, 0, 0);" ><%= message %></h3>
+            <% } %>
                 <form id="addressForm" action="/user/addAddress" method="post" >
                     <div class="form-group">
                       <label for="name">Name:</label>

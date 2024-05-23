@@ -2,7 +2,7 @@ const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const Address = new mongoose.Schema({  
     UserID:{
-        type:ObjectId,
+        type:String,
         required:true
     }, 
     userAddress:[{}]
