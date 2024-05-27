@@ -1,5 +1,4 @@
 <%- include('./layout/header.ejs') %>
-
 <!--::header part start::-->
 <%- include('./layout/navbar.ejs') %>
 <!-- Header part end-->
@@ -9,8 +8,8 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <div class="breadcrumb_iner" >
-                    <h2  id="RvText">Checkout</h2>
+                <div class="breadcrumb_iner">
+                    <h2 id="RvText">Checkout</h2>
                 </div>
             </div>
         </div>
@@ -19,60 +18,95 @@
 <!-- breadcrumb part end-->
 
 <!--================Checkout Area =================-->
-<section class="checkout_area section_padding">
-    <div class="container">
+<section class="checkout_area section_padding" >
+    <div class="container" style="margin-top: -150px;">
         <div class="cupon_area">
             <div class="check_title">
                 <h2>Have a coupon? Enter your code</h2>
             </div>
-            <input type="text" placeholder="Enter coupon code" />
+            <input type="text" placeholder="Enter coupon code"/>
             <a class="tp_btn" href="#">Apply Coupon</a>
         </div>
+        <hr>
         <div class="billing_details">
             <div class="row">
                 <div class="col-lg-8">
-                    <h3>Address Details</h3>
-                    <form class="row contact_form" action="#" method="post" >
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="first" name="name" placeholder="Name" required/>
+                    <h1>ADDRESS DETAILS</h1>
+                    <section class="user_addresses">
+                        <h3>Available Addresses:</h3>
+                        <form id="addressForm" action="/checkout" method="post">
+                            <% userAddresses.forEach(function(address) { %>
+                                <div class="info-box">
+                                    <div class="Check-info-header">
+                                        <div class="Check-radio-input">
+                                            <input type="radio" id="<%= address.Code %>" name="address" value="<%= address.Code %>" required>
+                                            <div class="Check-circle"></div>
+                                        </div>
+                                        <span id="nameB" ><%= address.Bname %></span>
+                                        <span class="Check-arrow"></span>
+                                    </div>
+                                    <div class="Check-info-content">
+                                        <h6>Name: <%= address.name %></h6>
+                                        <h6>Phone: <%= address.phone %></h6>
+                                        <h6>Email: <%= address.email %></h6>
+                                        <h6>Address: <%= address.address %></h6>
+                                        <h6>City: <%= address.town %></h6>
+                                        <h6>Pincode: <%= address.pincode %></h6>
+                                    </div>
+                                </div>
+                                <br>
+                            <% }); %>
+                        </form>
+                        <hr>
+                        <h1>Add new Address</h1>
+                        <button id="addAddressButton" class="btn_3">Add Address</button>
+                        <br>
+                        <hr>
+                        <div class="address_form_fields" style="display: none;">
+                            <h3>Add New Address:</h3>
+                            <form id="newAddressForm">
+                                <div class="col-md-12 form-group">
+                                    <span style="margin-left: 10px;">Name</span>
+                                    <input type="text" class="form-control" id="name" name="name" required/>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <span style="margin-left: 10px;">Work or Home</span>
+                                    <input type="text" class="form-control" id="Bname" name="Bname" required/>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <span style="margin-left: 10px;">phone</span>
+                                    <input type="number" class="form-control" id="phone" name="phone" required/>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <span style="margin-left: 10px;">email</span>
+                                    <input type="text" class="form-control" id="email" name="email" required/>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <span style="margin-left: 10px;">address</span>
+                                    <input type="text" class="form-control" id="address" name="address" required/>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <span style="margin-left: 10px;">city</span>
+                                    <input type="text" class="form-control" id="city" name="city"  required/>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <span style="margin-left: 10px;">pincode</span>
+                                    <input type="number" class="form-control" id="pincode" name="pincode" required/>
+                                </div>
+
+                                <button  class="col-md-12 form-group" id="saveAddressButton" style="border-radius: 6px; height: 40px; margin-left: 10px;">Save Address</button>
+                            </form>
                         </div>
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="workhome" name="workhome" placeholder="Work or Home" required/>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <input type="number" class="form-control" id="number" name="number" placeholder="Phone number" required/>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <input type="text" class="form-control" id="email" name="email" placeholder="Email Address" required/>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="add1" name="address" placeholder="Address line" required/>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="city" name="city" placeholder="Town/City" required/>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <input type="number" class="form-control" id="zip" name="zip" placeholder="Postcode/ZIP" required/>
-                        </div>
-                        <div class="payment_item">
-                            <div class="radion_btn">
-                                <input type="radio" id="f-option5" name="selector" required/>
-                                <label for="f-option5">Cash On Delivery</label>
-                                <div class="check"></div>
-                            </div>
-                            <p>We provide a Cash on Delivery option for your convenience. With COD, you can pay for your order in cash at the time of delivery</p>
-                        </div>
-                        <div class="payment_item active">
-                            <div class="radion_btn">
-                                <input type="radio" id="f-option6" name="selector" required/>
-                                <label for="f-option6">Paypal</label>
-                                <div class="check"></div>
-                            </div>
-                            <p>Please send a check to Store Name, Store Street, Store Town, Store State / County, Store Postcode.</p>
-                            <br>
-                        </div>
-                        <button type="submit" class="btn_3" disabled>Proceed</button>
-                    </form>
+                    </section>
+                    <h3>Select Payment Method:</h3>
+                    <div class="payment_options">
+                        <input type="radio" id="cash" name="payment_method" value="cash" required>
+                        <label for="cash">Cash On Delivery</label>
+                        <br>
+                        <input type="radio" id="paypal" name="payment_method" value="paypal" required>
+                        <label for="paypal">Paypal</label>
+                    </div>
+                    <button id="proceedButton" class="btn_3" type="button" onclick="proceed()">Proceed</button>
                 </div>
                 <div class="col-lg-4">
                     <div class="order_box">
@@ -88,20 +122,19 @@
                             <tbody>
                                 <% let subtotal = 0; %>
                                 <% Products.forEach(function(productDetails, index) { %>
-                                <tr>
-                                    <td style="padding: 10px;"><%= productDetails[1] %></td>
-                                    <td style="padding: 10px;"><%= productDetails[0].productTitle %></td>
-                                    <td style="padding: 10px;">$ <%= productDetails[0].price * productDetails[1] %></td>
-                                </tr>
-                                <% subtotal += productDetails[0].price * productDetails[1]; %>
+                                    <tr>
+                                        <td style="padding: 10px;"><%= productDetails[1] %></td>
+                                        <td style="padding: 10px;"><%= productDetails[0].productTitle %></td>
+                                        <td style="padding: 10px;">$ <%= productDetails[0].price * productDetails[1] %></td>
+                                    </tr>
+                                    <% subtotal += productDetails[0].price * productDetails[1]; %>
                                 <% }); %>
                             </tbody>
                         </table>
                         <hr>
                         <span>Subtotal :</span>
-                        <span style="margin-left: 170px;" >$ <%= subtotal %></span>
+                        <span style="margin-left: 170px;">$ <%= subtotal %></span>
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -159,35 +192,134 @@
         </div>
     </div>
 </footer>
-  <!--::footer_part end::-->
+<!--::footer_part end::-->
 
-  <!-- jquery plugins here-->
-  <script src="js/jquery-1.12.1.min.js"></script>
-  <!-- popper js -->
-  <script src="js/popper.min.js"></script>
-  <!-- bootstrap js -->
-  <script src="js/bootstrap.min.js"></script>
-  <!-- easing js -->
-  <script src="js/jquery.magnific-popup.js"></script>
-  <!-- swiper js -->
-  <script src="js/swiper.min.js"></script>
-  <!-- swiper js -->
-  <script src="js/mixitup.min.js"></script>
-  <!-- particles js -->
-  <script src="js/owl.carousel.min.js"></script>
-  <script src="js/jquery.nice-select.min.js"></script>
-  <!-- slick js -->
-  <script src="js/slick.min.js"></script>
-  <script src="js/jquery.counterup.min.js"></script>
-  <script src="js/waypoints.min.js"></script>
-  <script src="js/contact.js"></script>
-  <script src="js/jquery.ajaxchimp.min.js"></script>
-  <script src="js/jquery.form.js"></script>
-  <script src="js/jquery.validate.min.js"></script>
-  <script src="js/mail-script.js"></script>
-  <!-- custom js -->
-  <script src="js/custom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+<script>
+     var notyf = new Notyf();
+    document.getElementById('addAddressButton').addEventListener('click', function() {
+        document.querySelector('.address_form_fields').style.display = 'block';
+    });
 
+    function proceed() {
+        const selectedAddress = document.querySelector('input[name="address"]:checked');
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (selectedAddress) {
+            if(paymentMethod){
+                document.getElementById('addressForm').submit();
+            }else{
+                notyf.error("Select Payment Method")
+            }
+        } else {
+            notyf.error("Select a address")
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const infoHeaders = document.querySelectorAll('.Check-info-header');
+
+    for (let i = 0; i < infoHeaders.length; i++) {
+        const infoHeader = infoHeaders[i];
+        const infoContent = infoHeader.nextElementSibling;
+        const arrow = infoHeader.querySelector('.Check-arrow');
+
+        infoHeader.addEventListener('click', function() {
+            if (infoContent.style.display === 'block') {
+                infoContent.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                infoContent.style.display = 'block';
+                arrow.style.transform = 'rotate(90deg)';
+            }
+        });
+
+        const radioButton = infoHeader.querySelector('input[type="radio"]');
+        radioButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    }
+});
+
+// adding new address for user
+  document.getElementById("saveAddressButton").addEventListener('click',function(event){
+    event.preventDefault();
+
+    function validateEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+     return regex.test(email) ? false : true;
+    }
+
+   let data = {
+    phone : document.getElementById('phone').value,
+   name : document.getElementById('name').value,
+   Bname : document.getElementById('Bname').value,
+   email : document.getElementById('email').value,
+   address : document.getElementById('address').value,
+   town : document.getElementById('city').value,
+   pincode : document.getElementById('pincode').value,
+              }
+
+     if(data.name == '' ||data.Bname == '' ||data.phone == '' ||data.email == '' ||data.address == '' ||data.city == '' ||data.pincode == ''){
+        notyf.error("Fill the form")
+     }else{
+        if(data.phone.length !== 10){
+            notyf.error("Enter a Valid Phone Number")
+        }else if(validateEmail(data.email)){
+            notyf.error("Enter a Valid Email")
+        }else if(data.pincode.length !== 6){
+            notyf.error("Enter a Valid Pincode")
+        }else{
+
+       axios.post("/user/addressAddCheckout",data)
+       .then(function(response){
+           if(response.data.doneMessage){
+             alert("Created Successfully Now Select the Available address")       
+             window.location.reload()          
+           }else if(response.data.message){
+             notyf.error("Failed try again")
+           }
+       }).catch(function(error){
+        console.error('Error:', error);
+      });  
+        }
+     }
+   
+
+  })  
+
+
+
+
+
+</script>
+<!-- jquery plugins here-->
+<script src="js/jquery-1.12.1.min.js"></script>
+<!-- popper js -->
+<script src="js/popper.min.js"></script>
+<!-- bootstrap js -->
+<script src="js/bootstrap.min.js"></script>
+<!-- easing js -->
+<script src="js/jquery.magnific-popup.js"></script>
+<!-- swiper js -->
+<script src="js/swiper.min.js"></script>
+<!-- swiper js -->
+<script src="js/mixitup.min.js"></script>
+<!-- particles js -->
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<!-- slick js -->
+<script src="js/slick.min.js"></script>
+<script src="js/jquery.counterup.min.js"></script>
+<script src="js/waypoints.min.js"></script>
+<script src="js/contact.js"></script>
+<script src="js/jquery.ajaxchimp.min.js"></script>
+<script src="js/jquery.form.js"></script>
+<script src="js/jquery.validate.min.js"></script>
+<script src="js/mail-script.js"></script>
+<!-- custom js -->
+<script src="js/custom.js"></script>
 </body>
-
 </html>

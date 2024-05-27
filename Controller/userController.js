@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const productData = require("../Model/product")
 const cart = require('../Model/cart')
 const categoryDB = require('../Model/category')
+const address = require("../Model/address")
 
 
 
@@ -353,8 +354,6 @@ const insertUser = async (req, res) => {
 const loginVerify = async (req, res) => {
     try {
         let userDatas = await userData.findOne({$or:[{"name":req.body.name},{"email":req.body.name}]})
-
-        console.log("Log in user Data :",userDatas)
  
         if (userDatas){
             if (userDatas.isAdminBlocked == false) {
@@ -366,8 +365,6 @@ const loginVerify = async (req, res) => {
                         
                        let sessionStoring  = req.session.user_id = userDatas._id
                        if(sessionStoring){
-
-                        console.log("session stored")
                         res.render("index", { message: "Login Success",userData:sessionStoring })
                         
                        }else{
@@ -526,9 +523,6 @@ const categoryLoad = async (req,res)=>{
            const data = await categoryDB.findOne({_id:req.query.id})
            const allData = await productData.find({category:data.name})
            const categoryData = await categoryDB.find({})
-
-           
-           console.log("Data related to the  same category",allData)
            
            if(userSession){ 
             res.render("product_list", { Data: allData,userData:userSession ,cate:categoryData})
@@ -611,7 +605,8 @@ const search = async (req,res)=>{
 // Load Checkout page
 const loadCheckout = async (req,res)=>{
     try {
-        const userSession = await userData.findOne({ _id:req.session.user_id});
+        const userSession = await userData.findOne({_id:req.session.user_id});
+        const userAddress = await address.findOne({UserID:req.session.user_id})
         const productsData = req.body.products;
 
         const productsArray = Object.keys(productsData).map(productId =>([
@@ -625,7 +620,6 @@ const loadCheckout = async (req,res)=>{
 
         const UserCart = await cart.findOne({user:req.session.user_id});
   
-        console.log("Updated Cart:",UserCart);
         
 const arrayOfID = UserCart.product
 const CheckOutData = [];
@@ -637,8 +631,8 @@ const CheckOutData = [];
          CheckOutData.push(product)
      }
 
-     console.log(CheckOutData)
-        res.render("checkout",{userData: userSession,Products:CheckOutData});
+const userAddresses  = userAddress.userAddress     
+        res.render("checkout",{userData: userSession,Products:CheckOutData,userAddresses });
     } catch (error) {
         console.log(error)
     }

@@ -24,6 +24,7 @@ user.post("/addAddress",userProfileController.addAddress)
 user.get("/removeAddress",userProfileController.removeAddress)
 user.get("/editAddress",userProfileController.editAddress)
 user.post("/updateAddress",userProfileController.updateAddress)
+user.post("/addressAddCheckout",userProfileController.addressAddCheckout)
 
 
 

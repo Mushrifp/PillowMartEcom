@@ -3163,7 +3163,108 @@ ul {
 }
 
 
+/* Chckout page designs */
 
+.Check-radio-input {
+  display: flex;
+  align-items: center;
+}
+
+.Check-radio-input input {
+  appearance: none;
+  width: 2em;
+  height: 2em;
+  background-color: #171717;
+  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+  border-radius: 50%;
+  transition: 0.4s ease-in-out;
+}
+
+.Check-radio-input input:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.Check-radio-input .Check-circle {
+  position: relative;
+  top: 0.01em;
+  left: -1.3em;
+  width: 0.6em;
+  height: 0.6em;
+  background-color: rgb(255, 255, 255);
+  transform: scale(0);
+  border-radius: 10px;
+  transition: 0.4s ease-in-out;
+}
+
+.Check-radio-input input:checked {
+  box-shadow: none;
+  border: 1px solid rgb(255, 255, 255);
+}
+
+.Check-radio-input input:checked + .Check-circle {
+  transform: rotate(360deg) scale(1);
+}
+
+#saveAddressButton:hover{
+  transition: 0.5s;
+ background-color: #000;
+ color: white;
+ box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+
+}
+
+
+#nameB{
+    color: rgb(0, 0, 0);
+    font-size: x-large;
+}
+
+.Check-info-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #efefef;
+    cursor: pointer;
+    border-radius: 5px;
+    align-items: center;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    height: 50px;
+}
+
+.Check-arrow {
+    margin-right: 10px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #333;
+    transition: transform 0.3s ease;
+}
+
+.Check-info-content {
+    display: none;
+    padding: 10px;
+    background-color: #e7e7e7;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    border-top: 1px solid #ddd;
+}
+
+.expanded .Checkout-arrow {
+    transform: rotate(180deg);
+}
+
+.user_address {
+        cursor: pointer;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    .user_address:hover {
+        background-color: #f9f9f9;
+    }
+    .address_form_fields {
+        display: none;
+    }
 
 @media (max-width: 991px) {
   /* line 133, /Applications/MAMP/htdocs/old/palash/cl/shop_html/sass/_single_product.scss */

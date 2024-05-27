@@ -31,7 +31,6 @@ const StrongPassword = async (password) => {
 const profile = async (req, res) => {
   try {
     const userDatas = await userData.findOne({ _id: req.session.user_id });
-    console.log(userDatas);
     res.render("profile", { user: userDatas });
   } catch (error) {
     console.log(error);
@@ -294,7 +293,6 @@ const editAddress = async (req,res)=>{
 // Update edited address
 const updateAddress = async (req, res) => {
   try {
-    console.log("update Address");
   const Data = {
     name:req.body.name,
     Bname:req.body.Bname,
@@ -332,6 +330,56 @@ const updateAddress = async (req, res) => {
 };
 
 
+// adding trough checkout page 
+const addressAddCheckout = async (req,res)=>{
+   try {
+      console.log(req.body)
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const charactersLength = characters.length;
+      let result = '';
+      for (let i = 0; i < 7; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+
+    const Data={
+        Code:result,
+        name: req.body.name,
+        Bname: req.body.Bname,
+        phone: req.body.phone,
+        email: req.body.email,
+        address: req.body.address,
+        town: req.body.town,
+        pincode: req.body.pincode
+    }
+    
+    const addressData = await address.findOne({UserID:req.session.user_id})
+    
+    if(addressData){
+      const done =  await address.findOneAndUpdate({UserID:req.session.user_id},{$addToSet:{userAddress:Data}})
+      if(done){
+        res.send({doneMessage:"Created Successfully"})
+     }else{
+       res.send({message:"failed Try again "})
+     }
+    }else{
+      const NewAddress = new address({
+        UserID:req.session.user_id,
+        userAddress:[Data]
+        
+      }) 
+       const save = NewAddress.save();
+       if(save){
+        res.send({doneMessage:"Created Successfully"})
+     }else{
+       res.send({message:"failed Try again "})
+     }
+    }
+    
+   } catch (error) {
+     console.log(error)
+   }
+}
+
 
 module.exports = {
   profile,
@@ -346,4 +394,5 @@ module.exports = {
   removeAddress,
   editAddress,
   updateAddress,
+  addressAddCheckout
 };

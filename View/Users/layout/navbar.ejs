@@ -39,19 +39,22 @@
                             </a>
                         </div>
                         <div class="header_icon d-flex align-items-center">
-                            <div class="dropdown">
-                                <a class="dropdown-toggles" href="/home" role="button" id="profileDropdownTrigger" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img height="22px" style="margin-left: 20px;" src="/img/icons8-account-48.png" alt="Profile">
-                                </a>
-                                    <ul class="dropdown-menu" aria-labelledby="profileDropdownTrigger">
-
                                     <% if(typeof userData != 'undefined'){ %>
+                                        <div class="dropdown">
+                                            <a class="dropdown-toggles" href="/user/profile" role="button" id="profileDropdownTrigger" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <img height="22px" style="margin-left: 20px;" src="/img/icons8-account-48.png" alt="Profile">
+                                            </a>
+                                                <ul class="dropdown-menu" aria-labelledby="profileDropdownTrigger">
                                         <li><a class="dropdown-item" href="/user/profile">Edit Profile</a></li>
                                         <li><a class="dropdown-item" href="/logout">Logout</a></li>
                                         <% }else{ %>
+                                            <div class="dropdown">
+                                                <a class="dropdown-toggles" href="/home" role="button" id="profileDropdownTrigger" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <img height="22px" style="margin-left: 20px;" src="/img/icons8-account-48.png" alt="Profile">
+                                                </a>
+                                                    <ul class="dropdown-menu" aria-labelledby="profileDropdownTrigger">
                                             <li><a class="dropdown-item" href="/login">Login</a></li>
                                         <%} %>
-  
                                     </ul>
                             </div>
                         </div>
@@ -61,8 +64,8 @@
         </div>
         <div class="search_input" id="search_input_box">
             <div class="container ">
-                <form class="d-flex justify-content-between search-inner">
-                    <input type="text" class="form-control" id="search_input" placeholder="Type here to search">
+                <form class="d-flex justify-content-between search-inner" action="/search" method="get">
+                    <input type="text" class="form-control"  name="search" id="search_input" placeholder="Type here to search">
                     <button type="submit" class="btn"></button>
                     <span class="ti-close" id="close_search" title="Close Search"></span>
                 </form>
