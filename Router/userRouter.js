@@ -63,8 +63,8 @@ user_router.get("/search",userController.search)
 
 // checkout and order
 user_router.post("/checkout",userController.loadCheckout)
-user_router.get("/proceed",userController.loadProceed)
+user_router.post("/orderConfirm",userController.orderConfirm)
 
-
+ 
 
 module.exports = user_router;

@@ -1,3 +1,50 @@
+<style>
+    .modal {
+    z-index: 1050; /* Default Bootstrap z-index for modals, you can increase if needed */
+}
+
+
+    .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-title {
+        font-weight: bold;
+    }
+
+    .modal-body {
+        font-size: 0.9rem;
+    }
+
+    .modal-body h6 {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .modal-body p {
+        margin-bottom: 0.5rem;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+    }
+
+    .table tfoot th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .modal-footer {
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+
 <%- include('./layout/header.ejs') %>
 <!--::header part start::-->
 <%- include('./layout/navbar.ejs') %>
@@ -99,14 +146,19 @@
                         </div>
                     </section>
                     <h3>Select Payment Method:</h3>
-                    <div class="payment_options">
-                        <input type="radio" id="cash" name="payment_method" value="cash" required>
+                    <div class="Check-radio-input">
+                        <input type="radio" id="cash" name="payment_method" value="CashOnDelivery" required>
+                        <div class="Check-circle"></div>
                         <label for="cash">Cash On Delivery</label>
-                        <br>
-                        <input type="radio" id="paypal" name="payment_method" value="paypal" required>
-                        <label for="paypal">Paypal</label>
                     </div>
-                    <button id="proceedButton" class="btn_3" type="button" onclick="proceed()">Proceed</button>
+                    <br>
+                    <div class="Check-radio-input">
+                        <input  type="radio" id="pypal" name="payment_method" value="pypal" required>
+                        <div class="Check-circle"></div>
+                        <label for="cash">Online</label>
+                    </div>
+                    <br>
+                    <button id="proceedButton" class="btn_3" type="button" onclick="proceed()">Click to Proceed</button>
                 </div>
                 <div class="col-lg-4">
                     <div class="order_box">
@@ -124,9 +176,11 @@
                                 <% Products.forEach(function(productDetails, index) { %>
                                     <tr>
                                         <td style="padding: 10px;"><%= productDetails[1] %></td>
-                                        <td style="padding: 10px;"><%= productDetails[0].productTitle %></td>
+                                        <td style="padding: 10px;"><%= productDetails[0].productTitle %></td>        
                                         <td style="padding: 10px;">$ <%= productDetails[0].price * productDetails[1] %></td>
+                                        <input type="hidden" name="productId" value="<%= productDetails[0]._id %>">
                                     </tr>
+                                
                                     <% subtotal += productDetails[0].price * productDetails[1]; %>
                                 <% }); %>
                             </tbody>
@@ -134,6 +188,7 @@
                         <hr>
                         <span>Subtotal :</span>
                         <span style="margin-left: 170px;">$ <%= subtotal %></span>
+                        <input type="hidden" id="subtotal" value="<%= subtotal %>" >
                     </div>
                 </div>
             </div>
@@ -141,6 +196,69 @@
     </div>
 </section>
 <!--================End Checkout Area =================-->
+
+
+ <!-- Order Confirmation Modal -->
+ <!-- Order Confirmation Modal -->
+<div class="modal fade" id="orderConfirmationModal" tabindex="-1" aria-labelledby="orderConfirmationModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderConfirmationModalLabel">Order Confirmation</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6>Order Details</h6>
+                            <p><strong>Order Number:</strong> <span id="orderNumber"></span></p>
+                            <p><strong>Order Date:</strong> <span id="orderDate"></span></p>
+                            <p><strong>Order Total:</strong> <span id="orderTotal"></span></p>
+                            <p><strong>Payment Method:</strong> <span id="paymentMethod"></span></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6>Billing Address</h6>
+                            <p id="billingStreet"></p>
+                            <p id="billingCity"></p>
+                            <p id="billingCountry"></p>
+                            <p id="billingPostcode"></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Order Items</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">Product</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orderDetailsTableBody">
+                                        <!-- Order items will be populated here -->
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="3" class="text-right">Subtotal</th>
+                                            <th id="modalSubtotal"></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h2 style="margin-right: 170px;">Thank You For Ordering</h2>
+                <button type="button" class="btn btn-secondary" id="closeMOdal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!--::footer_part start::-->
 <footer class="footer_part">
@@ -196,27 +314,136 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+<link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
+<script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+
 <script>
      var notyf = new Notyf();
     document.getElementById('addAddressButton').addEventListener('click', function() {
         document.querySelector('.address_form_fields').style.display = 'block';
     });
 
-    function proceed() {
-        const selectedAddress = document.querySelector('input[name="address"]:checked');
-        const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
-        if (selectedAddress) {
-            if(paymentMethod){
-                document.getElementById('addressForm').submit();
-            }else{
-                notyf.error("Select Payment Method")
-            }
-        } else {
-            notyf.error("Select a address")
+    function proceed(){
+    const selectedAddress = document.querySelector('input[name="address"]:checked');
+    const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+    const subtotal = document.getElementById('subtotal').value;
+
+    if(selectedAddress){
+        if(paymentMethod){
+         const navv = document.getElementById("navv").style.display = 'none';
+          
+                    Swal.fire({
+                      title: "Are you sure?",
+                      icon: "question",
+                      showCancelButton: true,
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "Yes, Order it!"
+                          }).then((result) => {
+                            if (result.isConfirmed){
+
+                              Swal.fire({
+                                title: "Order Placed!",
+                                text: "Your Order has been placed.",
+                                icon: "success"
+                              });
+
+                    const addressCode = selectedAddress.value;
+                    const orderDetails = [];
+                    const tableRows = document.querySelectorAll('.order_box table tbody tr');
+                    const productIds = [];
+                    
+                    document.querySelectorAll('input[name="productId"]').forEach(input => {
+                        productIds.push(input.value);
+                    });
+
+                    tableRows.forEach(row =>{
+                        const quantity = row.children[0].innerText;
+                        const productTitle = row.children[1].innerText;
+                        const total = row.children[2].innerText;
+                        const productId = row.querySelector('input[name="productId"]').value;
+
+                        orderDetails.push({
+                            quantity: parseInt(quantity),
+                            productTitle: productTitle,
+                            total: parseFloat(total.replace('$', '').trim()),
+                            productId: productId,
+                        });
+                    });
+
+                    const data = {
+                        addressCode: addressCode,
+                        paymentMethod: paymentMethod.value,
+                        orderDetails: orderDetails,
+                        subtotal: subtotal
+                    };
+
+                    axios.post('/orderConfirm', data)
+                        .then(function(response){
+                            if (response.data.failed) {
+                                notyf.error("Failed to place order. Please try again.");
+                            } else {
+                                showOrderConfirmationModal(response.data);
+                            }
+                        })
+                        .catch(function(error){
+                            console.error('Error:', error);
+                            notyf.error("An error occurred. Please try again.");
+                        });
+                            }else{
+                                const navv = document.getElementById("navv").style.display = 'block';
+                            }
+                     });
+
+        }else{
+            notyf.error("Select Payment Method");
         }
+    }else{
+        notyf.error("Select an address");
     }
+}
+
+function showOrderConfirmationModal(orderData) {
+    document.getElementById('orderNumber').innerText = orderData.orderNumber;
+    document.getElementById('orderDate').innerText = orderData.orderDate;
+    document.getElementById('orderTotal').innerText = `$${orderData.orderTotal}`;
+    document.getElementById('paymentMethod').innerText = orderData.paymentMethod;
+
+    document.getElementById('billingStreet').innerText = orderData.billingAddress.street;
+    document.getElementById('billingCity').innerText = orderData.billingAddress.city;
+    document.getElementById('billingCountry').innerText = orderData.billingAddress.country;
+    document.getElementById('billingPostcode').innerText = orderData.billingAddress.postcode;
+
+    const orderDetailsTableBody = document.getElementById('orderDetailsTableBody');
+    orderDetailsTableBody.innerHTML = '';
+
+    orderData.orderDetails.forEach(detail => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <th colspan="2"><span>${detail.productTitle}</span></th>
+            <th>x${detail.quantity}</th>
+            <th><span>$${detail.total}</span></th>
+        `;
+        orderDetailsTableBody.appendChild(row);
+    });
+
+    document.getElementById('modalSubtotal').innerText = `$${orderData.subtotal}`;
+
+    const modal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'), {
+        backdrop: 'static',
+        keyboard: false
+    });
+    const navv = document.getElementById("navv").style.display = 'none';
+    
+    modal.show();
+}
 
 
+
+
+
+// ----------------------------------------------
     document.addEventListener('DOMContentLoaded', function() {
     const infoHeaders = document.querySelectorAll('.Check-info-header');
 
@@ -290,9 +517,10 @@
 
   })  
 
-
-
-
+  document.getElementById("closeMOdal").addEventListener('click',function(){
+    const navv = document.getElementById("navv").style.display = 'block';
+        window.location.href="/user/order"
+  })
 
 </script>
 <!-- jquery plugins here-->

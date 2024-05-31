@@ -6,6 +6,7 @@ const productData = require("../Model/product")
 const cart = require('../Model/cart')
 const categoryDB = require('../Model/category')
 const address = require("../Model/address")
+const order = require("../Model/order")
 
 
 
@@ -639,9 +640,77 @@ const userAddresses  = userAddress.userAddress
 }
 
 // Load confirmation 
-const loadProceed = async (req,res)=>{
+const orderConfirm = async (req,res)=>{
     try {
-         res.render("confirmation")
+console.log("-----",req.body,"---")
+       let orderDetails = req.body.orderDetails
+
+         const userAddress = await address.findOne({UserID:req.session.user_id},{userAddress:{$elemMatch:{Code:req.body.addressCode}}})
+
+         const product = [];
+         const productStock =[]
+
+         function addDays(date, days) {
+            let result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
+        let currentDate = new Date();
+          
+            for(let i=0;i<orderDetails.length;i++){
+
+             const ProductData = await productData.findOne({_id:orderDetails[i].productId})
+            
+            let productOBJ = {
+                item:ProductData,
+                quantity:orderDetails[i].quantity,
+                cash:orderDetails[i].total,
+                Dates:{
+                    ordered:currentDate,
+                    delivery:addDays(currentDate, 5)
+                }
+            }
+            product.push(productOBJ)
+            let pStock = {
+                product:orderDetails[i].productId,
+                quantity:orderDetails[i].quantity
+            }
+            productStock.push(pStock);
+
+            }
+   
+console.log("--------------------",product,"----------------------")
+
+            const newOrder = new order({
+                userID:req.session.user_id,
+                items:product,
+                total:req.body.subtotal,
+                address:userAddress.userAddress[0],
+                paymentMethod:req.body.paymentMethod,
+              })   
+              
+             const done =  newOrder.save()
+
+              if(done){
+                  for(let i=0;i<productStock.length;i++){
+                     await productData.updateOne({_id:productStock[i].product},{$inc:{stock:-productStock[i].quantity}})   
+                    }
+                    await cart.updateOne({user:req.session.user_id},{$set:{product:[]}})
+                    res.send({
+                        orderNumber: newOrder._id,
+                        orderDate: currentDate.toDateString(),
+                        orderTotal: newOrder.total,
+                        paymentMethod: newOrder.paymentMethod,
+                        billingAddress: newOrder.address,
+                        orderDetails: orderDetails,
+                        subtotal: req.body.subtotal,
+                    });
+                    
+              }else{
+                 res.send({failed:"Failed"})
+              }
+
+
     } catch (error) {
         console.log(error)
     }
@@ -668,5 +737,5 @@ module.exports = {
     LowToHigh,
     search,
     loadCheckout,
-    loadProceed
+    orderConfirm,
 }
