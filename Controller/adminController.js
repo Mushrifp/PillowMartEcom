@@ -31,7 +31,12 @@ const loginVerify = async (req,res)=>{
 
             const productNumber = await productData.countDocuments({})
             const userNumber = await userData.countDocuments({})
-             res.render("dash",{ProductCount:productNumber,userCount:userNumber})
+            const orderNumber = await order.find({})
+             let number = 0;
+             for(let i=0;i<orderNumber.length;i++){
+                 number +=orderNumber[i].items.length
+             }
+             res.render("dash",{ProductCount:productNumber,userCount:userNumber,number})
             console.log("admin In")
            }else{
             res.render("account-login",{message:"Invalid email and password"})
@@ -53,7 +58,7 @@ const loadDash = async (req,res)=>{
         for(let i=0;i<orderNumber.length;i++){
             number +=orderNumber[i].items.length
         }
-         res.render("dash",{ProductCount:productNumber,userCount:userNumber,orderNumber})
+         res.render("dash",{ProductCount:productNumber,userCount:userNumber,number})
         
      } catch (error) {
         console.log(error)
@@ -305,7 +310,7 @@ const addProduct = async (req,res)=>{
 const deleteProduct = async (req,res)=>{
     try {      
         await productData.deleteOne({_id:req.query.id})
-        res.redirect('/admin/product')
+        res.send({Done:"done"})
     } catch (error) {
          console.log(error)
     }

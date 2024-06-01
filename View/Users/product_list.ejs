@@ -104,7 +104,15 @@
                                             </div>
                                             <div class="col-xl-6 col-md-5 col-sm-7">
                                                 <a href="/single-product?id=<%= Data[i]._id %>"><h5><%= Data[i].productTitle %></h5></a>
-                                                <div class="text-muted">Category : <%= Data[i].category %></div>
+                                                <span >
+                                                    <% if (Data[i].stock === 0) { %>
+                                                        <span style="color: red;">Out of stock</span>
+                                                    <% } else if (Data[i].stock <= 5) { %>
+                                                       <span style="color: red;">Only a few left! Hurry up!</span>
+                                                    <% } else { %>
+                                                        <span style="color: green;">In Stock</span>
+                                                    <% } %>
+                                                </span>
                                                 <p class="text mb-4 mb-md-0"><%= Data[i].description %></p>
                                             </div>
                                             <div class="col-xl-3 col-md-3 col-sm-5">
@@ -116,7 +124,7 @@
                                                     <button class="btn_3" ><a style="color: black;" href="/single-product?id=<%= Data[i]._id %>">Details </a></button>
                                                     <br>
                                                     <br>
-                                                    <button id="wishButton" class="btn_3" type="button" >Wishlist</button>
+                                                    <button class="btn_3 wishButton" type="button" data-id="<%= Data[i]._id %>">Wishlist</button>
                                                     <input type="hidden" id="SendID" value="<%= Data[i]._id %>" >
                                                 </div>
                                             </div>
@@ -301,22 +309,26 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     <script>
         var notyf = new Notyf();
 
-        const id = document.getElementById("SendID").value;
-    document.getElementById("wishButton").addEventListener("click",function(event){
-         axios.post(`/cart/addToWishlist?id=${id}`)
-         .then(function(response){
-                if(response.data.added){
-                    notyf.success('Added Success');
-                }else if(response.data.notAdded){
-                    notyf.error('You Need To Login');
-                }else if(response.data.failed){
-                    notyf.error('Not Added');
-                }
-              })
-              .catch(function(error){
-                console.error('Error:',error);
-              });
-    })
+        const wishButtons = document.querySelectorAll(".wishButton");
+        
+        for (let i = 0; i < wishButtons.length; i++) {
+            wishButtons[i].addEventListener("click", function(event) {
+                const id = event.target.getAttribute("data-id");
+                axios.post(`/cart/addToWishlist?id=${id}`)
+                    .then(function(response) {
+                        if (response.data.added) {
+                            notyf.success('Added Success');
+                        } else if (response.data.notAdded) {
+                            notyf.error('You Need To Login');
+                        } else if (response.data.failed) {
+                            notyf.error('Not Added');
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+                    });
+            });
+        };
     
     
     </script>

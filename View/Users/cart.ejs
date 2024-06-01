@@ -40,7 +40,7 @@
                         <td>
                             <div class="media">
                                 <div class="d-flex">
-                                    <a href="/single-product?id=<%= cart._id %>"><img src="/productImages/<%= cart.image[0] %>" alt="image" /></a>
+                                    <a href="/single-product?id=<%= cart?._id %>"><img src="/productImages/<%= cart?.image[0] %>" alt="image" /></a>
                                 </div>
                                 <div class="media-body">
                                     <p><%= cart.productTitle %></p>
