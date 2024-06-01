@@ -33,15 +33,15 @@ const order = new mongoose.Schema({
             type:String,
             required:true,
             default:"Pending"
-        }    
+        },
+        address:{
+            type:Object,
+            required:true
+        },    
     }],
     total:{
         type:Number,
         required:true                                                           
-    },
-    address:{
-        type:Object,
-        required:true
     },
     paymentMethod:{
         type:String,

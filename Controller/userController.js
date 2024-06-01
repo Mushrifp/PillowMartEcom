@@ -607,7 +607,7 @@ const search = async (req,res)=>{
 const loadCheckout = async (req,res)=>{
     try {
         const userSession = await userData.findOne({_id:req.session.user_id});
-        const userAddress = await address.findOne({UserID:req.session.user_id})
+        const addresss = await address.findOne({UserID:req.session.user_id})
         const productsData = req.body.products;
 
         const productsArray = Object.keys(productsData).map(productId =>([
@@ -632,8 +632,13 @@ const CheckOutData = [];
          CheckOutData.push(product)
      }
 
-const userAddresses  = userAddress.userAddress     
+     if(addresss&&addresss.userAddress){
+        const userAddresses  =addresss.userAddress
         res.render("checkout",{userData: userSession,Products:CheckOutData,userAddresses });
+     }else{
+        res.render("checkout",{userData: userSession,Products:CheckOutData });
+      
+     }
     } catch (error) {
         console.log(error)
     }
@@ -642,7 +647,7 @@ const userAddresses  = userAddress.userAddress
 // Load confirmation 
 const orderConfirm = async (req,res)=>{
     try {
-console.log("-----",req.body,"---")
+
        let orderDetails = req.body.orderDetails
 
          const userAddress = await address.findOne({UserID:req.session.user_id},{userAddress:{$elemMatch:{Code:req.body.addressCode}}})
@@ -668,7 +673,8 @@ console.log("-----",req.body,"---")
                 Dates:{
                     ordered:currentDate,
                     delivery:addDays(currentDate, 5)
-                }
+                },
+                address:userAddress.userAddress[0],
             }
             product.push(productOBJ)
             let pStock = {
@@ -678,18 +684,15 @@ console.log("-----",req.body,"---")
             productStock.push(pStock);
 
             }
-   
-console.log("--------------------",product,"----------------------")
 
             const newOrder = new order({
                 userID:req.session.user_id,
                 items:product,
                 total:req.body.subtotal,
-                address:userAddress.userAddress[0],
                 paymentMethod:req.body.paymentMethod,
               })   
               
-             const done =  newOrder.save()
+             const done = await newOrder.save()
 
               if(done){
                   for(let i=0;i<productStock.length;i++){
@@ -701,11 +704,10 @@ console.log("--------------------",product,"----------------------")
                         orderDate: currentDate.toDateString(),
                         orderTotal: newOrder.total,
                         paymentMethod: newOrder.paymentMethod,
-                        billingAddress: newOrder.address,
+                        billingAddress: newOrder.items[0].address,
                         orderDetails: orderDetails,
                         subtotal: req.body.subtotal,
                     });
-                    
               }else{
                  res.send({failed:"Failed"})
               }

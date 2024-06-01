@@ -85,4 +85,12 @@ admin_router.post("/newCategory",auth.isLogin,adminController.newCategory)
 admin_router.get("/deleteCategory",auth.isLogin,adminController.deleteCategory)
 admin_router.get("/editCategoryLoad",auth.isLogin,adminController.editCategoryLoad)
 admin_router.post("/editCategory",auth.isLogin,adminController.editCategory)
+
+// order details
+admin_router.get("/viewOrder",auth.isLogin,adminController.viewOrder)
+admin_router.get("/statusChange",auth.isLogin,adminController.statusChange)
+
+
+
+
 module.exports=admin_router;   

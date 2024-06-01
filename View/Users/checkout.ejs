@@ -81,29 +81,33 @@
                     <h1>ADDRESS DETAILS</h1>
                     <section class="user_addresses">
                         <h3>Available Addresses:</h3>
-                        <form id="addressForm" action="/checkout" method="post">
-                            <% userAddresses.forEach(function(address) { %>
-                                <div class="info-box">
-                                    <div class="Check-info-header">
-                                        <div class="Check-radio-input">
-                                            <input type="radio" id="<%= address.Code %>" name="address" value="<%= address.Code %>" required>
-                                            <div class="Check-circle"></div>
+                      <% if(typeof userAddresses != 'undefined'){ %>
+                            <form id="addressForm" action="/checkout" method="post">
+                                <% userAddresses.forEach(function(address) { %>
+                                    <div class="info-box">
+                                        <div class="Check-info-header">
+                                            <div class="Check-radio-input">
+                                                <input type="radio" id="<%= address.Code %>" name="address" value="<%= address.Code %>" required>
+                                                <div class="Check-circle"></div>
+                                            </div>
+                                            <span id="nameB" ><%= address.Bname %></span>
+                                            <span class="Check-arrow"></span>
                                         </div>
-                                        <span id="nameB" ><%= address.Bname %></span>
-                                        <span class="Check-arrow"></span>
+                                        <div class="Check-info-content">
+                                            <h6>Name: <%= address.name %></h6>
+                                            <h6>Phone: <%= address.phone %></h6>
+                                            <h6>Email: <%= address.email %></h6>
+                                            <h6>Address: <%= address.address %></h6>
+                                            <h6>City: <%= address.town %></h6>
+                                            <h6>Pincode: <%= address.pincode %></h6>
+                                        </div>
                                     </div>
-                                    <div class="Check-info-content">
-                                        <h6>Name: <%= address.name %></h6>
-                                        <h6>Phone: <%= address.phone %></h6>
-                                        <h6>Email: <%= address.email %></h6>
-                                        <h6>Address: <%= address.address %></h6>
-                                        <h6>City: <%= address.town %></h6>
-                                        <h6>Pincode: <%= address.pincode %></h6>
-                                    </div>
-                                </div>
-                                <br>
-                            <% }); %>
-                        </form>
+                                    <br>
+                                <% }); %>
+                            </form>
+                        <% }else{ %>
+                              <h3>You don't have address</h3>
+                           <% } %> 
                         <hr>
                         <h1>Add new Address</h1>
                         <button id="addAddressButton" class="btn_3">Add Address</button>
@@ -342,13 +346,11 @@
                       confirmButtonText: "Yes, Order it!"
                           }).then((result) => {
                             if (result.isConfirmed){
-
                               Swal.fire({
                                 title: "Order Placed!",
                                 text: "Your Order has been placed.",
                                 icon: "success"
                               });
-
                     const addressCode = selectedAddress.value;
                     const orderDetails = [];
                     const tableRows = document.querySelectorAll('.order_box table tbody tr');
@@ -382,8 +384,10 @@
                     axios.post('/orderConfirm', data)
                         .then(function(response){
                             if (response.data.failed) {
+                                console.log("reached")
                                 notyf.error("Failed to place order. Please try again.");
                             } else {
+                                console.log("hoour")
                                 showOrderConfirmationModal(response.data);
                             }
                         })
@@ -438,9 +442,6 @@ function showOrderConfirmationModal(orderData) {
     
     modal.show();
 }
-
-
-
 
 
 // ----------------------------------------------

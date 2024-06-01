@@ -24,7 +24,13 @@ user.post("/addAddress",userProfileController.addAddress)
 user.get("/removeAddress",userProfileController.removeAddress)
 user.get("/editAddress",userProfileController.editAddress)
 user.post("/updateAddress",userProfileController.updateAddress)
+
+// address adding through checkout page 
 user.post("/addressAddCheckout",userProfileController.addressAddCheckout)
+
+// view and cancel order 
+user.post("/cancelOrder",userProfileController.cancelOrder)
+user.get("/viewDetails",userProfileController.viewDetails)
 
 
 

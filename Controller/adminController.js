@@ -3,6 +3,11 @@ const productData = require('../Model/product');
 const hash = require('bcrypt');
 const product = require("../Model/product")
 const categoryDB  = require("../Model/category")
+const order = require("../Model/order")
+const mongoose = require('mongoose');
+
+
+
 
 // Load Login
 const adminLogin = async (req,res)=>{
@@ -43,7 +48,13 @@ const loadDash = async (req,res)=>{
      try {
         const productNumber = await productData.countDocuments({})
         const userNumber = await userData.countDocuments({})
-         res.render("dash",{ProductCount:productNumber,userCount:userNumber})
+        const orderNumber = await order.find({})
+        let number = 0;
+        for(let i=0;i<orderNumber.length;i++){
+            number +=orderNumber[i].items.length
+        }
+         res.render("dash",{ProductCount:productNumber,userCount:userNumber,orderNumber})
+        
      } catch (error) {
         console.log(error)
      }
@@ -62,7 +73,34 @@ const Product = async (req,res)=>{
 // Load order 
 const Order = async (req,res)=>{
     try {
-         res.render("orders-1")
+    
+    const Datas = await order.find({}).sort({ _id: -1 });
+
+   let orders=[]
+
+       for(let i=0;i<Datas.length;i++){
+          for(let j=0;j<Datas[i].items.length;j++){
+            let singleData = Datas[i].items[j]
+            const options = {year:'numeric',month:'long',day:'numeric'};
+            const delivery = singleData.Dates.delivery.toLocaleDateString('en-US',options); 
+            const ordered = singleData.Dates.ordered.toLocaleDateString('en-US',options); 
+              let obj = {
+                user:Datas[i].userID,
+                ID:singleData._id,
+                orderDate:ordered,
+                deliveryDate:delivery,
+                productName:singleData.item.productTitle,
+                image:singleData.item.image[0],
+                Status:singleData.status,
+                Total:singleData.cash,
+                name:singleData.address.name
+              }
+
+              orders.push(obj)
+          }
+       }
+
+         res.render("orders-1",{orders:orders})
     } catch (error) {
         console.log(error)
     }
@@ -378,6 +416,61 @@ const CategoryData ={
     }
 }
 
+// Order View 
+const viewOrder = async (req,res)=>{
+    try {
+
+        const objectId = new  mongoose.Types.ObjectId(req.query.id);
+        let done = await order.findOne({userID:req.query.user,"items._id":objectId});
+
+        const options = {year:'numeric',month:'long',day:'numeric'};
+        const ordered = done.items[0].Dates.ordered.toLocaleDateString('en-US',options);
+        const delivery = done.items[0].Dates.delivery.toLocaleDateString('en-US',options);  
+        let obj = {
+          ordered:ordered,
+          delivery:delivery,
+          title:done.items[0].item.productTitle,
+          description:done.items[0].item.description,
+          price:done.items[0].item.price,
+          image1:done.items[0].item.image[0],
+          image2:done.items[0].item.image[1],
+          image3:done.items[0].item.image[2],
+          category:done.items[0].item.category,
+          size:done.items[0].item.size,
+          status:done.items[0].status,
+          cash:done.items[0].cash,
+          quantity:done.items[0].quantity,
+          name:done.items[0].address.name,
+          Bname:done.items[0].address.Bname,
+          phone:done.items[0].address.phone,
+          email:done.items[0].address.email,
+          address:done.items[0].address.address,
+          town:done.items[0].address.town,
+          pincode:done.items[0].address.pincode,
+   
+        }
+         
+        res.render("viewOrder",{obj})
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// change status
+const statusChange = async (req,res)=>{
+   try {
+    const objectId = new  mongoose.Types.ObjectId(req.query.orderId);
+    let done = await order.updateOne({userID:req.query.userId, "items._id": objectId }, {$set:{ "items.$.status": req.query.action } });
+
+        if(done){
+         res.send({Done:"Done"})
+        }else{
+         res.send({failed:"failed"})
+        }
+   } catch (error) {
+     console.log(error)
+   }
+}
 
 module.exports={
     loadDash,
@@ -403,5 +496,7 @@ module.exports={
     newCategory,
     deleteCategory,
     editCategory,
-    editCategoryLoad
+    editCategoryLoad,
+    viewOrder,
+    statusChange
 }

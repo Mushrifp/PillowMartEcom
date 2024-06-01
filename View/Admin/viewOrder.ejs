@@ -1,0 +1,201 @@
+<style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Arial', sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .main-wrap {
+      padding: 20px;
+    }
+  
+    .content-title {
+      text-align: center;
+      color: #4CAF50;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+  
+    .details-section {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      max-width: 1000px;
+      margin: 20px auto;
+    }
+  
+    .btn-custom {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      text-align: center;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+  
+    .btn-custom:hover {
+      background-color: #45a049;
+    }
+  
+    .section-header {
+      font-size: 1.5em;
+      color: #333;
+      border-bottom: 2px solid #4CAF50;
+      margin-bottom: 15px;
+      padding-bottom: 5px;
+    }
+  
+    .details-item {
+      margin-bottom: 15px;
+    }
+  
+    .details-item strong {
+      display: inline-block;
+      width: 150px;
+      font-size: 16px;
+      color: #333;
+    }
+  
+    .details-item img {
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      height: auto;
+    }
+  
+    .details-section .status {
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: #fff;
+      display: inline-block;
+    }
+  
+    .status-pending {
+      background-color: #FFA500;
+    }
+  
+    .status-canceled {
+      background-color: #FF4500;
+    }
+  
+    .status-delivered {
+      background-color: #4CAF50;
+    }
+  
+    .images-container {
+      display: flex;
+      gap: 10px;
+    }
+  
+    .images-container img {
+      flex: 1;
+      width: auto;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    #klkl{
+        height: 300px;
+    }
+  </style>
+  
+  <%- include('./layouts/header.ejs') %>
+  <main class="main-wrap">
+    <section class="content-main">
+      <div class="content-header">
+        <h2 class="content-title card-title">Order Details</h2>
+      </div>
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="details-section">
+            <button class="btn-custom">
+              <a href="/admin/order" class="btn-link" style="color: white; text-decoration: none;">Go Back</a>
+            </button>
+          </div>
+          
+          <div class="details-section">
+            <div class="section-header">Order Information</div>
+            <div class="details-item">
+              <strong>Ordered:</strong> <%= obj.ordered %>
+            </div>
+            <div class="details-item">
+              <strong>Delivery:</strong> <%= obj.delivery %>
+            </div>
+            <div class="details-item">
+              <strong>Title:</strong> <%= obj.title %>
+            </div>
+            <div class="details-item">
+              <strong>Description:</strong> <%= obj.description %>
+            </div>
+            <div class="details-item">
+              <strong>Price:</strong> $<%= obj.price %>
+            </div>
+            <div class="details-item">
+              <strong>Status:</strong>
+              <span class="status <%= obj.status === 'Pending' ? 'status-pending' : (obj.status === 'Canceled' ? 'status-canceled' : 'status-delivered') %>">
+                <%= obj.status %>
+              </span>
+            </div>
+            <div class="details-item">
+              <strong>Quantity:</strong> <%= obj.quantity %>
+            </div>
+          </div>
+          
+          <div class="details-section">
+            <div class="section-header">Billing Information</div>
+            <div class="details-item">
+              <strong>Cash:</strong> $<%= obj.cash %>
+            </div>
+            <div class="details-item">
+              <strong>Category:</strong> <%= obj.category %>
+            </div>
+            <div class="details-item">
+              <strong>Size:</strong> <%= obj.size %>
+            </div>
+          </div>
+          
+          <div class="details-section">
+            <div class="section-header">Customer Information</div>
+            <div class="details-item">
+              <strong>Name:</strong> <%= obj.name %>
+            </div>
+            <div class="details-item">
+              <strong>Phone:</strong> <%= obj.phone %>
+            </div>
+            <div class="details-item">
+              <strong>Email:</strong> <%= obj.email %>
+            </div>
+            <div class="details-item">
+              <strong>Address:</strong> <%= obj.address %>
+            </div>
+            <div class="details-item">
+              <strong>Town:</strong> <%= obj.town %>
+            </div>
+            <div class="details-item">
+              <strong>Pincode:</strong> <%= obj.pincode %>
+            </div>
+          </div>
+  
+          <div class="details-section" id="klkl">
+            <div class="section-header">Product Images</div>
+            <div class="images-container" style="height: 100px;">
+              <img src="/productImages/<%= obj.image1 %>" alt="Image 1 ">
+              <img src="/productImages/<%= obj.image2 %>" alt="Image 2 ">
+              <img src="/productImages/<%= obj.image3 %>" alt="Image 3 ">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <%- include('./layouts/footer.ejs') %>
+  
