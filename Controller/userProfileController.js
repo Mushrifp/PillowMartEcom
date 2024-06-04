@@ -80,17 +80,21 @@ const order = async (req, res) => {
        for(let i=0;i<Datas.length;i++){
           for(let j=0;j<Datas[i].items.length;j++){
             let singleData = Datas[i].items[j]
+            
             const options = {year:'numeric',month:'long',day:'numeric'};
             const delivery = singleData.Dates.delivery.toLocaleDateString('en-US',options); 
             const ordered = singleData.Dates.ordered.toLocaleDateString('en-US',options); 
+
               let obj = {
-                ID:singleData._id,
+                docID:singleData._id,
+                ID:singleData.item._id,
                 orderDate:ordered,
                 deliveryDate:delivery,
                 productName:singleData.item.productTitle,
                 image:singleData.item.image[0],
                 Status:singleData.status,
-                Total:singleData.cash
+                Total:singleData.cash,
+                quantity:singleData.quantity
               }
 
               orders.push(obj)
@@ -359,7 +363,6 @@ const updateAddress = async (req, res) => {
 // adding trough checkout page 
 const addressAddCheckout = async (req,res)=>{
    try {
-      console.log(req.body)
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       const charactersLength = characters.length;
       let result = '';
@@ -410,10 +413,11 @@ const addressAddCheckout = async (req,res)=>{
 const cancelOrder = async (req,res)=>{
   try {
 
-     const objectId = new  mongoose.Types.ObjectId(req.query.ID);
-     let done = await Order.updateOne({userID:req.session.user_id, "items._id": objectId }, {$set:{ "items.$.status": "Canceled" } });
+     let done = await Order.updateOne({userID:req.session.user_id, "items._id": req.query.docID }, {$set:{ "items.$.status": "Canceled" } });
+  
+    let StockIncrement =  await productData.updateOne({_id:req.query.ID},{$inc:{stock:parseInt(req.query.quant, 10)}}) 
 
-     if(done){
+     if(done&&StockIncrement){
       res.send({Done:"Done"})
      }else{
       res.send({failed:"failed"})
@@ -429,36 +433,49 @@ const cancelOrder = async (req,res)=>{
 // View order
 const viewDetails = async (req,res)=>{
   try {
+
      const objectId = new  mongoose.Types.ObjectId(req.query.ID);
-     let done = await Order.findOne({userID:req.session.user_id, "items._id": objectId});
+     let ordrData = await Order.findOne({userID:req.session.user_id, "items._id": objectId});
+
+     let productItems  = ordrData.items;
+
+     let done = []
+
+     for(let i=0;i<productItems.length;i++){
+
+        if(objectId.equals(productItems[i]._id)){
+            done.push(productItems[i]) 
+            break;
+        }
+     }
 
      const options = {year:'numeric',month:'long',day:'numeric'};
-     const ordered = done.items[0].Dates.ordered.toLocaleDateString('en-US',options);
-     const delivery = done.items[0].Dates.delivery.toLocaleDateString('en-US',options);  
+     const ordered = done[0].Dates.ordered.toLocaleDateString('en-US',options);
+     const delivery = done[0].Dates.delivery.toLocaleDateString('en-US',options);  
      let obj = {
        ordered : ordered,
        delivery : delivery,
-       title : done.items[0].item.productTitle,
-       description : done.items[0].item.description,
-       price : done.items[0].item.price,
-       image1 : done.items[0].item.image[0],
-       image2 : done.items[0].item.image[1],
-       image3 : done.items[0].item.image[2],
-       category : done.items[0].item.category,
-       size : done.items[0].item.size,
-       status : done.items[0].status,
-       cash : done.items[0].cash,
-       quantity : done.items[0].quantity,
-       name : done.items[0].address.name,
-       Bname : done.items[0].address.Bname,
-       phone : done.items[0].address.phone,
-       email : done.items[0].address.email,
-       address : done.items[0].address.address,
-       town : done.items[0].address.town,
-       pincode : done.items[0].address.pincode,
+       title : done[0].item.productTitle,
+       description : done[0].item.description,
+       price : done[0].item.price,
+       image1 : done[0].item.image[0],
+       image2 : done[0].item.image[1],
+       image3 : done[0].item.image[2],
+       category : done[0].item.category,
+       size : done[0].item.size,
+       status : done[0].status,
+       cash : done[0].cash,
+       quantity : done[0].quantity,
+       name : done[0].address.name,
+       Bname : done[0].address.Bname,
+       phone : done[0].address.phone,
+       email : done[0].address.email,
+       address : done[0].address.address,
+       town : done[0].address.town,
+       pincode : done[0].address.pincode,
 
      }
-      
+
      res.render("orderView",{obj})
 
   }catch (error){

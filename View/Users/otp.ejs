@@ -130,6 +130,8 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
+<script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
   <script>
 var countdownTime = 60;
 var timer = document.getElementById('timer');
@@ -190,8 +192,21 @@ function resendOTP() {
     
       .then(function(response){
         if (response.data.success){
-          window.location.href = '/login';
-          alert("Your OTP Verification Completed Now Your can Login by clicking the ok button");
+
+          Swal.fire({
+                      title: "OTP verified Now please login",
+                      icon: "success",
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "Ok",
+                      allowOutsideClick: false,
+                      allowEscapeKey: false    
+                          }).then((result) => {
+                            if (result.isConfirmed){
+                              window.location.href = '/login';
+                            }
+                     });
+
         } else if (response.data.invalid){
           err.style.display = 'block';
           err.innerHTML = response.data.invalid;

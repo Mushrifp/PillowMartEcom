@@ -17,6 +17,14 @@
         background-color: rgb(0, 104, 22);
         box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
     }
+    #returnBTN{
+        width: 150px;
+        background-color: rgb(1, 220, 49);
+        box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    }
+    #returnBTN:hover{
+        background-color: rgb(0, 123, 27);
+    }
 </style>
 <%- include('../layout/header.ejs') %>
 <!--::header part start::-->
@@ -115,7 +123,7 @@
                                     <br>
                                     <div class="row align-items-center">
                                         <div class="col-md-3">
-                                            <img src="/productImages/<%= product.image %>" alt="<%= product.image %>" style="width: 100%; border-radius: 10px;">
+                                            <a href="/user/viewDetails?ID=<%= product.docID %>"><img src="/productImages/<%= product.image %>" alt="<%= product.image %>" style="width: 100%; border-radius: 10px;"></a>
                                         </div>
                                         <div class="col-md-6">
                                             <h5 style="color: rgb(0, 0, 0); margin-left: 10px;"><span style="color: #61a5fd;">Product Name : </span><%= product.productName %></h5>
@@ -128,17 +136,29 @@
                                                 <h5 style="color: rgb(185, 0, 0); margin-left: 10px;"><span style="color: #84C69B">Delivery Status : </span><%= product.Status %></h5>
                                             <% }else if(product.Status == 'Delivered'){ %>
                                                 <h5 style="color: rgb(67, 191, 0); margin-left: 10px;"><span style="color: #84C69B">Delivery Status : </span><%= product.Status %></h5>
-                                            <% } %>    
+                                            <% } %>  
+                                            <input id="quant" type="hidden" value="<%= product.quantity %>">  
+                                            <input id="docID" type="hidden" value="<%= product.docID %>">  
                                         </div>
                                         <div class="col-md-3 text-right">
                                             <button type="button" class="btn btn-secondary" style="margin-right: 5px;" id="ViewButton">
-                                                <a style="color: rgb(255, 255, 255); " href="/user/viewDetails?ID=<%= product.ID %>">View Details</a>
+                                                <a style="color: rgb(255, 255, 255); " href="/user/viewDetails?ID=<%= product.docID %>">View Details</a>
                                             </button>
                                             <br>
                                             <br>
+                                            <% if(product.Status == 'Pending'){ %>
                                             <button type="button" class="cancelOrderBtn btn " id="cancelButton" >
                                                 <a style="color: rgb(255, 255, 255);" href="<%= product.ID %>">Cancel Order</a>
                                             </button>
+                                            <% } else if(product.Status == 'Delivered'){ %>
+                                            <button type="button" id="returnBTN">
+                                                <a style="color: rgb(255, 255, 255);" href="#">Return Product</a>
+                                            </button>  
+                                            <% } else if(product.Status == 'Canceled'){  %> 
+                                                <button type="button" style="background-color: rgb(143, 0, 0);" disabled>
+                                                    <a style="color: rgb(255, 255, 255);" href="#">Product Canceled</a>
+                                                </button> 
+                                             <% } %>   
                                         </div>
                                     </div>
                                 </div>
@@ -181,11 +201,11 @@
         <div class="copyright_part">
             <div class="container">
                 <div class="row ">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12">    
                         <div class="copyright_text">
                             <P><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P>
+                             Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P>
                             <div class="copyright_link">
                                 <a href="#">Turms & Conditions</a>
                                 <a href="#">FAQ</a>
@@ -203,48 +223,47 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
     <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <script>
+const buttons = document.querySelectorAll('.cancelOrderBtn');
 
-    const buttons = document.querySelectorAll('.cancelOrderBtn');
-    
+for (let i = 0; i < buttons.length; i++) {
+    const button = buttons[i];
+    button.addEventListener('click', function(event) {
+        event.preventDefault();
 
-    for (let i = 0; i < buttons.length; i++) {
-        const button = buttons[i];
-        button.addEventListener('click', function(event) {
- 
-            event.preventDefault();
+        const quant = button.closest('.product-box').querySelector('#quant').getAttribute('value');
+        const docID = button.closest('.product-box').querySelector('#docID').getAttribute('value');
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'You won\'t be able to revert this!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, cancel it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const linkUrl = button.querySelector('a').getAttribute('href');
-                    axios.post(`/user/cancelOrder?ID=${linkUrl}`)
-                    .then(function(response){
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const linkUrl = button.querySelector('a').getAttribute('href');
+                axios.post(`/user/cancelOrder?ID=${linkUrl}&quant=${quant}&docID=${docID}`)
+                    .then(function(response) {
                         Swal.fire({
-                                title: "Order Canceled",
-                                text: "Your Order has been Canceled.",
-                                icon: "success"
-                              }).then((result)=>{
-                                  if(result.isConfirmed){
-                                    if(response.data.Done){
-                                        window.location.reload()
-                                    }
-                                  }
-                              })
-                            
-                    }).catch(function(error){
-                       console.log(error)
-                    })
-                }
-            });
+                            title: "Order Canceled",
+                            text: "Your Order has been Canceled.",
+                            icon: "success"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                if (response.data.Done) {
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+            }
         });
-    }
+    });
+}
     </script>
     <!-- jquery plugins here-->
     <script src="/js/jquery-1.12.1.min.js"></script>

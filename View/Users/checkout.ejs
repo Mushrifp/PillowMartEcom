@@ -203,7 +203,6 @@
 
 
  <!-- Order Confirmation Modal -->
- <!-- Order Confirmation Modal -->
 <div class="modal fade" id="orderConfirmationModal" tabindex="-1" aria-labelledby="orderConfirmationModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
@@ -222,10 +221,10 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <h6>Billing Address</h6>
-                            <p id="billingStreet"></p>
-                            <p id="billingCity"></p>
-                            <p id="billingCountry"></p>
-                            <p id="billingPostcode"></p>
+                            <p><strong>Billing Address:</strong> <span id="billingAddress" ></span></p>
+                            <p><strong>Billing City:</strong> <span id="billingCity"    ></span></p>
+                            <p><strong>Billing Phone:</strong> <span id="billingPhone"   ></span></p>
+                            <p><strong>Billing Postcode:</strong> <span id="billingPostcode"></span></p>
                         </div>
                     </div>
                     <hr>
@@ -384,15 +383,12 @@
                     axios.post('/orderConfirm', data)
                         .then(function(response){
                             if (response.data.failed) {
-                                console.log("reached")
                                 notyf.error("Failed to place order. Please try again.");
                             } else {
-                                console.log("hoour")
                                 showOrderConfirmationModal(response.data);
                             }
                         })
                         .catch(function(error){
-                            console.error('Error:', error);
                             notyf.error("An error occurred. Please try again.");
                         });
                             }else{
@@ -408,16 +404,16 @@
     }
 }
 
-function showOrderConfirmationModal(orderData) {
+function showOrderConfirmationModal(orderData){
     document.getElementById('orderNumber').innerText = orderData.orderNumber;
     document.getElementById('orderDate').innerText = orderData.orderDate;
     document.getElementById('orderTotal').innerText = `$${orderData.orderTotal}`;
     document.getElementById('paymentMethod').innerText = orderData.paymentMethod;
 
-    document.getElementById('billingStreet').innerText = orderData.billingAddress.street;
-    document.getElementById('billingCity').innerText = orderData.billingAddress.city;
-    document.getElementById('billingCountry').innerText = orderData.billingAddress.country;
-    document.getElementById('billingPostcode').innerText = orderData.billingAddress.postcode;
+    document.getElementById('billingAddress').innerText = orderData.billingAddress.address;
+    document.getElementById('billingCity').innerText = orderData.billingAddress.town;
+    document.getElementById('billingPhone').innerText = orderData.billingAddress.phone;
+    document.getElementById('billingPostcode').innerText = orderData.billingAddress.pincode;
 
     const orderDetailsTableBody = document.getElementById('orderDetailsTableBody');
     orderDetailsTableBody.innerHTML = '';
@@ -443,8 +439,6 @@ function showOrderConfirmationModal(orderData) {
     modal.show();
 }
 
-
-// ----------------------------------------------
     document.addEventListener('DOMContentLoaded', function() {
     const infoHeaders = document.querySelectorAll('.Check-info-header');
 

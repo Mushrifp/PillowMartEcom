@@ -89,12 +89,12 @@
                         </div>
                         <div class="add_to_cart" style="margin-top: 25px; margin-left: 25%; " >
                                 <button id="wishButton" class="btn_3" >Add to Wishlist</button>
-                                <!-- <a href="/cart/addCart?id=<%= singleData._id %>" style="margin-left: 15px;"  class="btn_3">Add to Cart</a> -->
+                                
                                 <% if (singleData.stock === 0) { %>
-                                <!-- <a href="/cart/addCart?id=<%= singleData._id %>" style="margin-left: 15px;"  class="btn_3">Add to Cart</a>  -->
-                                <button style="background-color: rgb(163, 5, 5); margin-left: 10px; color: #000;" class="btn_3" disabled  >Out of Stock</button>                                    
+                               
+                                <button style="background-color: rgb(163, 5, 5); margin-left: 10px; color: #ffffff;" class="btn_3" disabled  >Out of Stock</button>                                    
                                 <% } else { %>
-                                <!-- <a href="/cart/addCart?id=<%= singleData._id %>" style="margin-left: 15px;"  class="btn_3">Add to Cart</a> -->
+                               
                                 <button id="cartButton" style="margin-left: 10px;" class="btn_3" >Add to cart</button>                                      
                                 <% } %> 
                                 <a href="/product" style="margin-left: 10px;" class="btn_3">GO to product</a> 

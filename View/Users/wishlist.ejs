@@ -53,7 +53,11 @@
                                         <h5>$<%= wishlist[i].price %></h5>
                                     </td>
                                     <td>
-                                        <a class="btn_1" href="">Add to cart</a>
+                                        <% if (wishlist[i].stock === 0) { %>
+                                            <button style="background-color: rgb(163, 5, 5); color: #ffffff;" class="btn_3" disabled>Out of Stock</button>
+                                          <% } else { %>
+                                            <button class="btn_3 addToCartButton" value="<%= wishlist[i]._id %>">Add to cart</button>
+                                          <% } %>
                                     </td>
                                     <td>
                                       <a class="btn_1" href="/cart/wishDelete?id=<%= wishlist[i].id %>">Remove</a>
@@ -128,6 +132,36 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <!--::footer_part end::-->
 
 
+
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  var notyf = new Notyf();
+
+    const buttons = document.querySelectorAll('.addToCartButton');
+  
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener('click', function(event) {
+        const productId = this.value;
+  
+        axios.post(`/cart/addCart?id=${productId}`)
+          .then(function(response) {
+            if (response.data.added) {
+              notyf.success('Added Success');
+            } else if (response.data.failed) {
+              notyf.error('Not Added');
+            } else if (response.data.notAdded) {
+              notyf.error('You Need To Login');
+            }
+          })
+          .catch(function(error) {
+            console.error('Error:', error);
+          });
+      });
+    }
+  </script>
+  
+  
 
 <!-- jquery plugins here-->
 <script src="/js/jquery-1.12.1.min.js"></script>

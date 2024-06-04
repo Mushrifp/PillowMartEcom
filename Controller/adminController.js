@@ -425,8 +425,9 @@ const CategoryData ={
 const viewOrder = async (req,res)=>{
     try {
 
-        const objectId = new  mongoose.Types.ObjectId(req.query.id);
-        let done = await order.findOne({userID:req.query.user,"items._id":objectId});
+        let done = await order.findOne({ userID: req.query.user, "items._id": req.query.id },{ "items.$": 1 });
+
+        console.log("this ppoi ",done) 
 
         const options = {year:'numeric',month:'long',day:'numeric'};
         const ordered = done.items[0].Dates.ordered.toLocaleDateString('en-US',options);
@@ -454,7 +455,9 @@ const viewOrder = async (req,res)=>{
           pincode:done.items[0].address.pincode,
    
         }
-         
+  
+//    console.log("this si he ",obj)     
+
         res.render("viewOrder",{obj})
     } catch (error) {
         console.log(error)
