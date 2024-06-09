@@ -1,3 +1,4 @@
+require('dotenv').config()
 const userData = require('../Model/userData')
 const hash = require("bcrypt");
 const OTP = require("../Model/otp")
@@ -7,8 +8,14 @@ const cart = require('../Model/cart')
 const categoryDB = require('../Model/category')
 const address = require("../Model/address")
 const order = require("../Model/order")
+const Razorpay = require('razorpay');
 
 
+
+const razorpayInstance = new Razorpay({
+    key_id: process.env.RAZORPAY_ID,
+    key_secret:  process.env.RAZORPAY_SECRET
+  });
 
 
 // Password hashing 
@@ -73,17 +80,24 @@ const loadAbout = async (req, res) => {
 // Load Product Page
 const loadProduct = async (req, res) => {
     try {
-        const DataProduct = await productData.find({})
+        const DataProduct = await productData.find({}).limit(10)
 
         const userSession  = await userData.findOne({_id:req.session.user_id})
 
         const categoryData = await categoryDB.find({})
+
+        const totalProduct = await productData.countDocuments({})
+
+        let answer = (Math.ceil(totalProduct/10))-1
+ 
+        let number = 0;
+
         if(userSession){ 
-            res.render("product_list", { Data: DataProduct,userData:userSession ,cate:categoryData})
+            res.render("product_list", { Data: DataProduct,userData:userSession ,cate:categoryData,answer,number})
         }else{
-            res.render("product_list", { Data: DataProduct ,cate:categoryData})
+            res.render("product_list", { Data: DataProduct ,cate:categoryData,answer,number})
         }
-    } catch (error) {
+    } catch (error){
         console.log(error)
     }
 }
@@ -545,8 +559,6 @@ const LowToHigh = async (req,res)=>{
 
 
         res.render("product_list", { Data: Sort,userData:userSession ,cate:categoryData})
-                 
-
 
 
      }catch(error){
@@ -563,8 +575,6 @@ const HighToLow = async (req,res)=>{
 
 
        res.render("product_list", { Data: Sort,userData:userSession ,cate:categoryData})
-                
-
 
 
     }catch(error){
@@ -692,28 +702,133 @@ const orderConfirm = async (req,res)=>{
                 paymentMethod:req.body.paymentMethod,
               })   
               
-             const done = await newOrder.save()
+            const RazPay = {
+                userID:req.session.user_id,
+                items:product,
+                total:req.body.subtotal,
+                paymentMethod:req.body.paymentMethod,
+            }  
 
-              if(done){
-                  for(let i=0;i<productStock.length;i++){
-                     await productData.updateOne({_id:productStock[i].product},{$inc:{stock:-productStock[i].quantity}})   
-                    }
-                    await cart.updateOne({user:req.session.user_id},{$set:{product:[]}})
-                    res.send({
-                        orderNumber: newOrder._id,
-                        orderDate: currentDate.toDateString(),
-                        orderTotal: newOrder.total,
-                        paymentMethod: newOrder.paymentMethod,
-                        billingAddress: newOrder.items[0].address,
-                        orderDetails: orderDetails,
-                        subtotal: req.body.subtotal,
-                    });
-              }else{
-                 res.send({failed:"Failed"})
-              }
+            if(req.body.paymentMethod == "CashOnDelivery"){
 
+                const done = await newOrder.save()
+
+                if(done){
+                    for(let i=0;i<productStock.length;i++){
+                       await productData.updateOne({_id:productStock[i].product},{$inc:{stock:-productStock[i].quantity}})   
+                      }
+                        await cart.updateOne({user:req.session.user_id},{$set:{product:[]}})
+
+                      res.send({
+                          method:"COD",
+                          orderNumber: newOrder._id,
+                          orderDate: currentDate.toDateString(),
+                          orderTotal: newOrder.total,
+                          paymentMethod: newOrder.paymentMethod,
+                          billingAddress: newOrder.items[0].address,
+                          orderDetails: orderDetails,
+                          subtotal: req.body.subtotal,
+                      });
+                }else{
+                   res.send({failed:"Failed"})
+                }
+
+            }else if(req.body.paymentMethod == "Razorpay"){
+
+           let razo_ID = process.env.RAZORPAY_ID;
+           let razo_SECRET = process.env.RAZORPAY_SECRET;
+
+           const options = {
+              amount: req.body.subtotal * 100, 
+              currency: 'INR',
+              receipt: 'order_rcptid_11'
+           };
+
+           const order = await razorpayInstance.orders.create(options);
+
+           for(let i=0;i<productStock.length;i++){
+             await productData.updateOne({_id:productStock[i].product},{$inc:{stock:-productStock[i].quantity}})   
+           }
+
+             res.send({     
+               orderNumber: newOrder._id,
+               orderDate: currentDate.toDateString(),
+               orderTotal: newOrder.total,
+               paymentMethod: newOrder.paymentMethod,
+               billingAddress: newOrder.items[0].address,
+               orderDetails: orderDetails,
+               subtotal: req.body.subtotal,
+               razo:order,
+               razoID:razo_ID,
+               RazPay:RazPay})
+            }
 
     } catch (error) {
+        console.log(error)
+    }
+}
+
+// pagination
+const pagination = async (req, res) => {
+    try {
+        const userSession = await userData.findOne({ _id:req.session.user_id});
+        const categoryData = await categoryDB.find({});
+        const totalProduct = await productData.countDocuments({});
+
+        const page = parseInt(req.query.number)||0;
+
+        const skip = page * 10;
+
+        const DataProduct = await productData.find().skip(skip).limit(10);
+        
+        const answer = Math.ceil(totalProduct/10) - 1; 
+
+        if (userSession) {
+            res.render("product_list",{Data:DataProduct,userData:userSession,cate:categoryData,answer,number:page});
+        } else {
+            res.render("product_list",{Data:DataProduct,cate:categoryData,answer,number:page});
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server Error");
+    }
+}
+
+// priceSort
+const priceSort = async (req,res)=>{
+   try{
+    const Sort = await productData.find({price:{$gte:req.query.price,$lte:req.query.to}}).sort({ price:1})
+    const userSession  = await userData.findOne({_id:req.session.user_id})
+    const categoryData = await categoryDB.find({})
+
+
+    res.render("product_list", { Data: Sort,userData:userSession ,cate:categoryData})
+   }catch(error){
+    console.log(error)
+   }
+}
+
+// Order place through razorpay 
+const razpayOrderPlace = async (req,res)=>{
+    try{
+
+       const newOrder = new order({
+        userID: req.body.RazPay.userID,
+        items: req.body.RazPay.items,
+        total: req.body.orderTotal,
+        paymentMethod: req.body.paymentMethod,
+        billingAddress: req.body.billingAddress,
+        orderNumber: req.body.orderNumber,
+        orderDate: req.body.orderDate,
+        orderDetails: req.body.orderDetails,
+        subtotal: req.body.subtotal,
+        razorpayOrder: req.body.razo,
+        razorpayID: req.body.razoID
+    });
+
+        await newOrder.save()
+
+    }catch(error){
         console.log(error)
     }
 }
@@ -740,4 +855,7 @@ module.exports = {
     search,
     loadCheckout,
     orderConfirm,
+    pagination,
+    priceSort,
+    razpayOrderPlace
 }

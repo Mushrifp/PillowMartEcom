@@ -1,10 +1,34 @@
 
 <style>
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .pagination li {
+      list-style-type: none;
+      margin: 0 5px;
+      padding: 10px 20px;
+      background-color: #B08EAD;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 16px;
+      transition: 0.5s;
+      box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    }
+    .pagination li:hover {   
+      background-color: #95338d;
+      box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
+    }
+    .pagination .active {
+      background-color: #95338d;
+    }
     #product-imageh {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
     }
     .InputContainer {
         width: 210px;
@@ -45,7 +69,7 @@
 </section>
 <header>
 
-    <div class="p-3 text-center bg-white border-bottom">
+    <div class="p-3 text-center bg-white border-bottom" >
       <div class="container">
         <div class="row gy-3">
 
@@ -70,6 +94,16 @@
                 </div>
             </div>
         </div>
+        <div class="single_sedebar" style="margin-left: 30px;">
+            <div class="select_option">
+                <div class="select_option_list">Price ><i class="right fas "></i> </div>
+                <div class="select_option_dropdown">
+                    <p><a href="/priceSort?price=100&to=500">$100 - $500</a></p>
+                    <p><a href="/priceSort?price=500&to=1000">$500 - $1000</a></p>
+                    <p><a href="/priceSort?price=1000&to=1500">$1000 - $1500</a></p>
+                </div>
+            </div>
+        </div>
         </div>
       </div>
     </div>
@@ -83,7 +117,7 @@
             <div class="col-lg-12">
                 <% if ( Data.length != 0) { %>
                     <% for (let i = 0; i < Data.length; i++) { %>
-                        <div class="row justify-content-center mb-3">
+                        <div class="row justify-content-center mb-3" >
                             <div class="col-md-12">
                                 <div class="card shadow-0 border rounded-3">
                                     <div class="card-body">
@@ -151,7 +185,36 @@
         </div>
     </div>
 </section>
+    <!--  pagination -->
+    <% if (typeof number !== "undefined") { %>
+        <div class="pagination">
+            <ul style="display: flex; list-style-type: none;">
+                <% if (number === 0) { %>
+                    <a style="color: white;" href="/pagination?number=0"><li style="margin-right: 5px;">&laquo; Prev</li></a>
+                <% } else { %>
+                    <a style="color: white;" href="/pagination?number=<%= number - 1 %>"><li style="margin-right: 5px;">&laquo; Prev</li></a>
+                <% } %>
     
+                <% for (let i = 0; i <= answer; i++) { %>
+                    <% if (number === i) { %>
+                        <a style="color: white;" href="/pagination?number=<%= i %>"><li class="active" style="margin-right: 5px;"><%= i %></li></a>
+                    <% } else { %>
+                        <a style="color: white;" href="/pagination?number=<%= i %>"><li style="margin-right: 5px;"><%= i %></li></a>
+                    <% } %>
+                <% } %>
+    
+                <% if (number === answer) { %>
+                    <a style="color: white;" href="/pagination?number=<%= answer %>"><li>Next &raquo;</li></a>
+                <% } else { %>
+                    <a style="color: white;" href="/pagination?number=<%= number + 1 %>"><li>Next &raquo;</li></a>
+                <% } %>
+            </ul>
+        </div>
+    <% } %>
+    
+    <!--  pagination -->
+    <br>
+    <br>
     <!-- client review part here -->
     <section class="client_review">
         <div class="container">

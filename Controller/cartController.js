@@ -94,7 +94,7 @@ const loadWish = async (req,res)=>{
                   const productdata = await productData.findOne({_id:wishDat.product[i]})
                   wishlist.push(productdata)
                }
-              console.log(wishlist)
+               
               res.render("wishlist",{userData:userSession,wishlist})
               }else{
               res.render("wishlist",{userData:userSession,empty:"empty"})

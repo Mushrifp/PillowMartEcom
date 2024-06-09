@@ -59,12 +59,13 @@ user_router.get("/categoryLoad",userController.categoryLoad)
 // high to low and low to high 
 user_router.get("/LowToHigh",userController.LowToHigh)
 user_router.get("/HighToLow",userController.HighToLow)
+user_router.get("/priceSort",userController.priceSort)
 user_router.get("/search",userController.search)
 
 // checkout and order
 user_router.post("/checkout",userController.loadCheckout)
 user_router.post("/orderConfirm",userController.orderConfirm)
-
- 
+user_router.get("/pagination",userController.pagination)
+user_router.post("/razpayOrderPlace",userController.razpayOrderPlace)
 
 module.exports = user_router;

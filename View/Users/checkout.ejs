@@ -1,9 +1,7 @@
 <style>
     .modal {
-    z-index: 1050; /* Default Bootstrap z-index for modals, you can increase if needed */
+    z-index: 1050;
 }
-
-
     .modal-header {
         background-color: #f8f9fa;
         border-bottom: 1px solid #dee2e6;
@@ -157,9 +155,9 @@
                     </div>
                     <br>
                     <div class="Check-radio-input">
-                        <input  type="radio" id="pypal" name="payment_method" value="pypal" required>
+                        <input  type="radio" id="Razorpay" name="payment_method" value="Razorpay" required>
                         <div class="Check-circle"></div>
-                        <label for="cash">Online</label>
+                        <label for="cash">Razorpay</label>
                     </div>
                     <br>
                     <button id="proceedButton" class="btn_3" type="button" onclick="proceed()">Click to Proceed</button>
@@ -321,6 +319,8 @@
 <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
 <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script>
      var notyf = new Notyf();
     document.getElementById('addAddressButton').addEventListener('click', function() {
@@ -345,11 +345,7 @@
                       confirmButtonText: "Yes, Order it!"
                           }).then((result) => {
                             if (result.isConfirmed){
-                              Swal.fire({
-                                title: "Order Placed!",
-                                text: "Your Order has been placed.",
-                                icon: "success"
-                              });
+
                     const addressCode = selectedAddress.value;
                     const orderDetails = [];
                     const tableRows = document.querySelectorAll('.order_box table tbody tr');
@@ -380,13 +376,63 @@
                         subtotal: subtotal
                     };
 
+                    if(paymentMethod.value == "CashOnDelivery"){
+                        Swal.fire({
+                                title: "Order Placed!",
+                                text: "Your Order has been placed.",
+                                icon: "success"
+                              });
+                    }
+
                     axios.post('/orderConfirm', data)
                         .then(function(response){
-                            if (response.data.failed) {
-                                notyf.error("Failed to place order. Please try again.");
-                            } else {
+                            if (response.data.method) {
                                 showOrderConfirmationModal(response.data);
+                            }else if(response.data.razo){
+                                const navv = document.getElementById("navv").style.display = 'block';       
+                                
+                        console.log("Reached here");
+                        console.log("This is the data received", response.data);
+                        
+                        const orderData = response.data;
+                        
+                            const options = {
+                                key: `${orderData.razoID}`,
+                                amount: orderData.razo.amount,
+                                currency: orderData.razo.currency,
+                                name: 'Pillow Mart',
+                                description: "Transaction",
+                                order_id: orderData.razo.id,
+                                handler: async function (response) {
+                                    Swal.fire({
+                                       title: "Order Placed!",
+                                       text: "Your Order has been placed.",
+                                       icon: "success"
+                                    });
+                                    console.log(response);
+
+                                       axios.post('/razpayOrderPlace',orderData)
+
+                                    showOrderConfirmationModal(orderData);
+                                },
+                                "prefill": {
+                                     "name": "Mushrf",
+                                     "email": "g@example.com",
+                                     "contact": "9000090000"
+                                },
+                                theme: {
+                                    color: '#B08EAD'
+                                }
+                            };
+                            
+                            const rzp = new Razorpay(options);
+
+                            rzp.open();
+                                           
+                            }else{
+                                notyf.error("Failed to place order. Please try again.");
                             }
+
                         })
                         .catch(function(error){
                             notyf.error("An error occurred. Please try again.");
@@ -405,6 +451,7 @@
 }
 
 function showOrderConfirmationModal(orderData){
+    console.log("Order details modal")
     document.getElementById('orderNumber').innerText = orderData.orderNumber;
     document.getElementById('orderDate').innerText = orderData.orderDate;
     document.getElementById('orderTotal').innerText = `$${orderData.orderTotal}`;
