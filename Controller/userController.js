@@ -685,6 +685,8 @@ const orderConfirm = async (req,res)=>{
                     delivery:addDays(currentDate, 5)
                 },
                 address:userAddress.userAddress[0],
+                paymentMethod:req.body.paymentMethod,
+                paymentStatus:false
             }
             product.push(productOBJ)
             let pStock = {
@@ -706,7 +708,6 @@ const orderConfirm = async (req,res)=>{
                 userID:req.session.user_id,
                 items:product,
                 total:req.body.subtotal,
-                paymentMethod:req.body.paymentMethod,
             }  
 
             if(req.body.paymentMethod == "CashOnDelivery"){
@@ -810,23 +811,22 @@ const priceSort = async (req,res)=>{
 
 // Order place through razorpay 
 const razpayOrderPlace = async (req,res)=>{
-    try{
-
+    try{ 
+        
        const newOrder = new order({
         userID: req.body.RazPay.userID,
         items: req.body.RazPay.items,
         total: req.body.orderTotal,
-        paymentMethod: req.body.paymentMethod,
-        billingAddress: req.body.billingAddress,
-        orderNumber: req.body.orderNumber,
-        orderDate: req.body.orderDate,
-        orderDetails: req.body.orderDetails,
-        subtotal: req.body.subtotal,
-        razorpayOrder: req.body.razo,
-        razorpayID: req.body.razoID
+
     });
 
-        await newOrder.save()
+    for (let i = 0; i < newOrder.items.length; i++) {
+        newOrder.items[i].paymentStatus = true;
+    }
+        
+    await cart.updateOne({user:req.session.user_id},{$set:{product:[]}})
+
+     await newOrder.save()
 
     }catch(error){
         console.log(error)

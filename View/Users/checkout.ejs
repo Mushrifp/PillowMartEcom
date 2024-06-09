@@ -334,7 +334,7 @@
 
     if(selectedAddress){
         if(paymentMethod){
-         const navv = document.getElementById("navv").style.display = 'none';
+         document.getElementById("navv").style.display = 'none';
           
                     Swal.fire({
                       title: "Are you sure?",
@@ -389,7 +389,7 @@
                             if (response.data.method) {
                                 showOrderConfirmationModal(response.data);
                             }else if(response.data.razo){
-                                const navv = document.getElementById("navv").style.display = 'block';       
+                             document.getElementById("navv").style.display = 'block';       
                                 
                         console.log("Reached here");
                         console.log("This is the data received", response.data);
@@ -438,7 +438,7 @@
                             notyf.error("An error occurred. Please try again.");
                         });
                             }else{
-                                const navv = document.getElementById("navv").style.display = 'block';
+                             document.getElementById("navv").style.display = 'block';
                             }
                      });
 
@@ -481,7 +481,7 @@ function showOrderConfirmationModal(orderData){
         backdrop: 'static',
         keyboard: false
     });
-    const navv = document.getElementById("navv").style.display = 'none';
+       document.getElementById("navv").style.display = 'none';
     
     modal.show();
 }
@@ -560,7 +560,7 @@ function showOrderConfirmationModal(orderData){
   })  
 
   document.getElementById("closeMOdal").addEventListener('click',function(){
-    const navv = document.getElementById("navv").style.display = 'block';
+       document.getElementById("navv").style.display = 'block';
         window.location.href="/user/order"
   })
 

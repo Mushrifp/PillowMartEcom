@@ -37,15 +37,19 @@ const order = new mongoose.Schema({
         address:{
             type:Object,
             required:true
-        },    
+        },
+        paymentMethod:{
+            type:String,
+            required:true 
+        },
+        paymentStatus:{
+            type:Boolean,
+            required:true
+        }    
     }],
     total:{
         type:Number,
         required:true                                                           
-    },
-    paymentMethod:{
-        type:String,
-        required:true 
     },
     totalStatus:{
         type:String,

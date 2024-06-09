@@ -94,7 +94,9 @@ const order = async (req, res) => {
                 image:singleData.item.image[0],
                 Status:singleData.status,
                 Total:singleData.cash,
-                quantity:singleData.quantity
+                quantity:singleData.quantity,
+                paymentMethod:singleData.paymentMethod,
+                paymentStatus:singleData.paymentStatus,
               }
 
               orders.push(obj)
@@ -465,6 +467,8 @@ const viewDetails = async (req,res)=>{
        size : done[0].item.size,
        status : done[0].status,
        cash : done[0].cash,
+       paymentMethod:done[0].paymentMethod,
+       paymentStatus:done[0].paymentStatus,
        quantity : done[0].quantity,
        name : done[0].address.name,
        Bname : done[0].address.Bname,
