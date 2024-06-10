@@ -160,6 +160,12 @@
                         <label for="cash">Razorpay</label>
                     </div>
                     <br>
+                    <div class="Check-radio-input">
+                        <input  type="radio" id="wallet" name="payment_method" value="wallet" required>
+                        <div class="Check-circle"></div>
+                        <label for="cash">wallet</label>
+                    </div>
+                    <br>
                     <button id="proceedButton" class="btn_3" type="button" onclick="proceed()">Click to Proceed</button>
                 </div>
                 <div class="col-lg-4">
@@ -191,6 +197,7 @@
                         <span>Subtotal :</span>
                         <span style="margin-left: 170px;">$ <%= subtotal %></span>
                         <input type="hidden" id="subtotal" value="<%= subtotal %>" >
+                        <input type="hidden" id="walletMoney" value="<%= walletMoney %>">
                     </div>
                 </div>
             </div>
@@ -331,11 +338,21 @@
     const selectedAddress = document.querySelector('input[name="address"]:checked');
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
     const subtotal = document.getElementById('subtotal').value;
+    const walletMoney = document.getElementById('walletMoney').value;
+    
 
     if(selectedAddress){
         if(paymentMethod){
          const navv = document.getElementById("navv").style.display = 'none';
-          
+
+         if(paymentMethod.value === 'wallet' && subtotal > walletMoney) {
+            Swal.fire({
+                 title: "Can't use",
+                 text: "Insufficient Balance",
+                 icon: "error"
+               });
+                return;
+            }
                     Swal.fire({
                       title: "Are you sure?",
                       icon: "question",
@@ -376,7 +393,7 @@
                         subtotal: subtotal
                     };
 
-                    if(paymentMethod.value == "CashOnDelivery"){
+                    if(paymentMethod.value == "CashOnDelivery"||paymentMethod.value == "wallet"){
                         Swal.fire({
                                 title: "Order Placed!",
                                 text: "Your Order has been placed.",

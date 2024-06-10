@@ -512,7 +512,7 @@ const viewDetails = async (req,res)=>{
 const walletAddMoney = async (req,res)=>{
   try{
 
-    const date = new Date('2024-06-10T00:06:30.739+00:00');
+    const date = new Date();
     const formattedDate = date.toLocaleString();
 
     const transaction = {
@@ -540,7 +540,11 @@ const getWalletHistory = async(req,res)=>{
 
     const data = await wallet.findOne({user:req.session.user_id})
 
-    res.send({data:data.history})
+    console.log(data)
+
+    const sortedHistory = data.history.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    res.send({data:sortedHistory})
 
   }catch(error){
     console.log(error)

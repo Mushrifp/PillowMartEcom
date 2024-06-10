@@ -9,6 +9,7 @@ const categoryDB = require('../Model/category')
 const address = require("../Model/address")
 const order = require("../Model/order")
 const Razorpay = require('razorpay');
+const wallet = require("../Model/wallet")
 
 
 
@@ -619,6 +620,7 @@ const loadCheckout = async (req,res)=>{
         const userSession = await userData.findOne({_id:req.session.user_id});
         const addresss = await address.findOne({UserID:req.session.user_id})
         const productsData = req.body.products;
+        const walletMoney = await wallet.findOne({user:req.session.user_id})
 
         const productsArray = Object.keys(productsData).map(productId =>([
           productId,
@@ -643,10 +645,11 @@ const CheckOutData = [];
      }
 
      if(addresss&&addresss.userAddress){
-        const userAddresses  =addresss.userAddress
-        res.render("checkout",{userData: userSession,Products:CheckOutData,userAddresses });
+        const userAddresses  = addresss.userAddress
+        let amount = walletMoney.amount
+        res.render("checkout",{userData: userSession,Products:CheckOutData,userAddresses,walletMoney:amount });
      }else{
-        res.render("checkout",{userData: userSession,Products:CheckOutData });
+        res.render("checkout",{userData: userSession,Products:CheckOutData,walletMoney:amount});
       
      }
     } catch (error) {
@@ -710,7 +713,7 @@ const orderConfirm = async (req,res)=>{
                 total:req.body.subtotal,
             }  
 
-            if(req.body.paymentMethod == "CashOnDelivery" ){
+            if(req.body.paymentMethod == "CashOnDelivery"){
 
                 const done = await newOrder.save()
 
@@ -762,6 +765,43 @@ const orderConfirm = async (req,res)=>{
                razo:order,
                razoID:razo_ID,
                RazPay:RazPay})
+            }else if(req.body.paymentMethod == "wallet"){
+
+                newOrder.items.forEach(item => {
+                    item.paymentStatus = true;
+                });
+
+                const done = await newOrder.save()
+
+                if(done){
+                    for(let i=0;i<productStock.length;i++){
+                       await productData.updateOne({_id:productStock[i].product},{$inc:{stock:-productStock[i].quantity}})   
+                      }
+                        await cart.updateOne({user:req.session.user_id},{$set:{product:[]}})
+                        const date = new Date();
+                        const formattedDate = date.toLocaleString();
+                    
+                        const transaction = {
+                          date:formattedDate,
+                          type:"withdrawal",
+                          money:req.body.subtotal
+                        }
+
+                         await wallet.updateOne({user:req.session.user_id},{$push:{history:transaction},$inc:{amount:-req.body.subtotal}})
+
+                      res.send({
+                          method:"wallet",
+                          orderNumber: newOrder._id,
+                          orderDate: currentDate.toDateString(),
+                          orderTotal: newOrder.total,
+                          paymentMethod: newOrder.paymentMethod,
+                          billingAddress: newOrder.items[0].address,
+                          orderDetails: orderDetails,
+                          subtotal: req.body.subtotal,
+                      });
+                }else{
+                   res.send({failed:"Failed"})
+                }
             }
 
     } catch (error) {
