@@ -710,7 +710,7 @@ const orderConfirm = async (req,res)=>{
                 total:req.body.subtotal,
             }  
 
-            if(req.body.paymentMethod == "CashOnDelivery"){
+            if(req.body.paymentMethod == "CashOnDelivery" ){
 
                 const done = await newOrder.save()
 

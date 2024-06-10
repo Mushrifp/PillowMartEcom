@@ -13,8 +13,8 @@
                                 <th scope="col">Product Image</th>
                                 <th scope="col">Product Name</th>
                                 <th scope="col">Customer</th>
-                                <th scope="col">Ordered</th>
-                                <th scope="col">Delivery</th>
+                                <th scope="col">Payment Method</th>
+                                <th scope="col">Payment Status</th>
                                 <th scope="col">Total</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Actions</th>
@@ -30,8 +30,8 @@
                                 </td>
                                 <td><%= order.productName %></td>
                                 <td><%= order.name %></td>
-                                <td><%= order.orderDate %></td>
-                                <td><%= order.deliveryDate %></td>
+                                <td><%= order.paymentMethod %></td>
+                                <td><%= order.paymentStatus ? 'Paid' : 'Not paid' %></td>
                                 <td>$<%= order.Total %></td>
                                 <td>
                                     <% if(order.Status === 'Pending') { %>

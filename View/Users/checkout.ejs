@@ -334,7 +334,7 @@
 
     if(selectedAddress){
         if(paymentMethod){
-         document.getElementById("navv").style.display = 'none';
+         const navv = document.getElementById("navv").style.display = 'none';
           
                     Swal.fire({
                       title: "Are you sure?",
@@ -389,10 +389,7 @@
                             if (response.data.method) {
                                 showOrderConfirmationModal(response.data);
                             }else if(response.data.razo){
-                             document.getElementById("navv").style.display = 'block';       
-                                
-                        console.log("Reached here");
-                        console.log("This is the data received", response.data);
+                                const navv = document.getElementById("navv").style.display = 'block';       
                         
                         const orderData = response.data;
                         
@@ -410,8 +407,8 @@
                                        icon: "success"
                                     });
                                     console.log(response);
-
-                                       axios.post('/razpayOrderPlace',orderData)
+                                    
+                                       axios.post("/razpayOrderPlace",orderData)
 
                                     showOrderConfirmationModal(orderData);
                                 },
@@ -438,7 +435,7 @@
                             notyf.error("An error occurred. Please try again.");
                         });
                             }else{
-                             document.getElementById("navv").style.display = 'block';
+                                const navv = document.getElementById("navv").style.display = 'block';
                             }
                      });
 
@@ -451,7 +448,6 @@
 }
 
 function showOrderConfirmationModal(orderData){
-    console.log("Order details modal")
     document.getElementById('orderNumber').innerText = orderData.orderNumber;
     document.getElementById('orderDate').innerText = orderData.orderDate;
     document.getElementById('orderTotal').innerText = `$${orderData.orderTotal}`;
@@ -481,7 +477,7 @@ function showOrderConfirmationModal(orderData){
         backdrop: 'static',
         keyboard: false
     });
-       document.getElementById("navv").style.display = 'none';
+    const navv = document.getElementById("navv").style.display = 'none';
     
     modal.show();
 }
@@ -560,7 +556,7 @@ function showOrderConfirmationModal(orderData){
   })  
 
   document.getElementById("closeMOdal").addEventListener('click',function(){
-       document.getElementById("navv").style.display = 'block';
+    const navv = document.getElementById("navv").style.display = 'block';
         window.location.href="/user/order"
   })
 

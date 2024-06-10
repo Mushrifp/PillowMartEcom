@@ -10,7 +10,7 @@ user.get("/profile",userProfileController.profile)
 user.get("/password",userProfileController.password)
 user.get("/address",userProfileController.LoadAddress)
 user.get("/order",userProfileController.order)
-user.get("/wallet",userProfileController.wallet)
+user.get("/wallet",userProfileController.loadWallet)
 
 // user profile edit save changes
 user.post("/profileEdit",userProfileController.profileEdit)
@@ -32,7 +32,9 @@ user.post("/addressAddCheckout",userProfileController.addressAddCheckout)
 user.post("/cancelOrder",userProfileController.cancelOrder)
 user.get("/viewDetails",userProfileController.viewDetails)
 
-
+// wallet money add
+user.post("/walletAddMoney",userProfileController.walletAddMoney)
+user.post("/getWalletHistory",userProfileController.getWalletHistory)
 
   
 module.exports = user; 

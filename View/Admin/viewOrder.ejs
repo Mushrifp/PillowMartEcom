@@ -140,13 +140,13 @@
               <strong>Price:</strong> $<%= obj.price %>
             </div>
             <div class="details-item">
-              <strong>Status:</strong>
-              <span class="status <%= obj.status === 'Pending' ? 'status-pending' : (obj.status === 'Canceled' ? 'status-canceled' : 'status-delivered') %>">
-                <%= obj.status %>
-              </span>
+              <strong>Quantity:</strong> <%= obj.quantity %>
             </div>
             <div class="details-item">
-              <strong>Quantity:</strong> <%= obj.quantity %>
+              <strong>Category:</strong> <%= obj.category %>
+            </div>
+            <div class="details-item">
+              <strong>Size:</strong> <%= obj.size %>
             </div>
           </div>
           
@@ -156,11 +156,18 @@
               <strong>Cash:</strong> $<%= obj.cash %>
             </div>
             <div class="details-item">
-              <strong>Category:</strong> <%= obj.category %>
+              <strong>Payment Method:</strong> <%= obj.paymentMethod %>
             </div>
             <div class="details-item">
-              <strong>Size:</strong> <%= obj.size %>
+              <strong>Payment Status:</strong> <%= obj.paymentStatus ? 'Paid' : 'Not paid' %> %>
             </div>
+            <div class="details-item">
+              <strong>Status:</strong>
+              <span class="status <%= obj.status === 'Pending' ? 'status-pending' : (obj.status === 'Canceled' ? 'status-canceled' : 'status-delivered') %>">
+                <%= obj.status %>
+              </span>
+            </div>
+
           </div>
           
           <div class="details-section">

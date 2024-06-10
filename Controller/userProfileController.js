@@ -4,6 +4,12 @@ const productData = require("../Model/product");
 const hash = require("bcrypt");
 const address = require("../Model/address")
 const Order = require("../Model/order")
+const wallet = require("../Model/wallet")
+
+
+
+
+
 
 // Password hashing 
 const passwordHash = async (password) => {
@@ -111,14 +117,29 @@ const order = async (req, res) => {
 };
 
 //  Load wallet
-const wallet = async (req, res) => {
+const loadWallet = async (req, res) => {
   try {
     const userDatas = await userData.findOne({ _id: req.session.user_id });
+    const exist = await wallet.findOne({user:req.session.user_id})
 
-    res.render("wallet",{userDatas});
+     if(exist){
+      res.render("wallet",{userDatas,exist});
+     }else{
+        
+      const newWallet = new wallet ({
+        user:req.session.user_id,
+        amount:0,
+      })
+
+      await newWallet.save()
+
+      const exist = await wallet.findOne({user:req.session.user_id})
+      res.render("wallet",{userDatas,exist});
+     } 
+
   } catch (error) {
     console.log(error);
-  }
+  } 
 };
 
 // edit profile name and email and number
@@ -486,12 +507,52 @@ const viewDetails = async (req,res)=>{
     console.log(error)
   }
 }
+
+// adding money to wallet
+const walletAddMoney = async (req,res)=>{
+  try{
+
+    const date = new Date('2024-06-10T00:06:30.739+00:00');
+    const formattedDate = date.toLocaleString();
+
+    const transaction = {
+      date:formattedDate,
+      type:"Deposit",
+      money:parseInt(req.query.number)
+    }
+
+    const done = await wallet.updateOne({user:req.session.user_id},{$push:{history:transaction},$inc:{amount:parseInt(req.query.number)}})
+    
+     if(done){
+      res.send({done:"done"})
+     }else{
+      res.send({failed:"failed"})
+     }
+
+  }catch(error){
+    console.log(error)
+  }
+}
+
+// wallet history
+const getWalletHistory = async(req,res)=>{
+  try{
+
+    const data = await wallet.findOne({user:req.session.user_id})
+
+    res.send({data:data.history})
+
+  }catch(error){
+    console.log(error)
+  }
+}
+
 module.exports = {
   profile,
   password,
   LoadAddress,
   order,
-  wallet,
+  loadWallet,
   profileEdit,
   profilePasswordEdit,
   addAddress,
@@ -501,5 +562,7 @@ module.exports = {
   updateAddress,
   addressAddCheckout,
   cancelOrder,
-  viewDetails
+  viewDetails,
+  walletAddMoney,
+  getWalletHistory
 };

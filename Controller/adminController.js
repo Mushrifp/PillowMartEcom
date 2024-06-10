@@ -86,14 +86,11 @@ const Order = async (req,res)=>{
        for(let i=0;i<Datas.length;i++){
           for(let j=0;j<Datas[i].items.length;j++){
             let singleData = Datas[i].items[j]
-            const options = {year:'numeric',month:'long',day:'numeric'};
-            const delivery = singleData.Dates.delivery.toLocaleDateString('en-US',options); 
-            const ordered = singleData.Dates.ordered.toLocaleDateString('en-US',options); 
               let obj = {
                 user:Datas[i].userID,
                 ID:singleData._id,
-                orderDate:ordered,
-                deliveryDate:delivery,
+                paymentMethod:singleData.paymentMethod,
+                paymentStatus:singleData.paymentStatus,
                 productName:singleData.item.productTitle,
                 image:singleData.item.image[0],
                 Status:singleData.status,
@@ -427,8 +424,6 @@ const viewOrder = async (req,res)=>{
 
         let done = await order.findOne({ userID: req.query.user, "items._id": req.query.id },{ "items.$": 1 });
 
-        console.log("this ppoi ",done) 
-
         const options = {year:'numeric',month:'long',day:'numeric'};
         const ordered = done.items[0].Dates.ordered.toLocaleDateString('en-US',options);
         const delivery = done.items[0].Dates.delivery.toLocaleDateString('en-US',options);  
@@ -445,6 +440,8 @@ const viewOrder = async (req,res)=>{
           size:done.items[0].item.size,
           status:done.items[0].status,
           cash:done.items[0].cash,
+          paymentMethod:done.items[0].paymentMethod,
+          paymentStatus:done.items[0].paymentStatus,
           quantity:done.items[0].quantity,
           name:done.items[0].address.name,
           Bname:done.items[0].address.Bname,
@@ -454,9 +451,7 @@ const viewOrder = async (req,res)=>{
           town:done.items[0].address.town,
           pincode:done.items[0].address.pincode,
    
-        }
-  
-//    console.log("this si he ",obj)     
+        } 
 
         res.render("viewOrder",{obj})
     } catch (error) {
