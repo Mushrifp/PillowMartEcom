@@ -440,6 +440,19 @@ const cancelOrder = async (req,res)=>{
   
     let StockIncrement =  await productData.updateOne({_id:req.query.ID},{$inc:{stock:parseInt(req.query.quant, 10)}}) 
 
+    const date = new Date();
+    const formattedDate = date.toLocaleString();
+
+    if(req.query.paymentMethod == "Razorpay" ||req.query.paymentMethod == "wallet"){
+      const transaction = {
+      date:formattedDate,
+      type:"Deposit",
+      money:req.query.totalCash
+    }
+
+    await wallet.updateOne({user:req.session.user_id},{$push:{history:transaction},$inc:{amount:req.query.totalCash}})
+    }
+
      if(done&&StockIncrement){
       res.send({Done:"Done"})
      }else{
@@ -551,6 +564,24 @@ const getWalletHistory = async(req,res)=>{
   }
 }
 
+// order return 
+const returnOrder = async (req,res)=>{
+  try {
+console.log("reached ===========")
+     let done = await Order.updateOne({userID:req.session.user_id, "items._id": req.query.docID }, {$set:{ "items.$.status": "Return" } });
+
+     if(done){
+      res.send({Done:"Done"})
+     }else{
+      res.send({failed:"failed"})
+     }
+
+
+  }catch (error){
+    console.log(error)
+  }
+}
+
 module.exports = {
   profile,
   password,
@@ -568,5 +599,6 @@ module.exports = {
   cancelOrder,
   viewDetails,
   walletAddMoney,
-  getWalletHistory
+  getWalletHistory,
+  returnOrder
 };

@@ -118,7 +118,11 @@
         <div class="card-body">
           <div class="details-section">
             <button class="btn-custom">
+              <% if(page == "order"){ %>
               <a href="/admin/order" class="btn-link" style="color: white; text-decoration: none;">Go Back</a>
+             <%  }else{ %>
+              <a href="/admin/dash" class="btn-link" style="color: white; text-decoration: none;">Go Back</a>
+               <% } %>
             </button>
           </div>
           

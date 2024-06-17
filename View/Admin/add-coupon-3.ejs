@@ -1,6 +1,5 @@
 <%- include('./layouts/header.ejs') %>
 <main class="main-wrap">
-
     <header class="main-header navbar">
         <div class="col-search">
             <form class="searchform">
@@ -10,64 +9,54 @@
                 </div>
             </form>
         </div>
-        <div class="col-nav">
-            <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
-            <ul class="nav">
-                <li class="dropdown nav-item">
-                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar-1.png" alt="User" /></a>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                        <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
     </header>
 
     <section class="content-main">
         <div class="row">
-            <div class="col-9">
-                <div class="content-header">
-                    <h2 class="content-title">Add New Coupon</h2>
-                    <div>
-                        <button class="btn btn-md rounded font-sm hover-up">Create</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
+            <div class="col-lg-10">
+                <h2 class="content-title">Add Coupons</h2>
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="mb-4">
-                            <label class="form-label">Coupon Name</label>
-                            <input type="text" placeholder="Type here" class="form-control" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Coupon Code</label>
-                            <input type="text" placeholder="Type here" class="form-control" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Discount Amount</label>
-                            <input type="text" placeholder="Type here" class="form-control" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Eligible Amount</label>
-                            <input type="text" placeholder="Type here" class="form-control" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Count</label>
-                            <input type="text" placeholder="Type here" class="form-control" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Expiry Date</label>
-                            <input type="text" placeholder="Type here" class="form-control" />
-                        </div>
+                        <form id="couponForm">
+                            <div class="mb-4">
+                                <label class="form-label">Coupon Name</label>
+                                <input type="text" id="name" name="name" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Coupon Code</label>
+                                <input type="text" id="code" name="code" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Discount Amount</label>
+                                <input type="number" id="discount_amount" name="discount_amount" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <input type="text" id="description" name="description" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Count</label>
+                                <input type="number" id="count" name="count" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Starting Date</label>
+                                <input type="date" id="starting_date" name="starting_date" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Expiry Date</label>
+                                <input type="date" id="expiry_date" name="expiry_date" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div>
+                                <button id="saveButton" class="btn btn-md rounded font-sm hover-up" type="submit">Create</button>
+                            </div>
+                        </form>
+                        <div id="notification" style="display: none; color: red;">Please fill all fields</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
+
     <footer class="main-footer font-xs">
         <div class="row pb-30 pt-15">
             <div class="col-sm-6">
@@ -82,4 +71,71 @@
         </div>
     </footer>
 </main>
+
 <%- include('./layouts/footer.ejs') %>
+
+<link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
+<script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.getElementById("couponForm").addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        let data = {
+            name: document.getElementById('name').value,
+            code: document.getElementById('code').value,
+            discount: document.getElementById('discount_amount').value,
+            description: document.getElementById('description').value,
+            count: document.getElementById('count').value,
+            startDate: document.getElementById('starting_date').value,
+            endDate: document.getElementById('expiry_date').value,
+        };
+
+        if (Object.values(data).some(field => field === '')) {
+            Toast.fire({
+                icon: "error",
+                title: "Please fill all fields"
+            });
+        } else {
+            axios.post("/admin/addCoupon", data)
+                .then(function(response) {
+                    if (response.data.doneMessage) {
+                        Swal.fire({
+                      title: "Created successfully",
+                      icon: "success",
+                      confirmButtonColor: "#3085d6",
+                      confirmButtonText: "ok",
+                      allowOutsideClick: false
+                          }).then((result) => {
+                            if (result.isConfirmed){
+                        window.location.href="/admin/offAndcop";
+                         }})
+                    } else if (response.data.message) {
+                        Toast.fire({
+                            icon: "error",
+                            title: "Failed. Try again."
+                        });
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    Toast.fire({
+                        icon: "error",
+                        title: "An error occurred. Please try again."
+                    });
+                });
+        }
+    });
+</script>

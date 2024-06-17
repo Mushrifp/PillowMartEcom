@@ -90,7 +90,13 @@ admin_router.post("/editCategory",auth.isLogin,adminController.editCategory)
 admin_router.get("/viewOrder",auth.isLogin,adminController.viewOrder)
 admin_router.get("/statusChange",auth.isLogin,adminController.statusChange)
 
+// coupon adding 
+admin_router.post("/addCoupon",adminController.addCoupon);
+admin_router.get("/deleteCoupon",adminController.deleteCoupon);
+admin_router.get("/editCoupon",adminController.editCoupon);
+admin_router.post("/editCouponSave",adminController.editCouponSave);
 
+admin_router.post("/filter",adminController.filterOrders);
 
 
 module.exports=admin_router;   

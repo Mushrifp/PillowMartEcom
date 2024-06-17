@@ -127,6 +127,8 @@
                                         <div style="background-color:rgba(67, 191, 0, 0.315); border-radius: 10px; padding: 5px; margin-bottom: 10px;"><span style="margin-left: 20px;">Order Delivered</span></div>
                                     <% }else if(product.Status == 'Pending'){ %>
                                         <div style="background-color:rgba(201, 174, 0, 0.315); border-radius: 10px; padding: 5px; margin-bottom: 10px;"><span style="margin-left: 20px;">Order Pending</span></div>
+                                    <% }else{%> 
+                                        <div style="background-color:rgba(0, 127, 201, 0.315); border-radius: 10px; padding: 5px; margin-bottom: 10px;"><span style="margin-left: 20px;"><%= product.Status %></span></div>
                                     <% }%> 
                                     <div class="row align-items-center">
                                         <div class="col-md-3">
@@ -138,7 +140,9 @@
                                             <h5 style="color: rgb(0, 0, 0); margin-left: 10px;"><span style="color: #2F8886">Delivery Date : </span><%= product.deliveryDate %></h5>
                                             <h5 style="color: rgb(0, 0, 0); margin-left: 10px;"><span style="color: #111d16">Payment Method : </span><%= product.paymentMethod %></h5>
                                             <input id="quant" type="hidden" value="<%= product.quantity %>">  
-                                            <input id="docID" type="hidden" value="<%= product.docID %>">  
+                                            <input id="docID" type="hidden" value="<%= product.docID %>"> 
+                                            <input id="paymentMethod" type="hidden" value="<%= product.paymentMethod %>">  
+                                            <input id="totalCash" type="hidden" value="<%= product.Total %>"> 
                                         </div>
                                         <div class="col-md-3 text-right">
                                             <button type="button" class="btn btn-secondary" style="margin-right: 5px;" id="ViewButton">
@@ -152,7 +156,7 @@
                                             </button>
                                             <% } else if(product.Status == 'Delivered'){ %>
                                             <button type="button" id="returnBTN">
-                                                <a style="color: rgb(255, 255, 255);" href="#">Return Product</a>
+                                                <a style="color: rgb(255, 255, 255);" href="<%= product.ID %>">Return Product</a>
                                             </button>  
                                             <% } else if(product.Status == 'Canceled'){  %> 
                                                 <button type="button" style="background-color: rgb(143, 0, 0);" disabled>
@@ -233,6 +237,8 @@ for (let i = 0; i < buttons.length; i++) {
 
         const quant = button.closest('.product-box').querySelector('#quant').getAttribute('value');
         const docID = button.closest('.product-box').querySelector('#docID').getAttribute('value');
+        const paymentMethod = button.closest('.product-box').querySelector('#paymentMethod').getAttribute('value');
+        const totalCash = button.closest('.product-box').querySelector('#totalCash').getAttribute('value');
 
         Swal.fire({
             title: 'Are you sure?',
@@ -245,7 +251,7 @@ for (let i = 0; i < buttons.length; i++) {
         }).then((result) => {
             if (result.isConfirmed) {
                 const linkUrl = button.querySelector('a').getAttribute('href');
-                axios.post(`/user/cancelOrder?ID=${linkUrl}&quant=${quant}&docID=${docID}`)
+                axios.post(`/user/cancelOrder?ID=${linkUrl}&quant=${quant}&docID=${docID}&paymentMethod=${paymentMethod}&totalCash=${totalCash}`)
                     .then(function(response) {
                         Swal.fire({
                             title: "Order Canceled",
@@ -263,6 +269,50 @@ for (let i = 0; i < buttons.length; i++) {
                     });
             }
         });
+    });
+}
+
+
+
+const returnButtons = document.querySelectorAll('#returnBTN');
+
+for (let i = 0; i < returnButtons.length; i++) {
+    const returnButton = returnButtons[i];
+    returnButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        const quant = returnButton.closest('.product-box').querySelector('#quant').getAttribute('value');
+        const docID = returnButton.closest('.product-box').querySelector('#docID').getAttribute('value');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const linkUrl = returnButton.querySelector('a').getAttribute('href');
+                axios.post(`/user/returnOrder?ID=${linkUrl}&docID=${docID}`)
+                    .then(function(response) {
+                        Swal.fire({
+                            title: "product returned ",
+                            text: "Your Order has been returned.",
+                            icon: "success"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                if (response.data.Done) {
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+            }
+        });
+           
     });
 }
     </script>

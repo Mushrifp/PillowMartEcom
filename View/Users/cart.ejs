@@ -24,17 +24,17 @@
         <div class="cart_inner">
           <form action="/checkout" method="POST">
             <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Product</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
                     <% if(typeof carts != 'undefined' ){ %>
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                     <% carts.forEach(cart => { %>
                     <tr>
                         <td>
@@ -65,6 +65,7 @@
                         </td>
                     </tr>
                     <% }) %>
+                </tbody>
                     <% } else if(typeof emptyCart != 'undefined') { %>
                     <tr>
                         <td colspan="5">
@@ -84,7 +85,6 @@
                         </td>
                     </tr>
                     <% } %>
-                </tbody>
             </table>
             <div class="checkout_btn_inner float-right">
                 <% if (typeof carts != 'undefined' ) { %>

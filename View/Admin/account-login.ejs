@@ -29,7 +29,7 @@
                 <div class="card mx-auto card-login">
                     <div class="card-body">
                         <h4 class="card-title mb-4">Sign in</h4>
-                        <form action="/admin/loginVerify" method="post">
+                        <form>
                             <div class="mb-3">
                                 <input class="form-control" placeholder="email" type="email" id="email" name="email" required />
                             </div>
@@ -39,12 +39,8 @@
                             </div>
                             <!-- form-group form-check .// -->
                             <div class="mb-4">
-                                <button type="submit" value="submit" class="btn btn-primary w-100">Login</button>
+                                <button type="submit" value="submit" id="Submt" class="btn btn-primary w-100">Login</button>
                             </div>
-
-                         <% if(typeof message != "undefined"){ %>
-                            <p style="color: red;"><%= message %></p>
-                        <% } %>
                             <!-- form-group// -->
                         </form>
                     </div>
@@ -65,5 +61,49 @@
         <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
         <!-- Main Script -->
         <script src="/assets/js/main.js?v=1.1" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
+        <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+        
+        <script>
+             
+         document.getElementById("Submt").addEventListener("click",function(event){
+            event.preventDefault();
+
+             let data={
+                email : document.getElementById("email").value,
+                password : document.getElementById("password").value
+             }
+
+             axios.post("/admin/loginVerify",data)
+               .then((response)=>{
+                      if(response.data.Done){
+                        Swal.fire({
+                      title: "Verified",
+                      icon: "success",
+                      confirmButtonColor: "#3085d6",
+                      confirmButtonText: "Log In",
+                      allowOutsideClick:false,
+                          }).then((result) => {
+                            if (result.isConfirmed){
+                                window.location.href="/admin/dash"
+                            }
+                          })
+                      }else{
+                        
+                        Swal.fire({
+                      title: "Failed Try Again",
+                      icon: "error",
+                      confirmButtonColor: "#3085d6",
+                          })
+                    
+                        
+                      }
+               }).catch((error)=>{
+                  console.log(error)
+               })
+         })
+
+        </script>
     </body>
 </html>

@@ -1,0 +1,80 @@
+<%- include('./layouts/header.ejs') %>
+<main class="main-wrap">
+    <header class="main-header navbar">
+        <div class="col-search">
+            <form class="searchform">
+                <div class="input-group">
+                    <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                    <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </header>
+
+    <section class="content-main">
+        <div class="row">
+            <div class="col-lg-10">
+                <% if(typeof message != 'undefined'){ %>
+                    <h3 style="color: red;"><%= message  %> </h3>
+            <% } %> 
+                <h2 class="content-title">Edit Coupons</h2>
+                <br>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form action="/admin/editCouponSave"  method="post" >
+                            <div class="mb-4">
+                                <label class="form-label">Coupon Name</label>
+                                <input type="text" id="name" name="name" placeholder="Type here" class="form-control" value="<%= coupon.name %>" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Coupon Code</label>
+                                <input type="text" id="code" name="code" placeholder="Type here" class="form-control" value="<%= coupon.code %>" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Discount Amount</label>
+                                <input type="number" id="discount_amount" name="discount" placeholder="Type here" class="form-control" value="<%= coupon.discount %>" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <input type="text" id="description" name="description" placeholder="Type here" class="form-control" value="<%= coupon.description %>" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Count</label>
+                                <input type="number" id="count" name="count" placeholder="Type here" class="form-control" value="<%= coupon.count %>" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Starting Date</label>
+                                <input type="date" id="starting_date" name="startDate" placeholder="Type here" class="form-control" value="<%= coupon.startDate %>" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Expiry Date</label>
+                                <input type="date" id="expiry_date" name="endDate" placeholder="Type here" class="form-control" value="<%= coupon.endDate %>" />
+                            </div>
+                            <input type="hidden" name="ID" value="<%= coupon._id %>" />
+                            <div>
+                                <button  class="btn btn-md rounded font-sm hover-up" type="submit">save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<%- include('./layouts/footer.ejs') %>

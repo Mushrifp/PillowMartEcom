@@ -68,4 +68,8 @@ user_router.post("/orderConfirm",userController.orderConfirm)
 user_router.get("/pagination",userController.pagination)
 user_router.post("/razpayOrderPlace",userController.razpayOrderPlace)
 
+// coupon
+user_router.post("/showCoupon",userController.showCoupon)
+user_router.post("/applyCoupon",userController.applyCoupon)
+
 module.exports = user_router;

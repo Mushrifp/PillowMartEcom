@@ -67,10 +67,11 @@
     <div class="container" style="margin-top: -150px;">
         <div class="cupon_area">
             <div class="check_title">
-                <h2>Have a coupon? Enter your code</h2>
+                <h2>Coupon Section</h2>
             </div>
-            <input type="text" placeholder="Enter coupon code"/>
-            <a class="tp_btn" href="#">Apply Coupon</a>
+            <input  id="couponCode" type="text" placeholder="Enter coupon code"/>
+            <a id="couponApply" class="tp_btn" href="#">Apply Coupon</a>
+            <a id="CouponShow" class="tp_btn" href="#">Show available Coupon</a>
         </div>
         <hr>
         <div class="billing_details">
@@ -79,6 +80,7 @@
                     <h1>ADDRESS DETAILS</h1>
                     <section class="user_addresses">
                         <h3>Available Addresses:</h3>
+                        <h4>Select Addresses By Clicking the Circle :</h4>
                       <% if(typeof userAddresses != 'undefined'){ %>
                             <form id="addressForm" action="/checkout" method="post">
                                 <% userAddresses.forEach(function(address) { %>
@@ -168,8 +170,8 @@
                     <br>
                     <button id="proceedButton" class="btn_3" type="button" onclick="proceed()">Click to Proceed</button>
                 </div>
-                <div class="col-lg-4">
-                    <div class="order_box">
+                <div class="col-lg-4" >
+                    <div class="order_box" style="width: 380px;">
                         <h2>Your Order Details</h2>
                         <table>
                             <thead>
@@ -195,8 +197,8 @@
                         </table>
                         <hr>
                         <span>Subtotal :</span>
-                        <span style="margin-left: 170px;">$ <%= subtotal %></span>
-                        <input type="hidden" id="subtotal" value="<%= subtotal %>" >
+                        <span style="margin-left: 170px;" id="subShow">$ <%= subtotal %></span>
+                        <input type="hidden" id="subtotal" value="<%= subtotal %>"  >
                         <input type="hidden" id="walletMoney" value="<%= walletMoney %>">
                     </div>
                 </div>
@@ -339,18 +341,16 @@
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
     const subtotal = document.getElementById('subtotal').value;
     const walletMoney = document.getElementById('walletMoney').value;
-    
 
+    console.log(paymentMethod,subtotal,walletMoney)
+    
     if(selectedAddress){
         if(paymentMethod){
          const navv = document.getElementById("navv").style.display = 'none';
 
-         if(paymentMethod.value === 'wallet' && subtotal > walletMoney) {
-            Swal.fire({
-                 title: "Can't use",
-                 text: "Insufficient Balance",
-                 icon: "error"
-               });
+         if(paymentMethod.value === 'wallet' && parseFloat(walletMoney) < parseFloat(subtotal)) {
+            const navv = document.getElementById("navv").style.display = 'block';
+            notyf.error("Can't use Insufficient Balance")
                 return;
             }
                     Swal.fire({
@@ -558,8 +558,17 @@ function showOrderConfirmationModal(orderData){
        axios.post("/user/addressAddCheckout",data)
        .then(function(response){
            if(response.data.doneMessage){
-             alert("Created Successfully Now Select the Available address")       
-             window.location.reload()          
+            const navv = document.getElementById("navv").style.display = 'none';
+            Swal.fire({
+              title: "Address Created",
+              text: "Select Your Address To Proceed",
+              icon: "success",
+              allowOutsideClick: false
+            }).then((result)=>{
+                  if(result.isConfirmed){
+                      window.location.reload()       
+                  }
+                              })
            }else if(response.data.message){
              notyf.error("Failed try again")
            }
@@ -576,6 +585,122 @@ function showOrderConfirmationModal(orderData){
     const navv = document.getElementById("navv").style.display = 'block';
         window.location.href="/user/order"
   })
+
+  
+  
+  document.getElementById("CouponShow").addEventListener("click", function(event) {
+    event.preventDefault();
+    const subtotal = document.getElementById('subtotal').value;
+    axios.post("/showCoupon",{subtotal:subtotal})
+        .then((response) => {
+            if (response.data.data) {
+                const coupons = response.data.data;
+
+                let couponHTML = '<h2>Available Coupons</h2>';
+                couponHTML += `
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #ddd; padding: 8px;">Coupon Code</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">Discount</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">Description</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">Expiration Date</th>
+                            </tr>
+                            <tr>
+                            <td colspan="6" style="border: none;"><br></td>
+                        </tr>
+                        </thead>
+                        <tbody>`;
+
+                coupons.forEach((coupon, index) => {
+                    couponHTML += `
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                ${coupon.code}
+                                <button onclick="copyToClipboard('coupon-${index}')"  style="border: none;  ">Copy</button>
+                                <span id="coupon-${index}" style="display:none;">${coupon.code}</span>
+                                </td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">$${coupon.discount}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${coupon.description}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${coupon.endDate}</td>
+                        </tr>
+                        
+                    `;
+                });
+
+                couponHTML += `
+                        </tbody>
+                    </table>`;
+
+                Swal.fire({
+                    html: couponHTML,
+                    width: '80%',
+                    confirmButtonText: "Close",
+                    customClass: {
+                        container: 'swal2-custom'
+                    }
+                });
+            } else if (response.data.NoData) {
+                notyf.error("No coupons available");
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+});
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        notyf.success("Coupon code copied to clipboard");
+    }).catch((error) => {
+        console.error('Failed to copy text: ', error);
+        notyf.error("Failed to copy coupon code");
+    });
+}
+
+document.getElementById("couponApply").addEventListener("click", function(event) {
+    event.preventDefault();
+
+    const code = document.getElementById("couponCode").value;
+
+    if(code == ''){
+        notyf.error("Enter Invalid Code")
+    }else{
+          let subtotal = document.getElementById('subtotal').value;
+
+          const data = {
+              code: code,
+              subtotal: subtotal
+                };
+
+    axios.post("/applyCoupon", data)
+    .then((response) => {
+          if(response.data.answer){
+            Swal.fire({
+            title: "Coupon  Applied",
+            text: "Your Coupon has been Applied.",
+            icon: "success"
+                
+                });
+        
+        document.getElementById("subShow").innerHTML = `<strike>${subtotal}</strike> $${response.data.answer}`;
+
+        document.getElementById("subtotal").value = response.data.answer;
+
+          }else{
+            notyf.error("Invalid Code")
+          }
+          
+    }).catch((error) => {
+        console.log(error);
+    });   
+    }
+    
+});
+
+
+
 
 </script>
 <!-- jquery plugins here-->

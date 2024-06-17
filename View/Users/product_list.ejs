@@ -9,8 +9,8 @@
       list-style-type: none;
       margin: 0 5px;
       padding: 10px 20px;
-      background-color: #B08EAD;
-      color: #fff;
+      background-color: #ffffff;
+      color: #000000;
       border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s;
@@ -19,11 +19,14 @@
       box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
     }
     .pagination li:hover {   
-      background-color: #95338d;
+      background-color: #ffffff;
       box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
+      color: black;
+
     }
     .pagination .active {
-      background-color: #95338d;
+      background-color: #ffffff;
+      color: black;
     }
     #product-imageh {
      width: 100%;
@@ -50,6 +53,12 @@
         letter-spacing: 0.8px;
         color: rgb(19, 19, 19);
         font-size: 13.4px;
+    }
+    #detailBtn{
+        color: #B08EAD;
+    }
+    #detailBtn:hover{
+        color: #ffffff;
     }
 </style>
 
@@ -151,11 +160,11 @@
                                             </div>
                                             <div class="col-xl-3 col-md-3 col-sm-5">
                                                 <div class="d-flex flex-row align-items-center mb-1">
-                                                    <h4 class="mb-1 me-1" style="color: green;">Price :</h4>
+                                                    <h4 class="mb-1 me-1" style="color: rgb(0, 0, 0);">Price :</h4>
                                                     <h4 class="mb-1 me-1">$<%= Data[i].price %></h4>
                                                 </div>
                                                 <div class="mt-4">
-                                                    <button class="btn_3" ><a style="color: black;" href="/single-product?id=<%= Data[i]._id %>">Details </a></button>
+                                                    <a id="detailBtn" href="/single-product?id=<%= Data[i]._id %>"><button class="btn_3" >&nbsp;Details</button> </a>
                                                     <br>
                                                     <br>
                                                     <button class="btn_3 wishButton" type="button" data-id="<%= Data[i]._id %>">Wishlist</button>
@@ -195,14 +204,32 @@
                     <a style="color: white;" href="/pagination?number=<%= number - 1 %>"><li style="margin-right: 5px;">&laquo; Prev</li></a>
                 <% } %>
     
-                <% for (let i = 0; i <= answer; i++) { %>
-                    <% if (number === i) { %>
-                        <a style="color: white;" href="/pagination?number=<%= i %>"><li class="active" style="margin-right: 5px;"><%= i %></li></a>
-                    <% } else { %>
-                        <a style="color: white;" href="/pagination?number=<%= i %>"><li style="margin-right: 5px;"><%= i %></li></a>
+                <% if (number > 0 && number != 1) { %>
+                    <a style="color: white;" href="/pagination?number=0"><li style="margin-right: 5px;">0</li></a>
+                <% } %>
+    
+                <% if (number > 1) { %>
+                    <li style="margin-right: 5px;">...</li>
+                <% } %>
+    
+                <% for (let i = Math.max(0, number - 1); i <= Math.min(answer, number + 1); i++) { %>
+                    <% if (i === 0 || i === answer || (i >= number - 1 && i <= number + 1)) { %>
+                        <% if (number === i) { %>
+                            <a style="color: white;" href="/pagination?number=<%= i %>"><li class="active" style="margin-right: 5px;"><%= i %></li></a>
+                        <% } else { %>
+                            <a style="color: white;" href="/pagination?number=<%= i %>"><li style="margin-right: 5px;"><%= i %></li></a>
+                        <% } %>
                     <% } %>
                 <% } %>
     
+                <% if (number < answer - 1) { %>
+                    <li style="margin-right: 5px;">...</li>
+                <% } %>
+                 
+                <% if (number >= 0 && number != answer && number != answer-1 ) { %>
+                    <a style="color: white;" href="/pagination?number=<%= answer %>"><li style="margin-right: 5px;"><%= answer %></li></a>
+                <% } %>
+
                 <% if (number === answer) { %>
                     <a style="color: white;" href="/pagination?number=<%= answer %>"><li>Next &raquo;</li></a>
                 <% } else { %>
@@ -211,6 +238,8 @@
             </ul>
         </div>
     <% } %>
+    
+    
     
     <!--  pagination -->
     <br>

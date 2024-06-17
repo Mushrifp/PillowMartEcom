@@ -5,7 +5,7 @@ const product = require("../Model/product")
 const categoryDB  = require("../Model/category")
 const order = require("../Model/order")
 const mongoose = require('mongoose');
-
+const Coupon = require('../Model/coupons');
 
 
 
@@ -21,25 +21,18 @@ const adminLogin = async (req,res)=>{
 // admin login verify
 const loginVerify = async (req,res)=>{
     try {
+         
           let adminEmail = "admin@gmail.com"
           let adminPass = "123"
-
+console.log("this is the shit ",req.body)
            if(adminEmail == req.body.email&&adminPass == req.body.password){
             req.session.admin_mail = {
                 email:adminEmail
             }
 
-            const productNumber = await productData.countDocuments({})
-            const userNumber = await userData.countDocuments({})
-            const orderNumber = await order.find({})
-             let number = 0;
-             for(let i=0;i<orderNumber.length;i++){
-                 number +=orderNumber[i].items.length
-             }
-             res.render("dash",{ProductCount:productNumber,userCount:userNumber,number})
-            console.log("admin In")
+    res.send({Done:"Verified"})
            }else{
-            res.render("account-login",{message:"Invalid email and password"})
+    res.send({NotDone:"Not Verified"})
            }
 
     } catch (error) {
@@ -47,23 +40,75 @@ const loginVerify = async (req,res)=>{
     }
 }
 
+// Load Dashboard with Pagination
+const loadDash = async (req, res) => {
+    try {
+        const productNumber = await productData.countDocuments({});
+        const userNumber = await userData.countDocuments({});
+        const orderNumber = await order.find({});
 
-// Load Dashboard
-const loadDash = async (req,res)=>{
-     try {
-        const productNumber = await productData.countDocuments({})
-        const userNumber = await userData.countDocuments({})
-        const orderNumber = await order.find({})
         let number = 0;
-        for(let i=0;i<orderNumber.length;i++){
-            number +=orderNumber[i].items.length
+        for (let i = 0; i < orderNumber.length; i++) {
+            number += orderNumber[i].items.length;
         }
-         res.render("dash",{ProductCount:productNumber,userCount:userNumber,number})
-        
-     } catch (error) {
-        console.log(error)
-     }
-}
+
+        const Datas = await order.find({}).sort({ _id: -1 });
+
+        let orders = [];
+
+        for (let i = 0; i < Datas.length; i++) {
+            for (let j = 0; j < Datas[i].items.length; j++) {
+                let singleData = Datas[i].items[j];
+                let pyst ;
+                if(singleData.paymentStatus == true){
+                       pyst="Paid"
+                }else{
+                      pyst="Not Paid"
+                }
+                let obj = {
+                    user: Datas[i].userID,
+                    ID: singleData._id,
+                    paymentMethod: singleData.paymentMethod,
+                    category:singleData.item.category,
+                    paymentStatus: pyst,
+                    productName: singleData.item.productTitle,
+                    image: singleData.item.image[0],
+                    OrdrDate: singleData.Dates.ordered,
+                    Status: singleData.status,
+                    Total: singleData.cash,
+                    name: singleData.address.name
+                };
+
+                orders.push(obj);
+            }
+        }
+
+        const perPage = 3; 
+        const page = req.query.page || 1; 
+
+        const userDataList = await userData.find({}).sort({_id:-1}).skip((page-1)*perPage).limit(perPage);
+
+        const catgorys = await categoryDB.find({})
+
+        const totalUsers = await userData.countDocuments({});
+        const totalPages = Math.ceil(totalUsers/perPage);
+
+        res.render('dash',{
+            ProductCount: productNumber,
+            userCount: userNumber,
+            number,
+            orders,
+            userData: userDataList,
+            totalPages,
+            currentPage: parseInt(page),
+            catgorys
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 
 // Load Product
 const Product = async (req,res)=>{
@@ -111,7 +156,7 @@ const Order = async (req,res)=>{
 // Load user
 const users = async (req,res)=>{
     try {
-        const DataOfUser = await userData.find({})
+        const DataOfUser = await userData.find({}).sort({ _id: -1 });
         res.render("user-list",{userData:DataOfUser})
     } catch (error) {
         console.log(error)
@@ -179,7 +224,9 @@ const addcoupon  = async (req,res)=>{
 // Load coupon and offer 
 const offAndcop = async (req,res)=>{
     try {
-         res.render("offerandcop-3")
+        const coupons = await Coupon.find({});
+         res.render("offerandcop-3",{coupons})
+        
     } catch (error) {
         console.log(error)
     }
@@ -452,8 +499,8 @@ const viewOrder = async (req,res)=>{
           pincode:done.items[0].address.pincode,
    
         } 
-
-        res.render("viewOrder",{obj})
+ let page = req.query.page
+        res.render("viewOrder",{obj,page})
     } catch (error) {
         console.log(error)
     }
@@ -474,6 +521,144 @@ const statusChange = async (req,res)=>{
      console.log(error)
    }
 }
+
+// adding coupon 
+const addCoupon = async (req,res)=>{
+    try{
+        const { code, name, description, discount, count, startDate, endDate } = req.body;
+        const newCoupon = new Coupon({
+            code,
+            name,
+            description,
+            discount,
+            count,
+            startDate,
+            endDate
+         });
+
+         const done = await newCoupon.save();;
+         if(done){
+            res.send({doneMessage:"done"})
+         }else{
+            res.send({message:"failed"})
+         }
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// delete coupon 
+const deleteCoupon = async (req,res)=>{
+    try{
+        await Coupon.deleteOne({_id:req.query.id})
+        const coupons = await Coupon.find({});
+        res.render("offerandcop-3",{coupons,message:"deleted"})
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// edit coupon 
+const editCoupon = async (req,res)=>{
+    try{
+
+       const coupon = await Coupon.findOne({_id:req.query.id})
+       res.render("edit-coupon-3 ",{coupon})
+
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// edit save coupon
+const editCouponSave = async (req, res) => {
+    try {
+        console.log(req.body)
+        const id = req.body.ID;
+        const updateFields = {};
+
+        for (const key in req.body) {
+            if (key !== 'ID') {
+                updateFields[key] = req.body[key];
+            }
+        }
+        const updatedCoupon = await Coupon.findByIdAndUpdate(id, updateFields, { new: true });
+
+        if (updatedCoupon) {
+            const coupons = await Coupon.find({});
+            res.render("offerandcop-3", { coupons });
+        } else {
+            res.render("offerandcop-3", { message: "Failed to update coupon" });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+
+const filterOrders = async (req,res)=>{
+    try{
+
+        const filterType = req.body.filterType;
+        const filterValue  = req.body.filterValue;
+        const data  = req.body.data     
+
+        let filteredOrders = data;
+    
+        if(filterType === 'Category'){
+            filteredOrders = filteredOrders.filter(order => order.category === filterValue);
+
+
+        } else if (filterType === 'Date'){
+            filteredOrders = filteredOrders.filter(order => {
+                const filterDate = new Date(filterValue);
+                const orderDate = new Date(order.OrdrDate);
+                return orderDate.getFullYear() === filterDate.getFullYear() && orderDate.getMonth() === filterDate.getMonth() && orderDate.getDate() === filterDate.getDate();
+            });
+            
+
+        } else if (filterType === 'Status'){
+            filteredOrders = filteredOrders.filter(order => order.paymentStatus.toLowerCase() === filterValue.toLowerCase());
+
+
+        } else if (filterType === 'Filter By'){
+            const now = new Date();
+            if (filterValue === 'Week') {
+                const oneWeekAgo = new Date(now.setDate(now.getDate() - 7));
+                filteredOrders = filteredOrders.filter(order => new Date(order.OrdrDate) >= oneWeekAgo);
+            } else if (filterValue === 'Month'){
+                const oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
+                filteredOrders = filteredOrders.filter(order => new Date(order.OrdrDate) >= oneMonthAgo);
+            } else if (filterValue === 'Today'){
+                filteredOrders = filteredOrders.filter(order => new Date(order.OrdrDate).toDateString() === new Date().toDateString());
+            }
+
+
+        } else if (filterType === 'Payment Method'){
+            let v ;
+             if(filterValue == "COD"){
+                v="CashOnDelivery"
+             }else if(filterValue == "Online"){
+                v="Razorpay"
+             }else{
+                v="wallet"
+             }
+            filteredOrders = filteredOrders.filter(order => order.paymentMethod.toLowerCase() === v.toLowerCase());
+        }
+
+        if(filteredOrders.length === 0){
+            res.send({NoData:data});
+        }else{
+            res.send(filteredOrders);
+        }
+    
+    }catch(error){
+        console.log(error)
+    }
+}
+
+
 
 module.exports={
     loadDash,
@@ -501,5 +686,10 @@ module.exports={
     editCategory,
     editCategoryLoad,
     viewOrder,
-    statusChange
+    statusChange,
+    addCoupon,
+    deleteCoupon,
+    editCoupon,
+    editCouponSave,
+    filterOrders
 }

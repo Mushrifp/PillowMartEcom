@@ -10,6 +10,7 @@ const address = require("../Model/address")
 const order = require("../Model/order")
 const Razorpay = require('razorpay');
 const wallet = require("../Model/wallet")
+const Coupon = require("../Model/coupons")
 
 
 
@@ -81,7 +82,7 @@ const loadAbout = async (req, res) => {
 // Load Product Page
 const loadProduct = async (req, res) => {
     try {
-        const DataProduct = await productData.find({}).limit(10)
+        const DataProduct = await productData.find({}).limit(5)
 
         const userSession  = await userData.findOne({_id:req.session.user_id})
 
@@ -89,7 +90,7 @@ const loadProduct = async (req, res) => {
 
         const totalProduct = await productData.countDocuments({})
 
-        let answer = (Math.ceil(totalProduct/10))-1
+        let answer = (Math.ceil(totalProduct/5))-1
  
         let number = 0;
 
@@ -381,6 +382,17 @@ const loginVerify = async (req, res) => {
                         
                        let sessionStoring  = req.session.user_id = userDatas._id
                        if(sessionStoring){
+                        
+                        const exist = await wallet.findOne({user:req.session.user_id})
+
+                        if(!exist){                            
+                          const newWallet = new wallet ({
+                            user:req.session.user_id,
+                            amount:0,
+                          })
+                          await newWallet.save()
+                         } 
+
                         res.render("index", { message: "Login Success",userData:sessionStoring })
                         
                        }else{
@@ -621,7 +633,7 @@ const loadCheckout = async (req,res)=>{
         const addresss = await address.findOne({UserID:req.session.user_id})
         const productsData = req.body.products;
         const walletMoney = await wallet.findOne({user:req.session.user_id})
-
+        
         const productsArray = Object.keys(productsData).map(productId =>([
           productId,
            parseInt(productsData[productId].quantity)
@@ -634,8 +646,8 @@ const loadCheckout = async (req,res)=>{
         const UserCart = await cart.findOne({user:req.session.user_id});
   
         
-const arrayOfID = UserCart.product
-const CheckOutData = [];
+   const arrayOfID = UserCart.product
+   const CheckOutData = [];
 
      for(let i=0;i<UserCart.product.length;i++){
          let product = [];
@@ -646,10 +658,9 @@ const CheckOutData = [];
 
      if(addresss&&addresss.userAddress){
         const userAddresses  = addresss.userAddress
-        let amount = walletMoney.amount
-        res.render("checkout",{userData: userSession,Products:CheckOutData,userAddresses,walletMoney:amount });
+        res.render("checkout",{userData: userSession,Products:CheckOutData,userAddresses,walletMoney:walletMoney.amount });
      }else{
-        res.render("checkout",{userData: userSession,Products:CheckOutData,walletMoney:amount});
+        res.render("checkout",{userData: userSession,Products:CheckOutData,walletMoney:walletMoney.amount});
       
      }
     } catch (error) {
@@ -817,12 +828,13 @@ const pagination = async (req, res) => {
         const totalProduct = await productData.countDocuments({});
 
         const page = parseInt(req.query.number)||0;
+      
+        let pageNUmber = 5
+        const skip = page * pageNUmber;
 
-        const skip = page * 10;
-
-        const DataProduct = await productData.find().skip(skip).limit(10);
+        const DataProduct = await productData.find().skip(skip).limit(pageNUmber);
         
-        const answer = Math.ceil(totalProduct/10) - 1; 
+        const answer = Math.ceil(totalProduct/pageNUmber) - 1; 
 
         if (userSession) {
             res.render("product_list",{Data:DataProduct,userData:userSession,cate:categoryData,answer,number:page});
@@ -872,6 +884,48 @@ const razpayOrderPlace = async (req,res)=>{
         console.log(error)
     }
 }
+
+// coupon show 
+const showCoupon = async(req,res)=>{
+    try{ 
+
+        let total = req.body.subtotal;
+        let offer = total * (25 / 100)
+        const currentDate = new Date();
+
+        let data = await Coupon.find({ endDate: { $gt: currentDate.toISOString().split('T')[0] }, discount: { $lt: offer } });
+
+            if(data){
+                res.send({data})
+            }else{
+                res.send({NoData})
+            }
+           
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// applying coupon
+const applyCoupon = async (req,res)=>{
+    try{
+          
+          let data = await Coupon.findOne({code:req.body.code})
+          if(!data){
+            res.send({Nodata:"NodatFound"})
+          }
+          let dis = data.discount;
+
+          let answer = parseInt(req.body.subtotal) - dis
+
+          let done  =  await Coupon.updateOne({code:req.body.code},{$inc:{count:-1}})
+
+           res.send({answer})
+          
+    }catch(error){
+        console.log(error)
+    }
+}
 module.exports = {
     loadHome,
     loadAbout, 
@@ -897,5 +951,7 @@ module.exports = {
     orderConfirm,
     pagination,
     priceSort,
-    razpayOrderPlace
+    razpayOrderPlace,
+    showCoupon,
+    applyCoupon
 }

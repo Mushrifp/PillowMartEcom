@@ -4,6 +4,57 @@
         <div class="row">
             <div class="col-lg-12">
                 <h2 class="content-title">Offers and Coupons</h2>
+                <br>
+                <% if(typeof message != 'undefined'){ %>
+                        <h3 style="color: red;">Deleted </h3>
+                <% } %>  
+                <br>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                           <h3>Existing Coupons</h3> 
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Code</th>
+                                        <th>Description</th>
+                                        <th>Discount</th>
+                                        <th>Count</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   <% for (let i = 0; i < coupons.length; i++){ %>
+                                    
+                                    <tr>
+                                        <td><%= coupons[i].name %></td>
+                                        <td><%= coupons[i].code %></td>
+                                        <td><%= coupons[i].description %></td>
+                                        <td><%= coupons[i].discount %></td>
+                                        <td><%= coupons[i].count %></td>
+                                        <td><%= coupons[i].startDate %></td>
+                                        <td><%= coupons[i].endDate %></td>
+                                        <td>
+                                            <a style="background-color: white;" href="/admin/editCoupon?id=<%= coupons[i]._id %>"><button class="btn btn-sm btn-primary">Edit</button></a>
+                                            <a style="background-color: rgb(125, 0, 0);" href="/admin/deleteCoupon?id=<%= coupons[i]._id %>"><button  class="btn btn-sm btn-primary" style="background-color: rgb(204, 51, 0);">Delete</button></a>
+                                        </td> 
+                                    </tr>
+                                   <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Add New Coupon Button -->
+                        <a href="/admin/addcoupon"><button class="btn btn-primary float-start">Add New Coupon</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
                 <div class="card mb-4">                   
                     <div class="card-body">
                         <!-- Existing Offers Section -->
@@ -54,68 +105,6 @@
                         </div>
                         <!-- Add New Offer Button -->
                         <a href="/admin/addoffer"><button class="btn btn-primary float-start">Add New Offer</button></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <h3>Existing Coupons</h3>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Code</th>
-                                        <th>Description</th>
-                                        <th>Discount</th>
-                                        <th>Count</th>
-                                        <th>Eligible Amount</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dummy Coupon Data -->
-                                    <tr>
-                                        <td>Coupon 1</td>
-                                        <td>XYZ123</td>
-                                        <td>Coupon 1 Description</td>
-                                        <td>$10 off</td>
-                                        <td>100</td>
-                                        <td>$50</td>
-                                        <td>2024-05-01</td>
-                                        <td>2024-06-01</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary">Edit</button>
-                                            <button class="btn btn-sm btn-danger">Delete</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Add more rows for other coupons -->
-                                    <tr>
-                                        <td>Coupon 2</td>
-                                        <td>ABC456</td>
-                                        <td>Coupon 2 Description</td>
-                                        <td>$15 off</td>
-                                        <td>200</td>
-                                        <td>$100</td>
-                                        <td>2024-05-05</td>
-                                        <td>2024-06-05</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary">Edit</button>
-                                            <button class="btn btn-sm btn-danger">Delete</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Add more rows for other coupons -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Add New Coupon Button -->
-                        <a href="/admin/addcoupon"><button class="btn btn-primary float-start">Add New Coupon</button></a>
                     </div>
                 </div>
             </div>
