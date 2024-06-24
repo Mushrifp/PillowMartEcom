@@ -27,7 +27,7 @@
                         <div class="product_img_slide owl-carousel"  >
                             <% for (let i = 0; i < singleData.image.length; i++) { %>
                                 <div class="single_product_img">
-                                    <img style="height: 380px; width: 480px; margin-top: 10px; " src="productImages/<%= singleData.image[i] %>"  class="img-fluid main-product-image" data-zoom="productImages/<%= singleData.image[i] %>">
+                                    <img style="height: 380px; width: 480px; margin-top: 10px; " src="/productImages/<%= singleData.image[i] %>"  class="img-fluid main-product-image" data-zoom="productImages/<%= singleData.image[i] %>">
                                 </div>
                             <% } %>
                         </div>
@@ -36,7 +36,7 @@
                         <div class="product_thumbnail mt-2">
                             <% for (let i = 0; i < singleData.image.length; i++) { %>
                                 <div class="single_thumbnail_img">
-                                    <img src="productImages/<%= singleData.image[i] %>" alt="thumbnail" class="img-thumbnail thumb-image" style="height: 100px; width: 120px;">
+                                    <img src="/productImages/<%= singleData.image[i] %>" alt="thumbnail" class="img-thumbnail thumb-image" style="height: 100px; width: 120px;">
                                 </div>
                             <% } %>
                         </div>
@@ -56,11 +56,12 @@
                     </div>
                     <div class="product_info">
                         <p><strong>Price: $</strong> 
-                            <%= singleData.price %></span>
-                            <% if (singleData.discountedPrice) { %>
-                                <span><del style="color: rgb(191, 191, 191);">$
-                                    <%= singleData.discountedPrice %></del></span>
-                                    <% } %>
+                                    <% if(singleData.OffPrice && singleData.OffPrice != 0){ %>
+                                        <h4 class="mb-1 me-1" style="display: inline;">$<%= singleData.OffPrice %></h4>
+                                        <del class="mb-1 me-1" style="color: rgb(6, 79, 6); font-size: medium; margin-left: 5px; display: inline;">$<%= singleData.price %></del>
+                                    <% }else{ %>
+                                        <h4 class="mb-1 me-1">$<%= singleData.price %></h4>
+                                     <% } %>   
                                     </p>
                                     <p><strong>Available Stock:</strong> 
                                         <span >
@@ -211,31 +212,31 @@ document.getElementById("cartButton").addEventListener("click",function(event){
 
 
 <!-- jquery plugins here-->
-<script src="js/jquery-1.12.1.min.js"></script>
-<!-- popper js -->
-<script src="js/popper.min.js"></script>
-<!-- bootstrap js -->
-<script src="js/bootstrap.min.js"></script>
-<!-- easing js -->
-<script src="js/jquery.magnific-popup.js"></script>
-<!-- swiper js -->
-<script src="js/swiper.min.js"></script>
-<!-- swiper js -->
-<script src="js/mixitup.min.js"></script>
-<!-- particles js -->
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/jquery.nice-select.min.js"></script>
-<!-- slick js -->
-<script src="js/slick.min.js"></script>
-<script src="js/jquery.counterup.min.js"></script>
-<script src="js/waypoints.min.js"></script>
-<script src="js/contact.js"></script>
-<script src="js/jquery.ajaxchimp.min.js"></script>
-<script src="js/jquery.form.js"></script>
-<script src="js/jquery.validate.min.js"></script>
-<script src="js/mail-script.js"></script>
-<!-- custom js -->
-<script src="js/custom.js"></script>
+<script src="/js/jquery-1.12.1.min.js"></script>
+<!-- popper j/s -->
+<script src="/js/popper.min.js"></script>
+<!-- bootstra/p js -->
+<script src="/js/bootstrap.min.js"></script>
+<!-- easing j/s -->
+<script src="/js/jquery.magnific-popup.js"></script>
+<!-- swiper j/s -->
+<script src="/js/swiper.min.js"></script>
+<!-- swiper j/s -->
+<script src="/js/mixitup.min.js"></script>
+<!-- particle/s js -->
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/jquery.nice-select.min.js"></script>
+<!-- slick js/ -->
+<script src="/js/slick.min.js"></script>
+<script src="/js/jquery.counterup.min.js"></script>
+<script src="/js/waypoints.min.js"></script>
+<script src="/js/contact.js"></script>
+<script src="/js/jquery.ajaxchimp.min.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script src="/js/jquery.validate.min.js"></script>
+<script src="/js/mail-script.js"></script>
+<!-- custom j/s -->
+<script src="/js/custom.js"></script>
 
 </body>
 

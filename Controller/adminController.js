@@ -4,9 +4,18 @@ const hash = require('bcrypt');
 const product = require("../Model/product")
 const categoryDB  = require("../Model/category")
 const order = require("../Model/order")
+const { Types } = require('mongoose');
 const mongoose = require('mongoose');
 const Coupon = require('../Model/coupons');
+const offer = require('../Model/offer');
 
+
+
+// For pdf 
+const ejs = require("ejs")
+const htmlPdf = require("html-pdf")
+const fs = require("fs")
+const path = require("path");
 
 
 // Load Login
@@ -225,7 +234,8 @@ const addcoupon  = async (req,res)=>{
 const offAndcop = async (req,res)=>{
     try {
         const coupons = await Coupon.find({});
-         res.render("offerandcop-3",{coupons})
+        const offers = await offer.find({});
+         res.render("offerandcop-3",{coupons,offers})
         
     } catch (error) {
         console.log(error)
@@ -552,7 +562,8 @@ const deleteCoupon = async (req,res)=>{
     try{
         await Coupon.deleteOne({_id:req.query.id})
         const coupons = await Coupon.find({});
-        res.render("offerandcop-3",{coupons,message:"deleted"})
+        const offers = await offer.find({});
+        res.render("offerandcop-3",{coupons,message:"deleted",offers})
     }catch(error){
         console.log(error)
     }
@@ -573,26 +584,27 @@ const editCoupon = async (req,res)=>{
 // edit save coupon
 const editCouponSave = async (req, res) => {
     try {
-        console.log(req.body)
         const id = req.body.ID;
         const updateFields = {};
 
-        for (const key in req.body) {
-            if (key !== 'ID') {
-                updateFields[key] = req.body[key];
-            }
-        }
+        const keys = Object.keys(req.body);
+       for (let i = 0; i < keys.length; i++) {
+         const key = keys[i];
+         if (key !== 'ID') {
+        updateFields[key] = req.body[key];
+           }
+                }
         const updatedCoupon = await Coupon.findByIdAndUpdate(id, updateFields, { new: true });
 
         if (updatedCoupon) {
             const coupons = await Coupon.find({});
-            res.render("offerandcop-3", { coupons });
+            const offers = await offer.find({});
+            res.render("offerandcop-3", { coupons ,offers });
         } else {
             res.render("offerandcop-3", { message: "Failed to update coupon" });
         }
     } catch (error) {
         console.log(error);
-        res.status(500).send("Internal Server Error");
     }
 };
 
@@ -658,7 +670,243 @@ const filterOrders = async (req,res)=>{
     }
 }
 
+// pdf export
+const pdfEx = async (req, res) => {
+    try {
+        const productNumber = await productData.countDocuments({});
+        const userNumber = await userData.countDocuments({});
+        const orderNumbers = await order.find({});
+        
+        let totalItems = 0;
+        for (let order of orderNumbers) {
+            totalItems += order.items.length;
+        }
 
+        const orders = [];
+        const allOrders = await order.find({}).sort({ _id: -1 });
+        allOrders.forEach((data) => {
+            data.items.forEach((item) => {
+                let paymentStatus = item.paymentStatus ? 'Paid' : 'Not Paid';
+                orders.push({
+                    user: data.userID,
+                    ID: item._id,
+                    paymentMethod: item.paymentMethod,
+                    category: item.item.category,
+                    paymentStatus,
+                    productName: item.item.productTitle,
+                    image: item.item.image[0],
+                    OrdrDate: item.Dates.ordered,
+                    Status: item.status,
+                    Total: item.cash,
+                    name: item.address.name
+                });
+            });
+        });
+
+        const userDataList = await userData.find({}).sort({ _id: -1 });
+
+        const datas = {
+            ProductCount: productNumber,
+            userCount: userNumber,
+            orders,
+            userData: userDataList,
+            totalItems
+        };
+
+        const filePath = path.resolve(__dirname, "../View/Admin/pdf.ejs");
+        const htmlToString = fs.readFileSync(filePath, 'utf-8');
+        const ejData = ejs.render(htmlToString, datas);
+
+        const options = {
+            format: 'Letter'
+        };
+
+        htmlPdf.create(ejData, options).toFile("SalesReport.pdf", (err, response) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Failed to generate PDF");
+            }
+            const file = path.resolve(__dirname, "../SalesReport.pdf");
+            fs.readFile(file, (err, data) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send("Failed to read PDF file");
+                }
+                res.setHeader("Content-Type", "application/pdf");
+                res.setHeader("Content-Disposition", 'attachment; filename="SalesReport.pdf"');
+                res.send(data);
+            });
+        });
+
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+// create offer 
+const createOffer = async (req, res) => {
+       
+        try {
+            const { offerName, discountPercentage, description, startDate, expiryDate } = req.body;
+            const discount = parseFloat(discountPercentage);
+
+            const newOffer = new offer({
+                name: offerName,
+                description: description,
+                discount: discount,
+                startDate: startDate,
+                endDate: expiryDate
+            });
+    
+            
+            await newOffer.save();
+    
+           res.send({Done:"Done"})
+            
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+// edit offer
+const editOffer = async (req,res)=>{
+    try{
+        const offers = await offer.findOne({_id:req.query.id})
+        res.render("edit-offer-3",{offers})
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// Delete offer
+const deleteOffer = async (req,res)=>{
+    try{
+        await offer.deleteOne({_id:req.query.id})
+        const offers = await offer.find({});
+        const coupons = await Coupon.find({});
+        res.render("offerandcop-3",{coupons,message:"deleted",offers})
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// edit save offer 
+const editOfferSave = async (req, res) => {
+    try {
+        const { id, name, discount, description, startDate, endDate } = req.body;
+
+        const updateFields = {
+            name,
+            discount,
+            description,
+            startDate,
+            endDate
+        };
+        console.log("Received id:", updateFields);
+
+        const objectId = new Types.ObjectId(id);
+
+        const updatedOffer = await offer.findByIdAndUpdate(objectId, updateFields, { new: true });
+
+        if (updatedOffer) {
+            res.send({ Done: "Done" });
+        } else {
+            res.send({ NotDone: "failed" });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+// offer applying loading
+const OffApply = async (req,res)=>{
+    try{
+
+        const productData = await product.find({
+            $or: [
+                { OffPrice: { $exists: false } },
+                { OffPrice: { $eq: 0 } }
+            ]
+        });
+         let offerID = req.query.id
+         
+         res.render("applyOffer",{productData,offerID})
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// offer apply 
+const apply = async (req,res)=>{
+    try{
+           await offer.updateOne({_id:req.query.offerID},{$set:{offProduct:req.query.id}})
+
+           const offerInfo = await offer.findOne({_id:req.query.offerID})
+           const productInfo = await product.findOne({_id:req.query.id})
+
+           let offerPercentage = offerInfo.discount;
+           let actualPrice = productInfo.price;
+          
+           await offer.updateOne({_id:req.query.offerID},{$push: { offProduct: productInfo._id }})
+
+           const discountDecimal = offerPercentage / 100;
+           const discountAmount = actualPrice * discountDecimal;
+           const finalPrice = parseInt(actualPrice - discountAmount); 
+    
+ 
+           const updatedProduct = await product.updateOne({ _id: req.query.id },{ $set:{OffPrice:finalPrice}});
+           
+               if(updatedProduct){
+                const productData = await product.find({
+                    $or: [
+                        { OffPrice: { $exists: false } },
+                        { OffPrice: { $eq: 0 } }
+                    ]
+                });
+                let offerID = req.query.offerID
+                res.render("applyOffer",{productData,offerID,message:"Done"})
+               }else{
+                const productData = await product.find({
+                    $or: [
+                        { OffPrice: { $exists: false } },
+                        { OffPrice: { $eq: 0 } }
+                    ]
+                });
+                let offerID = req.query.id
+                res.render("applyOffer",{productData,offerID,failed:"failed"})
+               }
+
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// remove offer  
+const remove = async (req,res)=>{
+    try{
+
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// current product 
+const current = async (req,res)=>{
+    try{
+        let offerID = req.query.offerID
+        const productData = await product.find({
+            OffPrice: { $exists: true, $gt: 0 }
+        });
+        let dataOFoffer = await offer.findOne({_id:offerID})
+
+        console.log(dataOFoffer)
+
+        //   res.render("current",{productData,offerID})
+        
+    }catch(error){
+        console.log(error)
+    }
+}
 
 module.exports={
     loadDash,
@@ -691,5 +939,14 @@ module.exports={
     deleteCoupon,
     editCoupon,
     editCouponSave,
-    filterOrders
+    filterOrders,
+    pdfEx,
+    createOffer,
+    editOffer,
+    deleteOffer,
+    editOfferSave,
+    OffApply,
+    apply,
+    remove,
+    current
 }

@@ -53,8 +53,8 @@
                         <td>
                             <div class="product_count">
                                 <button type="button" class="btn btn-decrement" data-id="<%= cart._id %>">-</button>
-                                <input type="number" name="products[<%= cart._id %>][quantity]" class="quantity-input" value="1" min="1" max="<%= cart.stock %>" data-id="<%= cart._id %>" data-price="<%= cart.price %>">
-                                <button type="button" class="btn btn-increment" data-id="<%= cart._id %>">+</button>
+                               <input type="text" name="products[<%= cart._id %>][quantity]" class="quantity-input form-control border-0 bg-transparent text-center" value="1" min="1" max="<%= cart.stock %>" data-id="<%= cart._id %>" data-price="<%= cart.price %>" readonly>
+                               <button type="button" class="btn btn-increment" data-id="<%= cart._id %>">+</button>
                             </div>
                         </td>
                         <td>

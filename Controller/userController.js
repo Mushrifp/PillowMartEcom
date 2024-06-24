@@ -94,10 +94,27 @@ const loadProduct = async (req, res) => {
  
         let number = 0;
 
-        if(userSession){ 
-            res.render("product_list", { Data: DataProduct,userData:userSession ,cate:categoryData,answer,number})
-        }else{
-            res.render("product_list", { Data: DataProduct ,cate:categoryData,answer,number})
+        if (userSession) {
+            res.render("product_list", {
+                Data: DataProduct,
+                userData: userSession,
+                cate: categoryData,
+                answer,
+                number,
+                selectedCategory: req.query.category || 'all',
+                selectedPrice: req.query.price || 'all',
+                selectedFilter: req.query.filter || 'all'
+            });
+        } else {
+            res.render("product_list", {
+                Data: DataProduct,
+                cate: categoryData,
+                answer,
+                number,
+                selectedCategory: req.query.category || 'all',
+                selectedPrice: req.query.price || 'all',
+                selectedFilter: req.query.filter || 'all'
+            });
         }
     } catch (error){
         console.log(error)
@@ -563,68 +580,7 @@ const categoryLoad = async (req,res)=>{
     }
 }
 
-// low to high 
-const LowToHigh = async (req,res)=>{
-     try{
-        const Sort = await productData.find({}).sort({ price:1})
-        const userSession  = await userData.findOne({_id:req.session.user_id})
-        const categoryData = await categoryDB.find({})
 
-
-        res.render("product_list", { Data: Sort,userData:userSession ,cate:categoryData})
-
-
-     }catch(error){
-        console.log(error)
-     }
-}
-
-// high to low 
-const HighToLow = async (req,res)=>{
-    try{
-       const Sort = await productData.find({}).sort({price:-1})
-       const userSession  = await userData.findOne({_id:req.session.user_id})
-       const categoryData = await categoryDB.find({})
-
-
-       res.render("product_list", { Data: Sort,userData:userSession ,cate:categoryData})
-
-
-    }catch(error){
-       console.log(error)
-    }
-}
-
-// Product Search
-const search = async (req,res)=>{
-   try{
-              const userSession = await userData.findOne({ _id:req.session.user_id});
-              const categoryData = await categoryDB.find({});
-            
-              let searchQuery = {};
-              if (req.query.search) {
-                  const search = req.query.search;
-                  searchQuery = {
-                      $or: [
-                          { productTitle: { $regex: '.*' + search + '.*', $options: 'i' }},
-                          { category: { $regex: '.*' + search + '.*', $options: 'i' }},
-                          { size: { $regex: '.*' + search + '.*', $options: 'i' }}
-                      ]
-                  };
-            
-                  const searchNumber = parseFloat(search);
-                  if (!isNaN(searchNumber)) {
-                      searchQuery.$or.push({ price: searchNumber });
-                  }
-              }
-            
-              const data = await productData.find(searchQuery);
-            
-              res.render("product_list", { userData: userSession, cate: categoryData, Data: data });
-   }catch(error){
-    console.log(error)
-   }
-}
 
 // Load Checkout page
 const loadCheckout = async (req,res)=>{
@@ -847,20 +803,6 @@ const pagination = async (req, res) => {
     }
 }
 
-// priceSort
-const priceSort = async (req,res)=>{
-   try{
-    const Sort = await productData.find({price:{$gte:req.query.price,$lte:req.query.to}}).sort({ price:1})
-    const userSession  = await userData.findOne({_id:req.session.user_id})
-    const categoryData = await categoryDB.find({})
-
-
-    res.render("product_list", { Data: Sort,userData:userSession ,cate:categoryData})
-   }catch(error){
-    console.log(error)
-   }
-}
-
 // Order place through razorpay 
 const razpayOrderPlace = async (req,res)=>{
     try{ 
@@ -926,6 +868,115 @@ const applyCoupon = async (req,res)=>{
         console.log(error)
     }
 }
+
+// product filter and sort
+const filterProduct= async (req,res)=>{
+    try{
+
+        // Initialize query and sort objects
+        let query = {};
+        let sortQuery = {};
+console.log(req.query)
+        // Extract and set category filter
+        if (req.query.category && req.query.category !== 'all') {
+            let categoryCheck = await categoryDB.findOne({ name: req.query.category });
+            
+            if (!categoryCheck) {
+                // If not found by _id, try to find by name
+                categoryss = await categoryDB.findOne({ _id: req.query.category });
+                query.category = categoryss.name;
+            }
+
+            if (categoryCheck) {
+                query.category = categoryCheck.name; // Use category _id in the query
+            }
+        }
+
+        // Extract and set price filter
+        if (req.query.price && req.query.price !== 'all') {
+            switch (req.query.price) {
+                case '100-500':
+                    query.price = { $gte: 100, $lte: 500 };
+                    break;
+                case '500-1000':
+                    query.price = { $gte: 500, $lte: 1000 };
+                    break;
+                case '1000-1500':
+                    query.price = { $gte: 1000, $lte: 1500 };
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Extract and set sorting filter
+        if (req.query.filter === 'lowToHigh') {
+            sortQuery.price = 1;
+        } else if (req.query.filter === 'highToLow') {
+            sortQuery.price = -1;
+        }
+
+        // Extract pagination info
+        const page = parseInt(req.query.number) || 0;
+        const itemsPerPage = 5;
+        const skip = page * itemsPerPage;
+
+        // Fetch filtered and paginated data
+        const products = await productData.find(query).sort(sortQuery).skip(skip).limit(itemsPerPage);
+
+        // Fetch additional data for rendering
+        const userSession = await userData.findOne({ _id: req.session.user_id });
+        const categoryData = await categoryDB.find({});
+        const totalProduct = await productData.countDocuments(query);
+        const totalPages = Math.ceil(totalProduct / itemsPerPage) - 1;
+
+        if (userSession) {
+            res.render("product_list", {
+                Data: products,
+                userData: userSession,
+                cate: categoryData,
+                answer: totalPages,
+                number: page,
+                selectedCategory: query.category || 'all',
+                selectedPrice: req.query.price || 'all',
+                selectedFilter: req.query.filter || 'all'
+            });
+        } else {
+            res.render("product_list", {
+                Data: products,
+                cate: categoryData,
+                answer: totalPages,
+                number: page,
+                selectedCategory: query.category || 'all',
+                selectedPrice: req.query.price || 'all',
+                selectedFilter: req.query.filter || 'all'
+            });
+        } 
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// handle search suggestions
+const searchSuggestions = async (req, res) => {
+    try {
+        const searchQuery  = req.query.searchQuery;
+
+        const regex = new RegExp(searchQuery, 'i'); 
+
+        const suggestions = await productData.find({ productTitle: regex })
+
+        const formattedSuggestions = suggestions.map(product => ({
+            _id: product._id,
+            name: product.productTitle,
+            image:product.image[0]
+        }));
+        res.send(formattedSuggestions);
+    } catch (error) {
+        console.error('Error fetching search suggestions:');
+    }
+};
+
 module.exports = {
     loadHome,
     loadAbout, 
@@ -944,14 +995,12 @@ module.exports = {
     passChanging,
     userLogout,
     categoryLoad,
-    HighToLow,
-    LowToHigh,
-    search,
     loadCheckout,
     orderConfirm,
     pagination,
-    priceSort,
     razpayOrderPlace,
     showCoupon,
-    applyCoupon
+    applyCoupon,
+    filterProduct,
+    searchSuggestions
 }

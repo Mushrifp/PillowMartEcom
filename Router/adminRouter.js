@@ -96,7 +96,22 @@ admin_router.get("/deleteCoupon",adminController.deleteCoupon);
 admin_router.get("/editCoupon",adminController.editCoupon);
 admin_router.post("/editCouponSave",adminController.editCouponSave);
 
+// order dash board filter
 admin_router.post("/filter",adminController.filterOrders);
+
+// pdf download
+admin_router.post("/pdfEx",adminController.pdfEx)
+
+// offer
+admin_router.post("/createOffer",adminController.createOffer)
+admin_router.get("/editOffer",adminController.editOffer);
+admin_router.get("/deleteOffer",adminController.deleteOffer);
+admin_router.post("/editOfferSave",adminController.editOfferSave);
+admin_router.get("/OffApply",adminController.OffApply);
+admin_router.get("/apply",adminController.apply);
+admin_router.get("/remove",adminController.remove);
+admin_router.get("/current",adminController.current);
+
 
 
 module.exports=admin_router;   

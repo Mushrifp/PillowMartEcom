@@ -44,7 +44,9 @@
     <section class="content-main">
         <div class="content-header">
             <div>
-                <h2 class="content-title card-title">Dashboard</h2>
+                <h2 class="content-title card-title">Dashboard
+                    <a href="#" class="btn btn-primary btn-sm rounded" id="Export" style="margin-left: 700px;" >Export</a>
+                </h2>
             </div>
         </div>
         <div class="row">
@@ -118,7 +120,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-4 col-lg-12 mb-4" style="height: 500px;">
+            <!-- <div class="col-xl-4 col-lg-12 mb-4" style="height: 500px;">
                 <div class="card shadow-sm">
                     <article class="card-body">
                         <h5 class="card-title">New Members</h5>
@@ -157,7 +159,7 @@
                     </article>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="card shadow-sm mb-4">
             <header class="card-header">
@@ -367,7 +369,8 @@
 </main>
 <%- include('./layouts/footer.ejs') %>
 
-
+<link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
+<script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     var notyf = new Notyf();
@@ -422,5 +425,34 @@ document.getElementById("reset").addEventListener("click",function(event){
     window.location.reload()
 })
 
+document.getElementById("Export").addEventListener("click",function(event){
+    event.preventDefault();
+    Swal.fire({
+    title: 'Choose Download Format',
+    text: 'Would you like to download as PDF or Excel?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'PDF',
+    cancelButtonText: 'Excel',
+    showCloseButton: true,
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios.post("/admin/pdfEx")
+      .then((response)=>{
+           if(response.data){
+             notyf.success("Downloaded")
+           }
+      }).catch((error)=>{
+        console.log(error)
+      })
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      notyf.success("excel")
+    }
+  });
+
+})
     </script>
     

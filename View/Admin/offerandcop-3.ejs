@@ -65,7 +65,6 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Description</th>
-                                        <th>Image</th>
                                         <th>Discount</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
@@ -73,33 +72,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Dummy Offer Data -->
-                                    <tr>
-                                        <td>Offer 1</td>
-                                        <td>Offer 1 Description</td>
-                                        <td><img src="/img/banner.png" alt="Offer 1 Image" width="50px"></td>
-                                        <td>20%</td>
-                                        <td>2024-04-20</td>
-                                        <td>2024-05-20</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary">Edit</button>
-                                            <button class="btn btn-sm btn-danger">Delete</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Add more rows for other offers -->
-                                    <tr>
-                                        <td>Offer 2</td>
-                                        <td>Offer 2 Description</td>
-                                        <td><img src="/img/feature_3.png" alt="Offer 2 Image" width="50px"></td>
-                                        <td>15%</td>
-                                        <td>2024-04-25</td>
-                                        <td>2024-05-25</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary">Edit</button>
-                                            <button class="btn btn-sm btn-danger">Delete</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Add more rows for other offers -->
+                                    <% for (let i = 0; i < offers.length; i++) { %>
+                                        <tr>
+                                            <td><%= offers[i].name %></td>
+                                            <td><%= offers[i].description %></td>
+                                            <td><%= offers[i].discount %></td>
+                                            <td><%= offers[i].startDate %></td>
+                                            <td><%= offers[i].endDate %></td>
+                                            <td>
+                                                <a style="background-color: white;" href="/admin/editoffer?id=<%= offers[i]._id %>"><button class="btn btn-sm btn-primary">Edit</button></a>
+                                                <a style="background-color: rgb(125, 0, 0);" href="/admin/deleteOffer?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" style="background-color: rgb(204, 51, 0);">Delete</button></a>
+                                                <a style="background-color: rgb(255, 255, 255);" href="/admin/OffApply?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" >Add Product</button></a>
+                                            </td>
+                                        </tr>
+                                    <% } %>
                                 </tbody>
                             </table>
                         </div>

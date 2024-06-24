@@ -1,3 +1,56 @@
+<style>
+    #suggestionList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    max-height: 300px;
+    overflow-y: auto;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin-left: -15px;
+}
+
+.suggestion-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+}
+
+.suggestion-link:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestion-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 4px;
+}
+
+.suggestion-name {
+    flex-grow: 1;
+    font-size: 16px;
+    color: #333;
+}
+
+</style>
 <%- include('../layout/header.ejs') %>
 
 
@@ -63,14 +116,76 @@
             </div>
         </div>
         <div class="search_input" id="search_input_box">
-            <div class="container ">
+            <div class="container position-relative">
                 <form class="d-flex justify-content-between search-inner" action="/search" method="get">
-                    <input type="text" class="form-control"  name="search" id="search_input" placeholder="Type here to search">
+                    <input type="text" class="form-control" name="searchQuery" id="search_input" placeholder="Type here to search">
                     <button type="submit" class="btn"></button>
                     <span class="ti-close" id="close_search" title="Close Search"></span>
                 </form>
+                <ul id="suggestionList" class="suggestion-list"></ul>
             </div>
         </div>
+        
+        
     </header>
 
     <%- include('../layout/footer.ejs') %>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('search_input');
+        const suggestionList = document.getElementById('suggestionList');
+
+        searchInput.addEventListener('input', async () => {
+            const searchQuery = searchInput.value.trim();
+            if (searchQuery.length === 0) {
+                suggestionList.innerHTML = '';
+                return;
+            }
+            try {
+                const response = await axios.get(`/search?searchQuery=${encodeURIComponent(searchQuery)}`);
+                if (!response.data || response.data.length === 0) {
+                    suggestionList.innerHTML = '<li>No Product found</li>';
+                    return;
+                }
+                displaySuggestions(response.data);
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+                suggestionList.innerHTML = '<li>Error fetching suggestions</li>';
+            }
+        });
+
+
+        function displaySuggestions(suggestions) {
+            console.log(suggestions)
+    suggestionList.innerHTML = '';
+    suggestions.forEach(suggestion => {
+        const li = document.createElement('li');
+        li.classList.add('suggestion-item');
+
+        const a = document.createElement('a');
+        a.href = `/single-product/?id=${suggestion._id}`;
+        a.classList.add('suggestion-link');
+
+        const img = document.createElement('img');
+        img.src = `/productImages/${suggestion.image}`; 
+        img.alt = suggestion.name;
+        img.classList.add('suggestion-image');
+
+        const name = document.createElement('span');
+        name.textContent = suggestion.name;
+        name.classList.add('suggestion-name');
+
+        a.appendChild(img);
+        a.appendChild(name);
+        li.appendChild(a);
+        
+        suggestionList.appendChild(li);
+    });
+}
+
+
+    });
+</script>

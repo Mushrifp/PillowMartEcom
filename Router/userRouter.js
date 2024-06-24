@@ -56,11 +56,10 @@ user_router.post("/passChanging",userController.passChanging)
 // category load
 user_router.get("/categoryLoad",userController.categoryLoad)
 
-// high to low and low to high 
-user_router.get("/LowToHigh",userController.LowToHigh)
-user_router.get("/HighToLow",userController.HighToLow)
-user_router.get("/priceSort",userController.priceSort)
-user_router.get("/search",userController.search)
+// Sort and filter
+user_router.get("/filterProduct",userController.filterProduct)
+
+user_router.get("/search",userController.searchSuggestions )
 
 // checkout and order
 user_router.post("/checkout",userController.loadCheckout)

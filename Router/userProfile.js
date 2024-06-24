@@ -15,7 +15,7 @@ user.get("/wallet",userProfileController.loadWallet)
 // user profile edit save changes
 user.post("/profileEdit",userProfileController.profileEdit)
 
-// user password changes from profile
+// user password changes from profile 
 user.post("/profilePasswordEdit",userProfileController.profilePasswordEdit)
 
 // Add new user Address

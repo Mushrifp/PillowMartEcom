@@ -14,28 +14,29 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <form id="offerForm">
+                            <input type="hidden" id="offID" value="<%= offers._id %>">
                             <div class="mb-4">
                                 <label class="form-label">Offer Name</label>
-                                <input type="text" id="offerName" name="offerName" placeholder="Type here" class="form-control" required />
+                                <input type="text" id="offerName" name="offerName"  class="form-control"  value="<%= offers.name %>" required />
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Discount Percentage</label>
-                                <input type="number" id="discountPercentage" name="discountPercentage" placeholder="Type here" class="form-control" min="0" max="90" required />
+                                <input type="number" id="discountPercentage" name="discountPercentage"  class="form-control" min="0" max="90"  value="<%= offers.discount %>" required />
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Description</label>
-                                <textarea id="description" name="description" placeholder="Type here" class="form-control" rows="4" required></textarea>
+                                <input type="text" id="description" name="description"  class="form-control" rows="4"   value="<%= offers.description %>" required></input>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Start Date</label>
-                                <input type="date" id="startDate" name="startDate" placeholder="Type here" class="form-control" required />
+                                <input type="date" id="startDate" name="startDate"  class="form-control"  value="<%= offers.startDate %>" required />
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Expiry Date</label>
-                                <input type="date" id="expiryDate" name="expiryDate" placeholder="Type here" class="form-control" required />
+                                <input type="date" id="expiryDate" name="expiryDate"  class="form-control"  value="<%= offers.endDate %>" required />
                             </div>
                             <div class="mb-4">
-                                <button type="submit" class="btn btn-md rounded font-sm hover-up">Create</button>
+                                <button type="submit" class="btn btn-md rounded font-sm hover-up">Save</button>
                             </div>
                         </form>
                     </div>
@@ -84,17 +85,18 @@
 
             const formData = new FormData(form);
 
-            axios.post('/admin/createOffer', {
-                offerName: formData.get('offerName'),
-                discountPercentage: formData.get('discountPercentage'),
+            axios.post('/admin/editOfferSave', {
+                id:document.getElementById("offID").value,
+                name: formData.get('offerName'),
+                discount: formData.get('discountPercentage'),
                 description: formData.get('description'),
                 startDate: formData.get('startDate'),
-                expiryDate: formData.get('expiryDate')
+                endDate: formData.get('expiryDate')
             })
-            .then(function (response) {
+            .then(function (response){
                 if(response.data.Done){
                     Swal.fire({
-                      title: "Created",
+                      title: "Saved",
                       icon: "success",
                       confirmButtonColor: "#3085d6",
                       confirmButtonText: "Ok",
