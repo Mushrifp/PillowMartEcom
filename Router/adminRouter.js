@@ -33,8 +33,8 @@ const upload = multer({storage:storage});
 
 // Admin log in and verify
 admin_router.get("/",auth.isLogout,adminController.adminLogin)
-admin_router.post("/loginVerify",adminController.loginVerify)
-admin_router.post("/logout",adminController.logout)
+admin_router.post("/loginVerify",auth.isLogout,adminController.loginVerify)
+admin_router.post("/logout",auth.isLogin,adminController.logout)
 
 // Load Dashboard
 admin_router.get("/dash",auth.isLogin,adminController.loadDash)
@@ -60,6 +60,9 @@ admin_router.get("/category",auth.isLogin,adminController.category)
 
 // user block and unblock
 admin_router.post("/blockUnblockUser",adminController.blockUnblockUser)
+
+// sales page loading
+admin_router.get("/sales",adminController.sales)
 
 // logout
 admin_router.get("/logout",auth.isLogin,adminController.logout)
@@ -96,11 +99,9 @@ admin_router.get("/deleteCoupon",adminController.deleteCoupon);
 admin_router.get("/editCoupon",adminController.editCoupon);
 admin_router.post("/editCouponSave",adminController.editCouponSave);
 
-// order dash board filter
-admin_router.post("/filter",adminController.filterOrders);
-
-// pdf download
-admin_router.post("/pdfEx",adminController.pdfEx)
+// sales filter
+admin_router.post("/filterSales",adminController.filterSales);
+admin_router.get("/filterSales2",adminController.filterSales2);
 
 // offer
 admin_router.post("/createOffer",adminController.createOffer)

@@ -33,7 +33,7 @@ const loginVerify = async (req,res)=>{
          
           let adminEmail = "admin@gmail.com"
           let adminPass = "123"
-console.log("this is the shit ",req.body)
+console.log(req.body)
            if(adminEmail == req.body.email&&adminPass == req.body.password){
             req.session.admin_mail = {
                 email:adminEmail
@@ -608,140 +608,137 @@ const editCouponSave = async (req, res) => {
     }
 };
 
-
-const filterOrders = async (req,res)=>{
+// filter sales 
+const filterSales  = async (req,res)=>{
     try{
+             let selectedDate  = req.body.date
 
-        const filterType = req.body.filterType;
-        const filterValue  = req.body.filterValue;
-        const data  = req.body.data     
-
-        let filteredOrders = data;
+             let dataToSend = await SalesDatas();
     
-        if(filterType === 'Category'){
-            filteredOrders = filteredOrders.filter(order => order.category === filterValue);
+         let filteredData = []
+           
+          for(let i=0;i<dataToSend.length;i++){
+              if(dataToSend[i]._id.orderedDate == selectedDate){
+                filteredData.push(dataToSend[i])
+              }
+          }
 
-
-        } else if (filterType === 'Date'){
-            filteredOrders = filteredOrders.filter(order => {
-                const filterDate = new Date(filterValue);
-                const orderDate = new Date(order.OrdrDate);
-                return orderDate.getFullYear() === filterDate.getFullYear() && orderDate.getMonth() === filterDate.getMonth() && orderDate.getDate() === filterDate.getDate();
-            });
+       if(filteredData.length == 0){
+        res.render("sales",{salesData:dataToSend,selectedDate,message:"no data"})
+       }else{
+        res.render("sales",{salesData:filteredData,selectedDate})
+       }
+           
             
-
-        } else if (filterType === 'Status'){
-            filteredOrders = filteredOrders.filter(order => order.paymentStatus.toLowerCase() === filterValue.toLowerCase());
-
-
-        } else if (filterType === 'Filter By'){
-            const now = new Date();
-            if (filterValue === 'Week') {
-                const oneWeekAgo = new Date(now.setDate(now.getDate() - 7));
-                filteredOrders = filteredOrders.filter(order => new Date(order.OrdrDate) >= oneWeekAgo);
-            } else if (filterValue === 'Month'){
-                const oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
-                filteredOrders = filteredOrders.filter(order => new Date(order.OrdrDate) >= oneMonthAgo);
-            } else if (filterValue === 'Today'){
-                filteredOrders = filteredOrders.filter(order => new Date(order.OrdrDate).toDateString() === new Date().toDateString());
-            }
-
-
-        } else if (filterType === 'Payment Method'){
-            let v ;
-             if(filterValue == "COD"){
-                v="CashOnDelivery"
-             }else if(filterValue == "Online"){
-                v="Razorpay"
-             }else{
-                v="wallet"
-             }
-            filteredOrders = filteredOrders.filter(order => order.paymentMethod.toLowerCase() === v.toLowerCase());
-        }
-
-        if(filteredOrders.length === 0){
-            res.send({NoData:data});
-        }else{
-            res.send(filteredOrders);
-        }
-    
     }catch(error){
         console.log(error)
     }
 }
 
-// pdf export
-const pdfEx = async (req, res) => {
+
+const SalesDatas = async () => {
     try {
-        const productNumber = await productData.countDocuments({});
-        const userNumber = await userData.countDocuments({});
-        const orderNumbers = await order.find({});
-        
-        let totalItems = 0;
-        for (let order of orderNumbers) {
-            totalItems += order.items.length;
-        }
-
-        const orders = [];
-        const allOrders = await order.find({}).sort({ _id: -1 });
-        allOrders.forEach((data) => {
-            data.items.forEach((item) => {
-                let paymentStatus = item.paymentStatus ? 'Paid' : 'Not Paid';
-                orders.push({
-                    user: data.userID,
-                    ID: item._id,
-                    paymentMethod: item.paymentMethod,
-                    category: item.item.category,
-                    paymentStatus,
-                    productName: item.item.productTitle,
-                    image: item.item.image[0],
-                    OrdrDate: item.Dates.ordered,
-                    Status: item.status,
-                    Total: item.cash,
-                    name: item.address.name
-                });
-            });
-        });
-
-        const userDataList = await userData.find({}).sort({ _id: -1 });
-
-        const datas = {
-            ProductCount: productNumber,
-            userCount: userNumber,
-            orders,
-            userData: userDataList,
-            totalItems
-        };
-
-        const filePath = path.resolve(__dirname, "../View/Admin/pdf.ejs");
-        const htmlToString = fs.readFileSync(filePath, 'utf-8');
-        const ejData = ejs.render(htmlToString, datas);
-
-        const options = {
-            format: 'Letter'
-        };
-
-        htmlPdf.create(ejData, options).toFile("SalesReport.pdf", (err, response) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send("Failed to generate PDF");
-            }
-            const file = path.resolve(__dirname, "../SalesReport.pdf");
-            fs.readFile(file, (err, data) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send("Failed to read PDF file");
+        let o = await order.aggregate([
+            { $unwind: '$items' },
+            {
+                $group: {
+                    _id: {
+                        orderedDate: {
+                            $dateToString: { format: "%Y-%m-%d", date: "$items.Dates.ordered" }
+                        }
+                    },
+                    totalCount: { $sum: 1 },
+                    totalRevenue: { $sum: '$items.cash' },
+                    cod: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$items.paymentMethod", "CashOnDelivery"] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    wallet: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$items.paymentMethod", "wallet"] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    razorpay: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$items.paymentMethod", "Razorpay"] },
+                                1,
+                                0
+                            ]
+                        }
+                    }
                 }
-                res.setHeader("Content-Type", "application/pdf");
-                res.setHeader("Content-Disposition", 'attachment; filename="SalesReport.pdf"');
-                res.send(data);
-            });
-        });
+            },
+            { $sort: { "_id.orderedDate": -1 } }
+        ]);
 
+        return o;
     } catch (error) {
-        console.error(error);
+        console.log(error);
+        throw error;
     }
 };
+
+
+// filter based on month and today and week 
+const filterSales2 = async (req,res)=>{
+    try{
+        let query = req.query.filterBy
+       
+        let dataToSend = await SalesDatas();
+
+        let send = [];
+
+        if (query == "Monthly") {
+
+            let currentDate = new Date();
+            let startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            let endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        
+            send = dataToSend.filter(item => {
+                let itemDate = new Date(item._id.orderedDate);
+                return itemDate >= startOfMonth && itemDate <= endOfMonth;
+            });
+        } else if (query == "Weekly") {
+
+            let currentDate = new Date();
+            let startOfWeek = new Date(currentDate);
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); 
+        
+            let endOfWeek = new Date(currentDate);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+        
+            send = dataToSend.filter(item => {
+                let itemDate = new Date(item._id.orderedDate);
+                return itemDate >= startOfWeek && itemDate <= endOfWeek;
+            });
+        } else {
+
+            let today = new Date();
+            let todayFormatted = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+        
+            send = dataToSend.filter(item => item._id.orderedDate === todayFormatted);
+        }
+
+   if(send.length == 0){
+    res.render("sales",{salesData:dataToSend,message:"no data"})
+   }else{
+    res.render("sales",{salesData:send,query})
+   }
+
+    }catch(error){
+        console.log(error)
+    }
+}
 
 // create offer 
 const createOffer = async (req, res) => {
@@ -908,6 +905,24 @@ const current = async (req,res)=>{
     }
 }
 
+// Load sales page
+const sales = async (req,res)=>{
+    try {
+        
+        let dataToSend = await SalesDatas();
+
+        res.render("sales",{salesData:dataToSend})
+    
+        
+    } catch (error) {
+        console.log(error);
+    }
+    
+    
+    
+    
+    
+}
 module.exports={
     loadDash,
     Product,
@@ -939,8 +954,8 @@ module.exports={
     deleteCoupon,
     editCoupon,
     editCouponSave,
-    filterOrders,
-    pdfEx,
+    filterSales,
+    filterSales2,
     createOffer,
     editOffer,
     deleteOffer,
@@ -948,5 +963,6 @@ module.exports={
     OffApply,
     apply,
     remove,
-    current
+    current,
+    sales
 }
