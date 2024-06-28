@@ -110,8 +110,10 @@ admin_router.get("/deleteOffer",adminController.deleteOffer);
 admin_router.post("/editOfferSave",adminController.editOfferSave);
 admin_router.get("/OffApply",adminController.OffApply);
 admin_router.get("/apply",adminController.apply);
-admin_router.get("/remove",adminController.remove);
-admin_router.get("/current",adminController.current);
+admin_router.get("/removeOfferProduct",adminController.removeOfferProduct);
+admin_router.get("/currentofferProduct",adminController.currentofferProduct);
+admin_router.get("/addOfferTOCategory",adminController.addOfferTOCategory);
+admin_router.get("/offApplyCategory",adminController.offApplyCategory);
 
 
 

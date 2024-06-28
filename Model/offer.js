@@ -21,7 +21,7 @@ const offer = new mongoose.Schema({
         type:String,
         required:true
     },
-    offProduct:{
+    offItem:{
         type:Array,
         default:[]
     }

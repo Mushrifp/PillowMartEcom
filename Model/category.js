@@ -10,6 +10,10 @@ const category = new mongoose.Schema({
          type:String,
          required:true
        },
+       offer:{
+        type:Boolean,
+        default:false
+      }
 
 })
 

@@ -81,8 +81,9 @@
                                             <td><%= offers[i].endDate %></td>
                                             <td>
                                                 <a style="background-color: white;" href="/admin/editoffer?id=<%= offers[i]._id %>"><button class="btn btn-sm btn-primary">Edit</button></a>
+                                                <a style="background-color: rgb(255, 255, 255);" href="/admin/OffApply?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" >Product</button></a>
+                                                <a style="background-color: rgb(255, 255, 255);" href="/admin/addOfferTOCategory?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" >category</button></a>
                                                 <a style="background-color: rgb(125, 0, 0);" href="/admin/deleteOffer?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" style="background-color: rgb(204, 51, 0);">Delete</button></a>
-                                                <a style="background-color: rgb(255, 255, 255);" href="/admin/OffApply?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" >Add Product</button></a>
                                             </td>
                                         </tr>
                                     <% } %>

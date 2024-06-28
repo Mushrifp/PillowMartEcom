@@ -13,8 +13,8 @@
     .table thead th {
         vertical-align: bottom;
         border-bottom: 2px solid #8cff00;
-        background-color: #bdbdbd;
-        color: #000000;
+        background-color: #343a40;
+        color: #ffffff;
     }
     .table-bordered {
         border: 1px solid #000000;
@@ -31,76 +31,104 @@
     .table td {
         text-align: center;
     }
-    #filterButtons{
+    #filterButtons {
         background-color: #3BB77E;
         color: white;
         transition: 0.5s;
         box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-
+        border: none;
+        cursor: pointer;
     }
-    #filterButtons:hover{
+    #filterButtons:hover {
         background-color: #004424;
         box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-       
+    }
+    .btn-primary {
+        background-color: #3BB77E;
+        border: none;
+        transition: 0.5s;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        cursor: pointer;
+    }
+    .btn-primary:hover {
+        background-color: #004424;
+    }
+    .content-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .content-title a {
+        margin-left: auto;
+    }
+    .card {
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .no-data {
+        color: red;
+        text-align: center;
     }
 </style>
 
 <%- include('./layouts/header.ejs') %>
 <main class="main-wrap">
-    </header>
     <section class="content-main">
         <div class="content-header">
-            <h2 class="content-title">Sales Report 
-                <a href="#" class="btn btn-primary btn-sm rounded" id="Export" style="margin-left: 700px;">Export</a>
+            <h2 class="content-title">
+                Sales Report 
+               
             </h2>
         </div>
-        <% if(typeof message != 'undefined'){ %>
-            <h4 style=" color: rgb(172, 0, 0); " >No data Available in this filter</h4>
-       <% } %>
-
-        
-        <div class="row align-items-center" >
+       
+        <div class="row align-items-center mb-4">
             <div class="col-md-2 col-6">
-                <form action="/admin/filterSales" id="formSub" method="post" >
-                    <input type="date" name="date"  class="form-control" value="<%= typeof selectedDate != 'undefined' ? selectedDate : ''  %>" id="dateForm" style=" background-color: #3BB77E;  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; color: #ffffff;" />
+                <form action="/admin/filterSales" id="formSub" method="post">
+                    <input type="date" name="date" class="form-control" value="<%= typeof selectedDate != 'undefined' ? selectedDate : ''  %>" id="dateForm" style="background-color: #3BB77E; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; color: #ffffff;" />
                 </form>
             </div>
             
-                  <% if(typeof query != 'undefined' && query == "Monthly"){ %>
-                        <div class="col-md-2 col-6">
-                          <a href="/admin/filterSales2?filterBy=Monthly"><button class="form-control" id="filterButtons" style="background-color: aquamarine; color: #000000;">Monthly</button></a>
-                        </div>
-                   <% }else { %>
-                      <div class="col-md-2 col-6">
-                        <a href="/admin/filterSales2?filterBy=Monthly"><button class="form-control" id="filterButtons" >Monthly</button></a>
-                      </div>
-                     <% } %>   
+            <% if(typeof query != 'undefined' && query == "Monthly"){ %>
+                <div class="col-md-2 col-6">
+                  <a href="/admin/filterSales2?filterBy=Monthly"><button class="form-control" id="filterButtons" style="background-color: #343a40; color: #ffffff;">Monthly</button></a>
+                </div>
+           <% }else { %>
+              <div class="col-md-2 col-6">
+                <a href="/admin/filterSales2?filterBy=Monthly"><button class="form-control" id="filterButtons" >Monthly</button></a>
+              </div>
+             <% } %>   
 
-                     <% if(typeof query != 'undefined' && query == "Weekly"){ %>
-                        <div class="col-md-2 col-6">
-                          <a href="/admin/filterSales2?filterBy=Weekly"><button class="form-control" id="filterButtons" style="background-color: aquamarine; color: #000000;">Weekly</button></a>
-                        </div>
-                   <% }else { %>
-                      <div class="col-md-2 col-6">
-                        <a href="/admin/filterSales2?filterBy=Weekly"><button class="form-control" id="filterButtons" >Weekly</button></a>
-                      </div>
-                     <% } %> 
+             <% if(typeof query != 'undefined' && query == "Weekly"){ %>
+                <div class="col-md-2 col-6">
+                  <a href="/admin/filterSales2?filterBy=Weekly"><button class="form-control" id="filterButtons" style="background-color: #343a40; color: #ffffff;">Weekly</button></a>
+                </div>
+           <% }else { %>
+              <div class="col-md-2 col-6">
+                <a href="/admin/filterSales2?filterBy=Weekly"><button class="form-control" id="filterButtons" >Weekly</button></a>
+              </div>
+             <% } %> 
 
-                     <% if(typeof query != 'undefined' && query == "Today"){ %>
-                        <div class="col-md-2 col-6">
-                          <a href="/admin/filterSales2?filterBy=Today"><button class="form-control" id="filterButtons" style="background-color: aquamarine; color: #000000;">Today</button></a>
-                        </div>
-                   <% }else { %>
-                      <div class="col-md-2 col-6">
-                        <a href="/admin/filterSales2?filterBy=Today"><button class="form-control" id="filterButtons" >Today</button></a>
-                      </div>
-                     <% } %>
+             <% if(typeof query != 'undefined' && query == "Today"){ %>
+                <div class="col-md-2 col-6">
+                  <a href="/admin/filterSales2?filterBy=Today"><button class="form-control" id="filterButtons" style="background-color: #343a40; color: #ffffff;">Today</button></a>
+                </div>
+           <% }else { %>
+              <div class="col-md-2 col-6">
+                <a href="/admin/filterSales2?filterBy=Today"><button class="form-control" id="filterButtons" >Today</button></a>
+              </div>
+             <% } %>
 
-                     <div class="col-md-2 col-6">
-                        <a href="/admin/sales"><button class="form-control" id="filterButtons" >reset</button></a>
-                     </div>  
+             <div class="col-md-2 col-6">
+                <a href="/admin/sales"><button class="form-control" id="filterButtons"  style="background-color: #343a40; color: #ffffff ;">reset</button></a>
+             </div>   
+             
+             <div  class="col-md-2 col-6">
+                <a href="#" class="btn btn-primary btn-sm rounded" id="Export" style="background-color: #343a40; color: #ffffff ;">Export</a>
+                   
+                </div>
         </div>
-        <br>
         
         <div class="card mb-4" id="salesReport">   
             <div class="card-body">
@@ -109,12 +137,12 @@
                     <table class="table table-hover table-striped table-bordered" id="tableData">
                         <thead class="thead-dark">
                             <tr>
-                                <th><h6>Date</h6></th>
-                                <th><h6>Order Count</h6></th>
-                                <th><h6>Razorpay</h6></th>
-                                <th><h6>COD</h6></th>
-                                <th><h6>Wallet</h6></th>
-                                <th><h6>Income</h6></th>
+                                <th>Date</th>
+                                <th>Order Count</th>
+                                <th>Razorpay</th>
+                                <th>COD</th>
+                                <th>Wallet</th>
+                                <th>Income</th>
                             </tr>
                         </thead>
                         <tbody>             
@@ -131,14 +159,13 @@
                         </tbody>
                     </table>
                     <% } else { %>
-                    <h2 style="color: red;">No Sales Data</h2>
+                    <h2 class="no-data">No Sales Data</h2>
                     <% } %>
                 </div>
             </div>
- 
         </div>
     </section>
-    <h3 id="hh" ></h3>
+    
     <footer class="main-footer font-xs">
         <div class="row pb-30 pt-15">
             <div class="col-sm-6">
@@ -153,31 +180,33 @@
         </div>
     </footer>
 </main>
+
 <%- include('./layouts/footer.ejs') %>
+
 <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
 <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
 <script>
     var notyf = new Notyf();
 
-document.getElementById("Export").addEventListener("click",function(event){
-    event.preventDefault();
-    Swal.fire({
-    title: 'Choose Download Format',
-    text: 'Would you like to download as PDF or Excel?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'PDF',
-    cancelButtonText: 'Excel',
-    showCloseButton: true,
-    reverseButtons: true
-  }).then((result) => {
-    if (result.isConfirmed) {
-
+    document.getElementById("Export").addEventListener("click", function(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Choose Download Format',
+            text: 'Would you like to download as PDF or Excel?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'PDF',
+            cancelButtonText: 'Excel',
+            showCloseButton: true,
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
                 const invoiceElement = document.getElementById('salesReport');
                 html2pdf(invoiceElement, {
                     margin: 1,
@@ -186,30 +215,27 @@ document.getElementById("Export").addEventListener("click",function(event){
                     html2canvas: { scale: 2 },
                     jsPDF: { unit: 'in', format: 'letter' }
                 });
-         notyf.success("Downloading")
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-        let tableData = document.getElementById('tableData');
+                notyf.success("Downloading");
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                let tableData = document.getElementById('tableData');
                 const wb = XLSX.utils.table_to_book(tableData);
-
                 const ws = wb.Sheets[wb.SheetNames[0]];
                 const wscols = [
-                    {wch: 20}, 
-                    {wch: 15}, 
-                    {wch: 15}, 
-                    {wch: 15}, 
-                    {wch: 15}, 
-                    {wch: 20}  
+                    { wch: 20 }, 
+                    { wch: 15 }, 
+                    { wch: 15 }, 
+                    { wch: 15 }, 
+                    { wch: 15 }, 
+                    { wch: 20 }  
                 ];
                 ws['!cols'] = wscols;
                 XLSX.writeFile(wb, 'PillowMartSales-report-excel.xlsx');
-                notyf.success("Downloading")
-    }
-  });
+                notyf.success("Downloading");
+            }
+        });
+    });
 
-})
-
-  document.getElementById("dateForm").addEventListener("change",function(){
-       document.getElementById("formSub").submit()
-  })
-
-    </script>
+    document.getElementById("dateForm").addEventListener("change", function() {
+        document.getElementById("formSub").submit();
+    });
+</script>

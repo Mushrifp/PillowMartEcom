@@ -12,12 +12,17 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    OffPrice:{
+    offPrice:{
         type:Number,
         required:true,
         default:0
     },
-    image:{
+    percentage:{
+        type:Number,
+        required:true,
+        default:0
+    },
+    image:{ 
         type:[String],
         required:true
     },
@@ -27,7 +32,7 @@ const productSchema = new mongoose.Schema({
     },
     stock:{
         type:Number,
-        required:true
+        required:true 
     },
     size:{
         type:String,

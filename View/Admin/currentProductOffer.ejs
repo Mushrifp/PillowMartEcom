@@ -17,9 +17,9 @@
     <section class="content-main">
         <div class="content-header">
             <div class="d-flex justify-content-between align-items-center">
-                <h2 class="content-title card-title">Add Offer to Product</h2>   
+                <h2 class="content-title card-title">current products in this offer</h2>   
             </div>
-            <a href="/admin/currentofferProduct?offerID=<%= offerID %>"><button class="form-control" id="filterButtons" style="background-color: #19bc31; color: #ffffff;">Current Products</button></a>
+            <a href="/admin/OffApply?id=<%= offerID %>"><button class="form-control" id="filterButtons" style="background-color: #19bc31; color: #ffffff;">Go Back</button></a>
         </div>
         <% if(typeof message != 'undefined'){ %>
             <h2 style="color: red;"><%= message %></h2>
@@ -38,11 +38,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% if(productData.length == 0) { %>
-                                <tr>
-                                    <td colspan="6" class="text-center">No products available</td>
-                                </tr>
-                            <% } else { %>
+
+                            <% if(typeof productData != 'undefined' &&  productData.length != 0) { %>
                                 <% for (let i = 0; i < productData.length; i++) { %>
                                     <tr>
                                         <td></td>
@@ -58,13 +55,12 @@
                                         </td>
                                         <td>$<%= productData[i].price %></td>
                                         <td class="text-end">
-                                           
-            <a href="/admin/apply?id=<%= productData[i]._id %>&offerID=<%= offerID %>"><button class="form-control" id="filterButtons" style="background-color: #19bc31; color: #ffffff;">Add Offer</button></a>
-
+            <a href="/admin/removeOfferProduct?offer=<%= offerID %>&productdID=<%= productData[i]._id %>"><button class="form-control" id="filterButtons" style="background-color: #19bc31; color: #ffffff;">Remove Offer</button></a>
                                         </td>
                                     </tr>
                                 <% } %>
                             <% } %>
+
                         </tbody>
                     </table>
                 </div>

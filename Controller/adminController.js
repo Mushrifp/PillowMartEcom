@@ -11,11 +11,7 @@ const offer = require('../Model/offer');
 
 
 
-// For pdf 
-const ejs = require("ejs")
-const htmlPdf = require("html-pdf")
-const fs = require("fs")
-const path = require("path");
+
 
 
 // Load Login
@@ -328,7 +324,6 @@ const updateProduct = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).send("Internal server error");
     }
 }
 
@@ -395,7 +390,6 @@ const logout = async (req,res)=>{
 const newCategory = async (req,res)=>{
     try{
 
-        const name = req.body.name.replace(/\s/g, "")
         const existingCategory = await categoryDB.findOne({name:req.body.name})
         const categoryData = await categoryDB.find({}) 
  
@@ -406,7 +400,6 @@ const newCategory = async (req,res)=>{
                    })
 
                  const saving  = await newCategory.save();
-                 saving ? console.log("category saved") : console.log("category not saved")
                  const categoryData = await categoryDB.find({}) 
                  res.render("categories",{message:"Created",categoryData})
                  
@@ -444,9 +437,9 @@ const editCategoryLoad = async (req,res)=>{
 const editCategory = async (req,res)=>{
     try {   
         let updateOperations = {};
-        console.log("this is the upcoming data",req.body)
-const alreadyExistName = await categoryDB.findOne({name:req.body.name})
-const CategoryData ={
+
+  const alreadyExistName = await categoryDB.findOne({name:req.body.name})
+  const CategoryData ={
     name:req.body.name,
     description:req.body.description
 }
@@ -624,7 +617,7 @@ const filterSales  = async (req,res)=>{
           }
 
        if(filteredData.length == 0){
-        res.render("sales",{salesData:dataToSend,selectedDate,message:"no data"})
+        res.render("sales",{selectedDate,message:"no data"})
        }else{
         res.render("sales",{salesData:filteredData,selectedDate})
        }
@@ -684,7 +677,6 @@ const SalesDatas = async () => {
         return o;
     } catch (error) {
         console.log(error);
-        throw error;
     }
 };
 
@@ -730,7 +722,7 @@ const filterSales2 = async (req,res)=>{
         }
 
    if(send.length == 0){
-    res.render("sales",{salesData:dataToSend,message:"no data"})
+    res.render("sales",{message:"no data"})
    }else{
     res.render("sales",{salesData:send,query})
    }
@@ -799,7 +791,6 @@ const editOfferSave = async (req, res) => {
             startDate,
             endDate
         };
-        console.log("Received id:", updateFields);
 
         const objectId = new Types.ObjectId(id);
 
@@ -815,14 +806,14 @@ const editOfferSave = async (req, res) => {
     }
 };
 
-// offer applying loading
+// offer applying loading product
 const OffApply = async (req,res)=>{
     try{
 
         const productData = await product.find({
             $or: [
-                { OffPrice: { $exists: false } },
-                { OffPrice: { $eq: 0 } }
+                { offPrice: { $exists: false } },
+                { offPrice: { $eq: 0 } }
             ]
         });
          let offerID = req.query.id
@@ -833,31 +824,29 @@ const OffApply = async (req,res)=>{
     }
 }
 
-// offer apply 
+// offer apply  product
 const apply = async (req,res)=>{
     try{
-           await offer.updateOne({_id:req.query.offerID},{$set:{offProduct:req.query.id}})
+           await offer.updateOne({_id:req.query.offerID},{$push:{offItem:req.query.id}})
 
-           const offerInfo = await offer.findOne({_id:req.query.offerID})
-           const productInfo = await product.findOne({_id:req.query.id})
+           const offerDetails = await offer.findOne({_id:req.query.offerID})
+           const producDetails = await product.findOne({_id:req.query.id})
 
-           let offerPercentage = offerInfo.discount;
-           let actualPrice = productInfo.price;
-          
-           await offer.updateOne({_id:req.query.offerID},{$push: { offProduct: productInfo._id }})
+           let offerPercentage = offerDetails.discount;
+           let actualPrice = producDetails.price;
 
            const discountDecimal = offerPercentage / 100;
            const discountAmount = actualPrice * discountDecimal;
            const finalPrice = parseInt(actualPrice - discountAmount); 
     
  
-           const updatedProduct = await product.updateOne({ _id: req.query.id },{ $set:{OffPrice:finalPrice}});
+           const updatedProduct = await product.updateOne({ _id: req.query.id },{ $set:{offPrice:finalPrice, percentage:offerDetails.discount }});
            
                if(updatedProduct){
                 const productData = await product.find({
                     $or: [
-                        { OffPrice: { $exists: false } },
-                        { OffPrice: { $eq: 0 } }
+                        { offPrice: { $exists: false } },
+                        { offPrice: { $eq: 0 } }
                     ]
                 });
                 let offerID = req.query.offerID
@@ -865,8 +854,8 @@ const apply = async (req,res)=>{
                }else{
                 const productData = await product.find({
                     $or: [
-                        { OffPrice: { $exists: false } },
-                        { OffPrice: { $eq: 0 } }
+                        { offPrice: { $exists: false } },
+                        { offPrice: { $eq: 0 } }
                     ]
                 });
                 let offerID = req.query.id
@@ -878,27 +867,85 @@ const apply = async (req,res)=>{
     }
 }
 
-// remove offer  
-const remove = async (req,res)=>{
+// remove offer product 
+const removeOfferProduct = async (req,res)=>{
     try{
+
+             await offer.updateOne({_id:req.query.offer},{$pull:{offItem:req.query.productdID}})
+          
+      const productCategory = await product.findOne({_id:req.query.productdID})
+
+    const categoryCheck = await categoryDB.findOne({name:productCategory.category})
+
+        if(categoryCheck.offer != true){
+             await product.updateOne({_id:req.query.productdID},{$set:{offPrice:0,percentage:0}})
+
+             
+        let offerIdArray = await offer.find({_id:req.query.offer});
+
+           let arrayID = offerIdArray[0].offItem;
+
+              if(arrayID.length != 0){
+           
+                let productInfo = []
+
+                   for(let i=0;i<arrayID.length;i++){
+
+                         let offID = arrayID[i]
+
+                         const products = await product.find({ _id: offID});
+
+                        if(products.length != 0 ){
+                            productInfo.push(products[0]) 
+                        }
+
+                   }
+
+                   res.render("currentProductOffer",{productData:productInfo,offerID:req.query.offer,message:"Done"})
+
+              }else{
+                res.render("currentProductOffer",{message:"not found",offerID:req.query.offer})
+              }
+             
+             
+             
+            
+        }
 
     }catch(error){
         console.log(error)
     }
-}
+} 
 
-// current product 
-const current = async (req,res)=>{
+// current offer products
+const currentofferProduct = async (req,res)=>{
     try{
         let offerID = req.query.offerID
-        const productData = await product.find({
-            OffPrice: { $exists: true, $gt: 0 }
-        });
-        let dataOFoffer = await offer.findOne({_id:offerID})
+        let offerIdArray = await offer.find({_id:offerID});
 
-        console.log(dataOFoffer)
+           let arrayID = offerIdArray[0].offItem;
 
-        //   res.render("current",{productData,offerID})
+              if(arrayID.length != 0){
+           
+                let productInfo = []
+
+                   for(let i=0;i<arrayID.length;i++){
+
+                         let offID = arrayID[i]
+
+                         const products = await product.find({ _id: offID});
+
+                        if(products.length != 0 ){
+                            productInfo.push(products[0]) 
+                        }
+
+                   }
+
+                   res.render("currentProductOffer",{productData:productInfo,offerID})
+
+              }else{
+                res.render("currentProductOffer",{message:"not found",offerID})
+              }
         
     }catch(error){
         console.log(error)
@@ -916,12 +963,72 @@ const sales = async (req,res)=>{
         
     } catch (error) {
         console.log(error);
+    } 
+}
+
+// offer apply to category page load
+const addOfferTOCategory = async (req,res)=>{
+    try{
+              const categoryData = await categoryDB.find({offer:{$eq:false}})   
+
+            let offerID = req.query.id
+              res.render("applyOfferCategory",{categoryData,offerID})
+
+    }catch(error){  
+        console.log(error)
+    }
+}
+
+// add offer to category
+const offApplyCategory = async (req,res)=>{
+    try{
+           
+               const detailsCategory = await categoryDB.findOne({_id:req.query.id})
+               let CategoryName  = detailsCategory.name;
+
+
+    await offer.updateOne({_id:req.query.offerID},{$push:{offItem:req.query.id}})
+    await categoryDB.updateOne({_id:req.query.id},{$set:{offer:true}})
+
+    const offerDetails = await offer.findOne({_id:req.query.offerID})
+    const producDetails = await product.find({category:CategoryName})
+
+let done = false
+
+    for(let i=0;i<producDetails.length;i++){
+
+        let offerPercentage = offerDetails.discount;
+        let actualPrice = producDetails[i].price;
+    
+        const discountDecimal = offerPercentage / 100;
+        const discountAmount = actualPrice * discountDecimal;
+        const finalPrice = parseInt(actualPrice - discountAmount); 
+    
+    
+        const updatedProduct = await product.updateOne({ _id: producDetails[i]._id },{ $set:{offPrice:finalPrice,percentage:offerDetails.discount}});    
+        
+          if(updatedProduct){
+            done=true
+          }else{
+            done=false
+          }
+
     }
     
-    
-    
-    
-    
+        if(done){
+            const categoryData = await categoryDB.find({offer:{$eq:false}})   
+         let offerID = req.query.offerID
+         res.render("applyOfferCategory",{categoryData,offerID,message:"Done"})
+        }else{
+            const categoryData = await categoryDB.find({offer:{$eq:false}})   
+         let offerID = req.query.id
+         res.render("applyOfferCategory",{categoryData,offerID,failed:"failed"})
+        }
+
+
+    }catch(error){
+        console.log(error)
+    }
 }
 module.exports={
     loadDash,
@@ -962,7 +1069,9 @@ module.exports={
     editOfferSave,
     OffApply,
     apply,
-    remove,
-    current,
-    sales
+    removeOfferProduct,
+    currentofferProduct,
+    sales,
+    offApplyCategory,
+    addOfferTOCategory
 }

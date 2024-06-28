@@ -56,8 +56,8 @@
                     </div>
                     <div class="product_info">
                         <p><strong>Price: $</strong> 
-                                    <% if(singleData.OffPrice && singleData.OffPrice != 0){ %>
-                                        <h4 class="mb-1 me-1" style="display: inline;">$<%= singleData.OffPrice %></h4>
+                                    <% if(singleData.offPrice && singleData.offPrice != 0){ %>
+                                        <h4 class="mb-1 me-1" style="display: inline;">$<%= singleData.offPrice %></h4>
                                         <del class="mb-1 me-1" style="color: rgb(6, 79, 6); font-size: medium; margin-left: 5px; display: inline;">$<%= singleData.price %></del>
                                     <% }else{ %>
                                         <h4 class="mb-1 me-1">$<%= singleData.price %></h4>
@@ -74,7 +74,15 @@
                                             <% } %>
                                         </span>
                                     </p>
-                                    <p><strong>Discount:</strong> <%= singleData.discount %> off</p>
+
+                                        <% if(singleData.percentage != 0){ %>
+
+                                            <p><strong>Discount:</strong> <span class="ms-2 badge bg-success text-white   " ><%= singleData.percentage %>% Offer</span ></p>
+
+                                        <% }else{  %>
+                                    <p><strong>Discount:</strong> <span >No Offer</span ></p>
+                                                                        
+                                           <% } %> 
                                     
                                 </div>
                                 <div>                                    
