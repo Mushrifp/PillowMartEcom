@@ -810,15 +810,10 @@ const editOfferSave = async (req, res) => {
 const OffApply = async (req,res)=>{
     try{
 
-        const productData = await product.find({
-            $or: [
-                { offPrice: { $exists: false } },
-                { offPrice: { $eq: 0 } }
-            ]
-        });
+        const productData = await product.find({});
          let offerID = req.query.id
-         
-         res.render("applyOffer",{productData,offerID})
+         let offerData = await offer.findOne({_id: offerID})
+         res.render("applyOffer",{productData,offerID,offerData})
     }catch(error){
         console.log(error)
     }
@@ -827,6 +822,7 @@ const OffApply = async (req,res)=>{
 // offer apply  product
 const apply = async (req,res)=>{
     try{
+           await offer.updateOne({},{$pull:{offItem:req.query.id}})
            await offer.updateOne({_id:req.query.offerID},{$push:{offItem:req.query.id}})
 
            const offerDetails = await offer.findOne({_id:req.query.offerID})
@@ -843,23 +839,9 @@ const apply = async (req,res)=>{
            const updatedProduct = await product.updateOne({ _id: req.query.id },{ $set:{offPrice:finalPrice, percentage:offerDetails.discount }});
            
                if(updatedProduct){
-                const productData = await product.find({
-                    $or: [
-                        { offPrice: { $exists: false } },
-                        { offPrice: { $eq: 0 } }
-                    ]
-                });
-                let offerID = req.query.offerID
-                res.render("applyOffer",{productData,offerID,message:"Done"})
+                       res.send({Done:"Done"})
                }else{
-                const productData = await product.find({
-                    $or: [
-                        { offPrice: { $exists: false } },
-                        { offPrice: { $eq: 0 } }
-                    ]
-                });
-                let offerID = req.query.id
-                res.render("applyOffer",{productData,offerID,failed:"failed"})
+                           res.send({NotDone:"NotDone"})
                }
 
     }catch(error){
@@ -871,45 +853,36 @@ const apply = async (req,res)=>{
 const removeOfferProduct = async (req,res)=>{
     try{
 
-             await offer.updateOne({_id:req.query.offer},{$pull:{offItem:req.query.productdID}})
+            console.log(req.query)
           
       const productCategory = await product.findOne({_id:req.query.productdID})
 
     const categoryCheck = await categoryDB.findOne({name:productCategory.category})
 
         if(categoryCheck.offer != true){
+            await offer.updateOne({_id:req.query.offer},{$pull:{offItem:req.query.productdID}})
              await product.updateOne({_id:req.query.productdID},{$set:{offPrice:0,percentage:0}})
 
+                   res.send({Done:"done"})
              
-        let offerIdArray = await offer.find({_id:req.query.offer});
+        }else{
 
-           let arrayID = offerIdArray[0].offItem;
-
-              if(arrayID.length != 0){
-           
-                let productInfo = []
-
-                   for(let i=0;i<arrayID.length;i++){
-
-                         let offID = arrayID[i]
-
-                         const products = await product.find({ _id: offID});
-
-                        if(products.length != 0 ){
-                            productInfo.push(products[0]) 
-                        }
-
-                   }
-
-                   res.render("currentProductOffer",{productData:productInfo,offerID:req.query.offer,message:"Done"})
-
-              }else{
-                res.render("currentProductOffer",{message:"not found",offerID:req.query.offer})
-              }
-             
-             
-             
+               let cateID =  categoryCheck.id;
+               let offerInfos = await offer.find({offItem:cateID})
             
+               const producDetails = await product.findOne({_id:req.query.productdID})
+    
+               let offerPercentage = offerInfos[0].discount;
+               let actualPrice = producDetails.price;
+    
+               const discountDecimal = offerPercentage / 100;
+               const discountAmount = actualPrice * discountDecimal;
+               const finalPrice = parseInt(actualPrice - discountAmount);
+
+            await product.updateOne({ _id: req.query.productdID },{ $set:{offPrice:finalPrice, percentage:offerInfos[0].discount }});
+            await offer.updateOne({_id:req.query.offer},{$pull:{offItem:req.query.productdID}})
+
+            res.send({Done:"done"})
         }
 
     }catch(error){
@@ -944,7 +917,7 @@ const currentofferProduct = async (req,res)=>{
                    res.render("currentProductOffer",{productData:productInfo,offerID})
 
               }else{
-                res.render("currentProductOffer",{message:"not found",offerID})
+                res.render("currentProductOffer",{message:false,offerID})
               }
         
     }catch(error){
@@ -972,7 +945,10 @@ const addOfferTOCategory = async (req,res)=>{
               const categoryData = await categoryDB.find({offer:{$eq:false}})   
 
             let offerID = req.query.id
-              res.render("applyOfferCategory",{categoryData,offerID})
+
+            let offerData = await offer.findOne({_id:req.query.id})
+
+              res.render("applyOfferCategory",{categoryData,offerID,offerData})
 
     }catch(error){  
         console.log(error)
@@ -1016,13 +992,9 @@ let done = false
     }
     
         if(done){
-            const categoryData = await categoryDB.find({offer:{$eq:false}})   
-         let offerID = req.query.offerID
-         res.render("applyOfferCategory",{categoryData,offerID,message:"Done"})
+                res.send({Done:"Done"})
         }else{
-            const categoryData = await categoryDB.find({offer:{$eq:false}})   
-         let offerID = req.query.id
-         res.render("applyOfferCategory",{categoryData,offerID,failed:"failed"})
+            res.send({NotDone:"NotDone"})
         }
 
 
@@ -1030,6 +1002,78 @@ let done = false
         console.log(error)
     }
 }
+
+// current offer in category
+const currentOfferCategory = async (req,res)=>{
+    try{
+   
+
+       let offerID = req.query.offerID
+       let offerIdArray = await offer.find({_id:offerID});
+
+          let arrayID = offerIdArray[0].offItem;
+
+             if(arrayID.length != 0){
+          
+               let categoryInfo = []
+
+                  for(let i=0;i<arrayID.length;i++){
+
+                        let offID = arrayID[i]
+
+                        const category = await categoryDB.find({ _id: offID});
+
+                       if(category.length != 0 ){
+                           categoryInfo.push(category[0]) 
+                       }
+
+                  }
+
+                  res.render("currentOfferCategory",{categoryData:categoryInfo,offerID})
+
+             }else{
+               res.render("currentOfferCategory",{message:"NO Data",offerID})
+             }
+
+    }catch(error){
+        console.log(error)
+    }
+}
+
+// removing category offer
+const removeOfferCategory  = async (req,res)=>{
+    try{
+               console.log(req.body)
+
+               const detailsCategory = await categoryDB.findOne({_id:req.body.categoryID})
+               let CategoryName  = detailsCategory.name;
+
+
+    await offer.updateOne({_id:req.body.OfferID},{$pull:{offItem:req.body.categoryID}})
+    await categoryDB.updateOne({_id:req.body.categoryID},{$set:{offer:false}})
+
+    const producDetails = await product.find({category:CategoryName})
+
+    for(let i=0;i<producDetails.length;i++){
+     
+        await product.updateOne({ _id: producDetails[i]._id },{ $set:{offPrice:0,percentage:0}});          
+
+    }   
+
+    res.send({respond:'done'})
+               
+               
+    }catch(error){
+        console.log(error)
+    }
+} 
+
+
+
+
+
+
+
 module.exports={
     loadDash,
     Product,
@@ -1073,5 +1117,7 @@ module.exports={
     currentofferProduct,
     sales,
     offApplyCategory,
-    addOfferTOCategory
+    addOfferTOCategory,
+    currentOfferCategory,
+    removeOfferCategory
 }

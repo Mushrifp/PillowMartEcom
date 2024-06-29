@@ -5,14 +5,14 @@
             <div class="col-lg-12">
                 <h2 class="content-title">Offers and Coupons</h2>
                 <br>
-                <% if(typeof message != 'undefined'){ %>
-                        <h3 style="color: red;">Deleted </h3>
+                <% if (typeof message !== 'undefined') { %>
+                    <h3 style="color: red;">Deleted</h3>
                 <% } %>  
                 <br>
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="table-responsive">
-                           <h3>Existing Coupons</h3> 
+                            <h3>Existing Coupons</h3>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -27,27 +27,25 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                   <% for (let i = 0; i < coupons.length; i++){ %>
-                                    
-                                    <tr>
-                                        <td><%= coupons[i].name %></td>
-                                        <td><%= coupons[i].code %></td>
-                                        <td><%= coupons[i].description %></td>
-                                        <td><%= coupons[i].discount %></td>
-                                        <td><%= coupons[i].count %></td>
-                                        <td><%= coupons[i].startDate %></td>
-                                        <td><%= coupons[i].endDate %></td>
-                                        <td>
-                                            <a style="background-color: white;" href="/admin/editCoupon?id=<%= coupons[i]._id %>"><button class="btn btn-sm btn-primary">Edit</button></a>
-                                            <a style="background-color: rgb(125, 0, 0);" href="/admin/deleteCoupon?id=<%= coupons[i]._id %>"><button  class="btn btn-sm btn-primary" style="background-color: rgb(204, 51, 0);">Delete</button></a>
-                                        </td> 
-                                    </tr>
-                                   <% } %>
+                                    <% for (let i = 0; i < coupons.length; i++) { %>
+                                        <tr>
+                                            <td><%= coupons[i].name %></td>
+                                            <td><%= coupons[i].code %></td>
+                                            <td><%= coupons[i].description %></td>
+                                            <td><%= coupons[i].discount %></td>
+                                            <td><%= coupons[i].count %></td>
+                                            <td><%= coupons[i].startDate %></td>
+                                            <td><%= coupons[i].endDate %></td>
+                                            <td>
+                                                <a href="/admin/editCoupon?id=<%= coupons[i]._id %>" class="btn btn-sm btn-primary">Edit</a>
+                                                <a href="/admin/deleteCoupon?id=<%= coupons[i]._id %>" class="btn btn-sm btn-danger">Delete</a>
+                                            </td> 
+                                        </tr>
+                                    <% } %>
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Add New Coupon Button -->
-                        <a href="/admin/addcoupon"><button class="btn btn-primary float-start">Add New Coupon</button></a>
+                        <a href="/admin/addcoupon"><button class="btn btn-primary">Add New Coupon</button></a>
                     </div>
                 </div>
             </div>
@@ -55,9 +53,8 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <div class="card mb-4">                   
+                <div class="card mb-4">
                     <div class="card-body">
-                        <!-- Existing Offers Section -->
                         <div class="table-responsive">
                             <h3>Existing Offers</h3>
                             <table class="table">
@@ -80,23 +77,35 @@
                                             <td><%= offers[i].startDate %></td>
                                             <td><%= offers[i].endDate %></td>
                                             <td>
-                                                <a style="background-color: white;" href="/admin/editoffer?id=<%= offers[i]._id %>"><button class="btn btn-sm btn-primary">Edit</button></a>
-                                                <a style="background-color: rgb(255, 255, 255);" href="/admin/OffApply?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" >Product</button></a>
-                                                <a style="background-color: rgb(255, 255, 255);" href="/admin/addOfferTOCategory?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" >category</button></a>
-                                                <a style="background-color: rgb(125, 0, 0);" href="/admin/deleteOffer?id=<%= offers[i]._id %>"><button  class="btn btn-sm btn-primary" style="background-color: rgb(204, 51, 0);">Delete</button></a>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        Actions
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="/admin/editoffer?id=<%= offers[i]._id %>">Edit</a></li>
+                                                        <li><a class="dropdown-item text-danger" href="/admin/deleteOffer?id=<%= offers[i]._id %>">Delete</a></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        Add to
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="/admin/OffApply?id=<%= offers[i]._id %>">Product</a></li>
+                                                        <li><a class="dropdown-item" href="/admin/addOfferTOCategory?id=<%= offers[i]._id %>">Category</a></li>
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                     <% } %>
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Add New Offer Button -->
-                        <a href="/admin/addoffer"><button class="btn btn-primary float-start">Add New Offer</button></a>
+                        <a href="/admin/addoffer"><button class="btn btn-primary">Add New Offer</button></a>
                     </div>
                 </div>
             </div>
         </div>
-
     </section>
     <footer class="main-footer font-xs">
         <div class="row pb-30 pt-15">
@@ -104,14 +113,12 @@
                 <script>
                     document.write(new Date().getFullYear());
                 </script>
-                &copy; Nest - HTML Ecommerce Template .
+                &copy; Nest - HTML Ecommerce Template.
             </div>
-            <div class="col-sm-6">
-                <div class="text-sm-end">All rights reserved</div>
+            <div class="col-sm-6 text-sm-end">
+                All rights reserved
             </div>
         </div>
     </footer>
 </main>
 <%- include('./layouts/footer.ejs') %>
-
-

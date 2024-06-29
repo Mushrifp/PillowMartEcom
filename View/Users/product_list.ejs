@@ -320,14 +320,14 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-6 col-md-5 col-sm-7">
-                                                        <a href="/single-product?id=<%= Data[i]._id %>"><h5><%= Data[i].productTitle %></h5></a>
+                                                        <a href="/single-product?id=<%= Data[i]._id %>"><h3><%= Data[i].productTitle %></h3></a>
                                                         <span>
                                                             <% if (Data[i].stock === 0) { %>
-                                                                <span style="color: red;">Out of stock</span>
+                                                                <span style="color: red;" class="ms-2 badge bg-danger text-white   ">Out of stock</span>
                                                             <% } else if (Data[i].stock <= 5) { %>
-                                                                <span style="color: red;">Only a few left! Hurry up!</span>
+                                                                <span style="color: red;" class="ms-2 badge bg-danger text-white   ">Only a few left! Hurry up!</span>
                                                             <% } else { %>
-                                                                <span style="color: green;">In Stock</span>
+                                                                <span style="color: green;" class="ms-2 badge bg-success text-white   ">In Stock</span>
                                                             <% } %>
                                                         </span>
                                                         <p class="text mb-4 mb-md-0"><%= Data[i].description %></p>
@@ -368,7 +368,8 @@
                                     </div>
                                 </div>
                             <% } %>
-                        <% } else { %>
+                            
+                            <% } else { %>
                             <div class="row justify-content-center mb-3">
                                 <div class="col-md-12">
                                     <div class="card shadow-0 border rounded-3">
