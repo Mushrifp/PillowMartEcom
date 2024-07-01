@@ -71,4 +71,7 @@ user_router.post("/razpayOrderPlace",userController.razpayOrderPlace)
 user_router.post("/showCoupon",userController.showCoupon)
 user_router.post("/applyCoupon",userController.applyCoupon)
 
+// chart in admin dashboard
+user_router.get("/dashboardOrderChart",userController.dashboardOrderChart)
+
 module.exports = user_router;

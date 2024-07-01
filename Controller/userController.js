@@ -988,6 +988,20 @@ const searchSuggestions = async (req, res) => {
     }
 };
 
+// order show in admin dashboard 
+const dashboardOrderChart = async (req, res) => {
+    try {
+
+        const orderData = await order.aggregate([{ $unwind: "$items" },{ $addFields: { year: { $year: "$items.Dates.ordered" } } },{$group: {_id: "$year",count: { $sum: 1 }}},{ $sort: { _id: 1 } }]); 
+
+        res.send(orderData); 
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
 module.exports = {
     loadHome,
     loadAbout, 
@@ -1013,5 +1027,6 @@ module.exports = {
     showCoupon,
     applyCoupon,
     filterProduct,
-    searchSuggestions
+    searchSuggestions,
+    dashboardOrderChart
 }

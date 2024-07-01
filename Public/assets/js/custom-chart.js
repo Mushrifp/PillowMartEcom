@@ -10,7 +10,7 @@
             
             // The data for our dataset
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', '900', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 datasets: [{
                         label: 'Sales',
                         tension: 0.3,
