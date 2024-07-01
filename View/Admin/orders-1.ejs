@@ -3,7 +3,11 @@
     <section class="content-main">
         <div class="content-header">
             <h2 class="content-title card-title">Orders</h2>
+            <div class="d-flex">
+                <a href="/admin/returnOrder" class="btn btn-primary btn-sm rounded" style="margin-left: 600px;" >Return Requested</a>
+            </div>
         </div>
+       
         <div class="card mb-4">
             <div class="card-body">
                 <div class="table-responsive">
@@ -40,6 +44,8 @@
                                             <span class="badge rounded-pill alert-danger">Canceled</span>
                                         <% } else if(order.Status === 'Delivered') { %>
                                             <span class="badge rounded-pill alert-success">Delivered</span>
+                                        <% } else if(order.Status === 'Return') { %>
+                                            <span class="badge rounded-pill alert-primary">Return</span>
                                         <% } else { %>
                                             <span class="badge rounded-pill alert-success"><%= order.Status %></span>
                                         <% } %>

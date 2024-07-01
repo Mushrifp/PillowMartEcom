@@ -5,7 +5,7 @@ const hash = require("bcrypt");
 const address = require("../Model/address")
 const Order = require("../Model/order")
 const wallet = require("../Model/wallet")
-
+const orderReturned = require("../Model/returnOrder")
 
 
 
@@ -567,8 +567,18 @@ const getWalletHistory = async(req,res)=>{
 // order return 
 const returnOrder = async (req,res)=>{
   try {
-console.log("reached ===========")
-     let done = await Order.updateOne({userID:req.session.user_id, "items._id": req.query.docID }, {$set:{ "items.$.status": "Return" } });
+
+      await Order.updateOne({userID:req.session.user_id, "items._id": req.query.docID }, {$set:{ "items.$.status": "Return" } });
+
+
+    let newReturnOrder = new orderReturned({
+      userId:req.session.user_id,
+      orderId:req.query.docID,
+      reason:req.query.reason 
+    })
+
+    let done =  newReturnOrder.save()
+
 
      if(done){
       res.send({Done:"Done"})

@@ -8,6 +8,7 @@ const { Types } = require('mongoose');
 const mongoose = require('mongoose');
 const Coupon = require('../Model/coupons');
 const offer = require('../Model/offer');
+const orderReturned = require("../Model/returnOrder")
 
 
 
@@ -61,52 +62,15 @@ const loadDash = async (req, res) => {
 
         let orders = [];
 
-        for (let i = 0; i < Datas.length; i++) {
-            for (let j = 0; j < Datas[i].items.length; j++) {
-                let singleData = Datas[i].items[j];
-                let pyst ;
-                if(singleData.paymentStatus == true){
-                       pyst="Paid"
-                }else{
-                      pyst="Not Paid"
-                }
-                let obj = {
-                    user: Datas[i].userID,
-                    ID: singleData._id,
-                    paymentMethod: singleData.paymentMethod,
-                    category:singleData.item.category,
-                    paymentStatus: pyst,
-                    productName: singleData.item.productTitle,
-                    image: singleData.item.image[0],
-                    OrdrDate: singleData.Dates.ordered,
-                    Status: singleData.status,
-                    Total: singleData.cash,
-                    name: singleData.address.name
-                };
 
-                orders.push(obj);
-            }
-        }
 
-        const perPage = 3; 
-        const page = req.query.page || 1; 
 
-        const userDataList = await userData.find({}).sort({_id:-1}).skip((page-1)*perPage).limit(perPage);
-
-        const catgorys = await categoryDB.find({})
-
-        const totalUsers = await userData.countDocuments({});
-        const totalPages = Math.ceil(totalUsers/perPage);
 
         res.render('dash',{
             ProductCount: productNumber,
             userCount: userNumber,
             number,
             orders,
-            userData: userDataList,
-            totalPages,
-            currentPage: parseInt(page),
-            catgorys
         });
 
     } catch (error) {
@@ -1068,9 +1032,38 @@ const removeOfferCategory  = async (req,res)=>{
     }
 } 
 
+// return order
+const returnOrder = async (req, res) => {
+    try {
+        let done = await orderReturned.find({});
 
+        let arr = [];
 
+        for (let i = 0; i < done.length; i++) {
+            let data = await order.findOne({ userID: done[i].userId, "items._id": done[i].orderId });
 
+                    let ojj = {
+                        title: data.items[0].item.productTitle,
+                        price: data.items[0].item.price,
+                        image1:data.items[0].item.image[0],
+                        customer:data.items[0].address.name,
+                        phone:data.items[0].address.phone,
+                        orderDate:data.items[0].Dates.ordered,
+                        deliveryDate:data.items[0].Dates.delivery,
+                        paymentMethod:data.items[0].paymentMethod,
+                        reason: done[i].reason 
+                    };
+
+                    arr.push(ojj);
+
+        }
+
+        console.log(arr);
+        res.render("returnOrder", { orders: arr }); 
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 
@@ -1119,5 +1112,6 @@ module.exports={
     offApplyCategory,
     addOfferTOCategory,
     currentOfferCategory,
-    removeOfferCategory
+    removeOfferCategory,
+    returnOrder
 }

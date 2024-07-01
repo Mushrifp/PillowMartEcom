@@ -290,29 +290,43 @@ for (let i = 0; i < returnButtons.length; i++) {
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, cancel it!'
+            confirmButtonText: 'Yes, return it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                const linkUrl = returnButton.querySelector('a').getAttribute('href');
-                axios.post(`/user/returnOrder?ID=${linkUrl}&docID=${docID}`)
-                    .then(function(response) {
-                        Swal.fire({
-                            title: "product returned ",
-                            text: "Your Order has been returned.",
-                            icon: "success"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                if (response.data.Done) {
-                                    window.location.reload();
-                                }
-                            }
-                        });
-                    }).catch(function(error) {
-                        console.log(error);
-                    });
+                Swal.fire({
+                    title: 'Return Reason',
+                    input: 'textarea',
+                    inputPlaceholder: 'Type your reason for return here...',
+                    inputAttributes: {
+                        'aria-label': 'Type your reason for return here'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Submit',
+                    cancelButtonText: 'Cancel'
+                }).then((reasonResult) => {
+                    if (reasonResult.isConfirmed) {
+                        const reason = encodeURIComponent(reasonResult.value);
+                        const linkUrl = returnButton.querySelector('a').getAttribute('href');
+                        axios.post(`/user/returnOrder?ID=${linkUrl}&docID=${docID}&reason=${reason}`)
+                            .then(function(response) {
+                                Swal.fire({
+                                    title: "Request Sended",
+                                    text: "Your product return request sended ",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        if (response.data.Done) {
+                                            window.location.reload();
+                                        }
+                                    }
+                                });
+                            }).catch(function(error) {
+                                console.log(error);
+                            });
+                    }
+                });
             }
         });
-           
     });
 }
     </script>

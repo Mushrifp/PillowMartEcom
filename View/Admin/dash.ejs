@@ -44,9 +44,7 @@
     <section class="content-main">
         <div class="content-header">
             <div>
-                <h2 class="content-title card-title">Dashboard
-                    <a href="#" class="btn btn-primary btn-sm rounded" id="Export" style="margin-left: 700px;" >Export</a>
-                </h2>
+                <h2 class="content-title card-title">Dashboard</h2>
             </div>
         </div>
         <div class="row">
@@ -120,339 +118,138 @@
                 </div>
             </div>
 
-            <!-- <div class="col-xl-4 col-lg-12 mb-4" style="height: 500px;">
+            <div class="col-xl-4 col-lg-12 mb-4" style="height: 500px;">
                 <div class="card shadow-sm">
                     <article class="card-body">
-                        <h5 class="card-title">New Members</h5>
+                        <h4 class="card-title">New Members</h4>
+                        <hr>
                         <div class="new-member-list">
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
-                                    <img src="assets/imgs/people/avatar-4.png" alt="" class="avatar" />
-                                    <div class="ml-3">
-                                        <h6>Patric Adams</h6>
-                                        <p class="text-muted font-xs">San Francisco</p>
-                                    </div>
-                                </div>
-                                <a href="#" class="btn btn-outline-primary btn-sm"><i class="material-icons md-add"></i> Add</a>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center">
-                                    <img src="assets/imgs/people/avatar-2.png" alt="" class="avatar" />
-                                    <div class="ml-3">
-                                        <h6>Dilan Specter</h6>
-                                        <p class="text-muted font-xs">San Francisco</p>
-                                    </div>
-                                </div>
-                                <a href="#" class="btn btn-outline-primary btn-sm"><i class="material-icons md-add"></i> Add</a>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center">
-                                    <img src="assets/imgs/people/avatar-3.png" alt="" class="avatar" />
                                     <div class="ml-3">
                                         <h6>Tomas Baker</h6>
                                         <p class="text-muted font-xs">San Francisco</p>
                                     </div>
                                 </div>
-                                <a href="#" class="btn btn-outline-primary btn-sm"><i class="material-icons md-add"></i> Add</a>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <h6>Tomas Baker</h6>
+                                        <p class="text-muted font-xs">San Francisco</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <h6>Tomas Baker</h6>
+                                        <p class="text-muted font-xs">San Francisco</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <h6>Tomas Baker</h6>
+                                        <p class="text-muted font-xs">San Francisco</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <h6>Tomas Baker</h6>
+                                        <p class="text-muted font-xs">San Francisco</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </article>
                 </div>
-            </div>
-        </div> -->
 
-        <div class="card shadow-sm mb-4">
-            <header class="card-header">
-                <h4 class="card-title">User List</h4>
-            </header>
-            
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Email</th>
-                                <th>Phone Number</th>
-                                <th>OTP Verification</th>
-                            </tr>
-                        </thead>
-                        <tbody >
-                            <% for (let i = 0; i < userData.length; i++) { %>
-                                <tr >
-                                    <td width="23%">
-                                        <div class="info pl-3">
-                                            <h6 class="mb-0 title"><%= userData[i].name %></h6>
+                    <div class="card shadow-sm">
+                        <article class="card-body">
+                            <h4 class="card-title">New Product</h4>
+                            <hr>
+                            <div class="new-member-list">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <img src="assets/imgs/people/avatar-4.png" alt="" class="avatar" />
+                                        <div class="ml-3">
+                                            <h6>Patric Adams</h6>
+                                            <p class="text-muted font-xs">San Francisco</p>
                                         </div>
-                                    </td>
-                                    <td><%= userData[i].email %></td>
-                                    <td><%= userData[i].mobile %></td>
-                                    <td>
-                                        <% if (userData[i].isVerified === true) { %>
-                                            <span class="badge rounded-pill alert-success">verified</span>
-                                        <% } else { %>
-                                            <span class="badge rounded-pill alert-danger">not Verified</span>
-                                        <% } %>
-                                    </td>
-                                </tr>
-                            <% } %> 
-                        </tbody>
-                        
-                    </table>
-                </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <img src="assets/imgs/people/avatar-2.png" alt="" class="avatar" />
+                                        <div class="ml-3">
+                                            <h6>Dilan Specter</h6>
+                                            <p class="text-muted font-xs">San Francisco</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <img src="assets/imgs/people/avatar-3.png" alt="" class="avatar" />
+                                        <div class="ml-3">
+                                            <h6>Tomas Baker</h6>
+                                            <p class="text-muted font-xs">San Francisco</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <img src="assets/imgs/people/avatar-3.png" alt="" class="avatar" />
+                                        <div class="ml-3">
+                                            <h6>Tomas Baker</h6>
+                                            <p class="text-muted font-xs">San Francisco</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <img src="assets/imgs/people/avatar-3.png" alt="" class="avatar" />
+                                        <div class="ml-3">
+                                            <h6>Tomas Baker</h6>
+                                            <p class="text-muted font-xs">San Francisco</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+
             </div>
-<!--  -->
+
             
-<div class="pagination" style="margin-left: 50px;">
-    <ul class="pagination">
-        <% if (currentPage === 1) { %>
-            <li class="page-item disabled"><span class="page-link">&laquo; Prev</span></li>
-        <% } else { %>
-            <li class="page-item"><a class="page-link" href="/admin/dash?page=<%= currentPage - 1 %>">&laquo; Prev</a></li>
-        <% } %>
-        
-        <% if (currentPage > 2) { %>
-            <li class="page-item"><a class="page-link" href="/admin/dash?page=1">1</a></li>
-        <% } %>
-
-        <% if (currentPage > 3) { %>
-            <li class="page-item"><span class="page-link">...</span></li>
-        <% } %>
-
-        <% for (let i = Math.max(1, currentPage - 1); i <= Math.min(currentPage + 1, totalPages); i++) { %>
-            <% if (i === currentPage) { %>
-                <li class="page-item active"><span class="page-link bg-success" style="color: white;"><%= i %></span></li>
-            <% } else { %>
-                <li class="page-item"><a class="page-link" href="/admin/dash?page=<%= i %>"><%= i %></a></li>
-            <% } %>
-        <% } %>
-
-        <% if (currentPage < totalPages - 2) { %>
-            <li class="page-item"><span class="page-link">...</span></li>
-        <% } %>
-
-        <% if (currentPage < totalPages - 1) { %>
-            <li class="page-item"><a class="page-link" href="/admin/dash?page=<%= totalPages %>"><%= totalPages %></a></li>
-        <% } %>
-
-        <% if (currentPage === totalPages || totalPages === 0) { %>
-            <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
-        <% } else { %>
-            <li class="page-item"><a class="page-link" href="/admin/dash?page=<%= currentPage + 1 %>">Next &raquo;</a></li>
-        <% } %>
-    </ul>
-</div>
-
-<br><br>
-           
-<!--  -->
         </div> 
 
-        <div class="card shadow-sm mb-4">
-            <header class="card-header">
-                <h4 class="card-title">Latest Orders  <a href="#" class="btn btn-primary btn-sm rounded" id="reset" style="margin-left: 700px;" >Reset</a></h4>
-                   
-                <input type="hidden" id="OrderHIdden" value="<%= JSON.stringify(orders) %>">
-                <div class="row align-items-center">
-                    <div class="col-md-3 col-12 mb-md-0 mb-3">
-                        <div class="custom_select">
-                            <% if(typeof catgorys != 'undefined'){ %>
-                            <select class="form-select select-nice" id="categoryFilter" onchange="logFilterSelection('Category', this.value)">
-                                <option selected>All Categories</option>
-                                <% for(let i = 0 ; i < catgorys.length ; i++ ) { %>
-                                <option><%= catgorys[i].name %></option>
-                                <% } %>
-                            </select>
-                            <% }else{ %>
-                            <h5>no Category</h5>
-                            <% } %>   
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-6">
-                        <input type="date" class="form-control" onchange="logFilterSelection('Date', this.value)" />
-                    </div>
-                    <div class="col-md-2 col-6">
-                        <div class="custom_select">
-                            <select class="form-select select-nice" id="statusFilter" onchange="logFilterSelection('Status', this.value)">
-                                <option selected>Status</option>
-                                <option>Paid</option>
-                                <option>Not Paid</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-6">
-                        <div class="custom_select">
-                            <select class="form-select select-nice" id="filterByFilter" onchange="logFilterSelection('Filter By', this.value)">
-                                <option selected>Filter by</option>
-                                <option>Week</option>
-                                <option>Month</option>
-                                <option>Today</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-6">
-                        <div class="custom_select">
-                            <select class="form-select select-nice" id="paymentMethodFilter" onchange="logFilterSelection('Payment Method', this.value)">
-                                <option selected>Payment</option>
-                                <option>COD</option>
-                                <option>Online</option>
-                                <option>Wallet</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </header>
-        
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table align-middle table-nowrap mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="align-middle" scope="col">User Name</th>
-                                <th class="align-middle" scope="col">Product Name</th>
-                                <th class="align-middle" scope="col">Total</th>
-                                <th class="align-middle" scope="col">Payment Status</th>
-                                <th class="align-middle" scope="col">Payment Method</th>
-                                <th class="align-middle" scope="col">Status</th>
-                                <th class="align-middle" scope="col">View Details</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersTable">
-                            <% for (let i = 0; i < orders.length; i++) { %>
-                            <% let order = orders[i]; %>
-                            <tr>
-                                <td><%= order.name %></td>
-                                <td><%= order.productName %></td>
-                                <td>$<%= order.Total %></td>
-                                <td>
-                                    <% if (order.paymentStatus == "Paid") { %>
-                                    <span class="badge bg-success-light text-success">Paid</span>
-                                    <% } else { %>
-                                    <span class="badge badge-soft-danger text-danger">Not paid</span>
-                                    <% } %>
-                                </td>
-                                <td>
-                                    <i class="material-icons md-payment font-xxl text-muted"></i> <%= order.paymentMethod %>
-                                </td>
-                                <td>
-                                    <i class=" font-xxl text-muted"></i> <%= order.Status %>
-                                </td>
-                                <td>
-                                    <a href="/admin/viewOrder?id=<%= order.ID %>&user=<%= order.user %>&page=dash" class="btn btn-outline-primary btn-sm">View details</a>
-                                </td>
-                            </tr>
-                            <% } %>
-                        </tbody>                        
-                    </table>
-                </div>
+        <div class="col-xl-8 col-lg-12 mb-4" style="margin-top: -25px;">
+            <div class="card shadow-sm">
+                <article class="card-body">
+                    <h5 class="card-title">Best Selling  Product</h5>
+
+                </article>
             </div>
         </div>
-        
-        
-        
+
+        <div class="col-xl-8 col-lg-12 mb-4" >
+            <div class="card shadow-sm">
+                <article class="card-body">
+                    <h5 class="card-title">Best Selling Category</h5>
+
+                </article>
+            </div>
+        </div>
 
     </section>
-    <!-- content-main end// -->
-    <footer class="main-footer font-xs">
-        <div class="row pb-30 pt-15">
-            <div class="col-sm-6">
-                <script>
-                    document.write(new Date().getFullYear());
-                </script>
-                &copy; Nest - HTML Ecommerce Template .
-            </div>
-            <div class="col-sm-6">
-                <div class="text-sm-end">All rights reserved</div>
-            </div>
-        </div>
-    </footer>
+
 </main>
 <%- include('./layouts/footer.ejs') %>
 
 <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
 <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-    var notyf = new Notyf();
-    
-    
-    function logFilterSelection(filterType,selectedValue){
-        const OrderHIdden = document.getElementById("OrderHIdden");
-        const data = JSON.parse(OrderHIdden.value);
-        console.log(data)
-        axios.post(`/admin/filter`, {
-            filterType: filterType,
-            filterValue: selectedValue,
-            data: data
-        })
-        .then(response =>{
-
-             if(response.data.NoData){
-                console.log("coming")
-                notyf.error("Not Data Found")
-             }else{
-                OrderHIdden.value = JSON.stringify(response.data);
-                console.log("---")
-                updateOrderTable(response.data);
-             }
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }
-    
-    function updateOrderTable(filteredOrders) {
-    const tableBody = document.getElementById('ordersTable');
-    tableBody.innerHTML = ''; 
-
-    filteredOrders.forEach(order => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${order.name}</td>
-            <td>${order.productName}</td>
-            <td>$${order.Total}</td>
-            <td>${order.paymentStatus == "Paid" ? '<span class="badge bg-success-light text-success">Paid</span>' : '<span class="badge badge-soft-danger text-danger">Not paid</span>'}</td>
-            <td><i class="material-icons md-payment font-xxl text-muted"></i> ${order.paymentMethod}</td>
-            <td><i class="font-xxl text-muted"></i> ${order.Status}</td>
-            <td><a href="/admin/viewOrder?id=${order.ID}&user=${order.user}&page=dash" class="btn btn-outline-primary btn-sm">View details</a></td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
-
-document.getElementById("reset").addEventListener("click",function(event){
-    event.preventDefault();
-    window.location.reload()
-})
-
-document.getElementById("Export").addEventListener("click",function(event){
-    event.preventDefault();
-    Swal.fire({
-    title: 'Choose Download Format',
-    text: 'Would you like to download as PDF or Excel?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'PDF',
-    cancelButtonText: 'Excel',
-    showCloseButton: true,
-    reverseButtons: true
-  }).then((result) => {
-    if (result.isConfirmed) {
-      axios.post("/admin/pdfEx")
-      .then((response)=>{
-           if(response.data){
-             notyf.success("Downloaded")
-           }
-      }).catch((error)=>{
-        console.log(error)
-      })
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      notyf.success("excel")
-    }
-  });
-
-})
-    </script>
-    

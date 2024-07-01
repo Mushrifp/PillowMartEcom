@@ -1,0 +1,50 @@
+<%- include('./layouts/header.ejs') %>
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <h2 class="content-title card-title">Return Orders</h2>
+            <div class="d-flex">
+                <a href="/admin/order" class="btn btn-primary btn-sm rounded" style="margin-left: 600px;" >Order</a>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col"><h4>Image</h4></th>
+                                <th scope="col"><h4>Name</h4></th>
+                                <th scope="col"><h4>Customer</h4></th>
+                                <th scope="col"><h4>Phone</h4></th>
+                                <th scope="col"><h4>Order</h4></th>
+                                <th scope="col"><h4>Delivery</h4></th>
+                                <th scope="col"><h4>Payment</h4></th>
+                                <th scope="col"><h4>Reason</h4></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach(function(order) { %>
+                                <tr>
+                                    <td>
+                                        <img src="/productImages/<%= order.image1 %>" alt="Product Image" class="img-fluid rounded" style="width: 100px; height: auto;">
+                                    </td>
+                                    <td><%= order.title %></td>
+                                    <td><%= order.customer %></td>
+                                    <td><%= order.phone %></td>
+                                    <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
+                                    <td><%= new Date(order.deliveryDate).toLocaleDateString() %></td>
+                                    <td><%= order.paymentMethod %></td>
+                                    <td><%= order.reason %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('./layouts/footer.ejs') %>
