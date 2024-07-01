@@ -44,7 +44,7 @@
     <section class="content-main">
         <div class="content-header">
             <div>
-                <h2 class="content-title card-title">Dashboard</h2>
+                <h2 class="content-title card-title">Welcome to Dashboard</h2>
             </div>
         </div>
         <div class="row">
@@ -55,8 +55,10 @@
                             <i class="text-primary material-icons md-monetization_on" style="margin-top: 13px;"></i>
                         </span>
                         <div class="text">
-                            <h6 class="mb-1 card-title">Revenue</h6>
-                            <span>$13,456.5</span>
+                            <h6 class="mb-1 card-title">Total Revenue</h6>
+                            <% if (typeof totalRevenue != "undefined") { %>
+                                <span>$<%= totalRevenue %></span>
+                             <% } %>
                         </div>
                     </article>
                 </div>
@@ -112,7 +114,7 @@
             <div class="col-xl-8 col-lg-12 mb-4">
                 <div class="card shadow-sm">
                     <article class="card-body">
-                        <h5 class="card-title">Sale Statistics</h5>
+                        <h3 class="card-title">Sale Statistics</h3>
                         <canvas id="myChart" height="220"></canvas>
                     </article>
                 </div>
@@ -121,46 +123,46 @@
             <div class="col-xl-4 col-lg-12 mb-4" style="height: 500px;">
                 <div class="card shadow-sm">
                     <article class="card-body">
-                        <h4 class="card-title">New Members</h4>
+                        <h3 class="card-title">New Members</h3>
                         <hr>
                         <div class="new-member-list">
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <div class="ml-3">
-                                        <h6>Tomas Baker</h6>
-                                        <p class="text-muted font-xs">San Francisco</p>
+                                        <h6><%= latestUsers[0].name %></h6>
+                                        <p class="text-muted font-xs">Phone no: <%= latestUsers[0].mobile %></p>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <div class="ml-3">
-                                        <h6>Tomas Baker</h6>
-                                        <p class="text-muted font-xs">San Francisco</p>
+                                        <h6><%= latestUsers[1].name %></h6>
+                                        <p class="text-muted font-xs">Phone no: <%= latestUsers[1].mobile %></p>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <div class="ml-3">
-                                        <h6>Tomas Baker</h6>
-                                        <p class="text-muted font-xs">San Francisco</p>
+                                        <h6><%= latestUsers[2].name %></h6>
+                                        <p class="text-muted font-xs">Phone no: <%= latestUsers[2].mobile %></p>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <div class="ml-3">
-                                        <h6>Tomas Baker</h6>
-                                        <p class="text-muted font-xs">San Francisco</p>
+                                        <h6><%= latestUsers[3].name %></h6>
+                                        <p class="text-muted font-xs">Phone no: <%= latestUsers[3].mobile %></p>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <div class="ml-3">
-                                        <h6>Tomas Baker</h6>
-                                        <p class="text-muted font-xs">San Francisco</p>
+                                        <h6><%= latestUsers[4].name %></h6>
+                                        <p class="text-muted font-xs">Phone no: <%= latestUsers[4].mobile %></p>
                                     </div>
                                 </div>
                             </div>
@@ -168,53 +170,53 @@
                     </article>
                 </div>
 
-                    <div class="card shadow-sm">
+                    <div class="card shadow-sm" style="background-color: #6c757d00;  border: 3px dotted #000000;">
                         <article class="card-body">
-                            <h4 class="card-title">New Product</h4>
+                            <h3 class="card-title">New Product</h3>
                             <hr>
                             <div class="new-member-list">
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="d-flex align-items-center">
-                                        <img src="assets/imgs/people/avatar-4.png" alt="" class="avatar" />
+                                        <img src="productImages/<%= latestProduct[0].image[0] %>" alt="" class="avatar" />
                                         <div class="ml-3">
-                                            <h6>Patric Adams</h6>
-                                            <p class="text-muted font-xs">San Francisco</p>
+                                            <h6><%= latestProduct[0].productTitle %></h6>
+                                            <p class="text-muted font-xs"><%= latestProduct[0].category %></p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="d-flex align-items-center">
-                                        <img src="assets/imgs/people/avatar-2.png" alt="" class="avatar" />
+                                        <img src="productImages/<%= latestProduct[1].image[0] %>" alt="" class="avatar" />
                                         <div class="ml-3">
-                                            <h6>Dilan Specter</h6>
-                                            <p class="text-muted font-xs">San Francisco</p>
+                                            <h6><%= latestProduct[1].productTitle %></h6>
+                                            <p class="text-muted font-xs"><%= latestProduct[0].category %></p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="d-flex align-items-center">
-                                        <img src="assets/imgs/people/avatar-3.png" alt="" class="avatar" />
+                                        <img src="productImages/<%= latestProduct[2].image[0] %>" alt="" class="avatar" />
                                         <div class="ml-3">
-                                            <h6>Tomas Baker</h6>
-                                            <p class="text-muted font-xs">San Francisco</p>
+                                            <h6><%= latestProduct[2].productTitle %></h6>
+                                            <p class="text-muted font-xs"><%= latestProduct[0].category %></p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="d-flex align-items-center">
-                                        <img src="assets/imgs/people/avatar-3.png" alt="" class="avatar" />
+                                        <img src="productImages/<%= latestProduct[3].image[0] %>" alt="" class="avatar" />
                                         <div class="ml-3">
-                                            <h6>Tomas Baker</h6>
-                                            <p class="text-muted font-xs">San Francisco</p>
+                                            <h6><%= latestProduct[3].productTitle %></h6>
+                                            <p class="text-muted font-xs"><%= latestProduct[0].category %></p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="d-flex align-items-center">
-                                        <img src="assets/imgs/people/avatar-3.png" alt="" class="avatar" />
+                                        <img src="productImages/<%= latestProduct[4].image[0] %>" alt="" class="avatar" />
                                         <div class="ml-3">
-                                            <h6>Tomas Baker</h6>
-                                            <p class="text-muted font-xs">San Francisco</p>
+                                            <h6><%= latestProduct[4].productTitle %></h6>
+                                            <p class="text-muted font-xs"><%= latestProduct[0].category %></p>
                                         </div>
                                     </div>
                                 </div>
@@ -222,29 +224,67 @@
                         </article>
                     </div>
 
+                    
+                    <div class="col-xl-8 col-lg-12 mb-4" style="width: 100%;">
+                        <div class="card shadow-sm" style="border: none;">
+                            <article class="card-body">
+                                <h3 class="card-title text-center">Best Selling Categories</h3>
+                                <% if (topSellingCategories && topSellingCategories.length > 0) { %>
+                                    <div class="d-flex flex-column">
+                                        <% for (let i = 0; i < topSellingCategories.length; i++) { %>
+                                            <div class="mb-2">
+                                                <div class="card" style="border: 1px solid #ddd; border-radius: 8px;">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title"><%= topSellingCategories[i]._id %></h5>
+                                                        <p class="card-text">Quantity Sold: <%= topSellingCategories[i].totalQuantitySold %></p>
+                                                        <p class="card-text">Orders: <%= topSellingCategories[i].orderCount %></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-center">No best selling categories available.</p>
+                                <% } %>
+                            </article>
+                        </div>
+                    </div>
+
+            
+            
+                    
+                    
+
             </div>
 
             
         </div> 
 
         <div class="col-xl-8 col-lg-12 mb-4" style="margin-top: -25px;">
-            <div class="card shadow-sm">
+            <div class="card" style="background-color: #6c757d00;  border: 3px dotted #000000;">
                 <article class="card-body">
-                    <h5 class="card-title">Best Selling  Product</h5>
-
+                    <h3 class="card-title">Best Selling Products</h3>
+                    <% if (topSellingProducts && topSellingProducts.length > 0) { %>
+                        <div class="row" style="display: flex; flex-wrap: wrap;">
+                            <% for (let i = 0; i < topSellingProducts.length; i++) { %>
+                                <div class="col-md-4 mb-3" style="display: flex; align-items: stretch;">
+                                    <div class="card" style="flex: 1; display: flex; flex-direction: column; height: 100%; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                                        <img src="productImages/<%= topSellingProducts[i].image %>" class="card-img-top" alt="<%= topSellingProducts[i]._id %>" style="object-fit: cover; width: 100%; height: 200px;"/>
+                                        <div class="card-body" style="flex-grow: 1;">
+                                            <h5 class="card-title"><%= topSellingProducts[i]._id %></h5>
+                                            <p class="card-text">Total Quantity Sold: <%= topSellingProducts[i].totalQuantitySold %></p>
+                                            <p class="card-text">From  <%= topSellingProducts[i].orderCount %> Orders</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% } else { %>
+                        <p>No best selling products available.</p>
+                    <% } %>
                 </article>
             </div>
         </div>
-
-        <div class="col-xl-8 col-lg-12 mb-4" >
-            <div class="card shadow-sm">
-                <article class="card-body">
-                    <h5 class="card-title">Best Selling Category</h5>
-
-                </article>
-            </div>
-        </div>
-
     </section>
 
 </main>

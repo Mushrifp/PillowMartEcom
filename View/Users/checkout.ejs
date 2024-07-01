@@ -80,7 +80,7 @@
                     <h1>ADDRESS DETAILS</h1>
                     <section class="user_addresses">
                         <h3>Available Addresses:</h3>
-                        <h4>Select Addresses By Clicking the Circle :</h4>
+                        <h4 style="color: brown;">Select Addresses By Clicking the Circle :</h4>
                       <% if(typeof userAddresses != 'undefined'){ %>
                             <form id="addressForm" action="/checkout" method="post">
                                 <% userAddresses.forEach(function(address) { %>
@@ -209,6 +209,7 @@
                             <hr>
                             <div style="display: flex; justify-content: space-between; padding: 10px;">
                                 <span><h4 style="font-weight: bolder;">Total :</h4></span>
+                                <input type="hidden" value="" id="couponToSend">
                                 <span id="totalAfterDiscount"><h4 style="font-weight: bolder;">$ <%= subtotal %></h4></span>
                             </div>
                             <input type="hidden" id="subtotal" value="<%= subtotal %>">
@@ -354,6 +355,7 @@
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
     const subtotal = document.getElementById('subtotal').value;
     const walletMoney = document.getElementById('walletMoney').value;
+    var couponToSend = document.getElementById('couponToSend').value
 
     console.log(paymentMethod,subtotal,walletMoney)
     
@@ -403,7 +405,8 @@
                         addressCode: addressCode,
                         paymentMethod: paymentMethod.value,
                         orderDetails: orderDetails,
-                        subtotal: subtotal
+                        subtotal: subtotal,
+                        coupon:couponToSend
                     };
 
                     if(paymentMethod.value == "CashOnDelivery"||paymentMethod.value == "wallet"){
@@ -478,6 +481,7 @@
 }
 
 function showOrderConfirmationModal(orderData){
+
     document.getElementById('orderNumber').innerText = orderData.orderNumber;
     document.getElementById('orderDate').innerText = orderData.orderDate;
     document.getElementById('orderTotal').innerText = `$${orderData.orderTotal}`;
@@ -709,6 +713,8 @@ document.getElementById("couponApply").addEventListener("click", function(event)
 
                 document.getElementById("subtotal").value = response.data.answer;
                 
+                 document.getElementById('couponToSend').value = discountAmount
+    
                 appliedCoupon = code;
                 document.getElementById("couponCode").disabled = true;
                 document.getElementById("couponApply").disabled = true;

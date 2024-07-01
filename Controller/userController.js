@@ -628,6 +628,14 @@ const loadCheckout = async (req,res)=>{
 const orderConfirm = async (req,res)=>{
     try {
 
+         console.log("+++",req.body)
+
+         let couponDiscount=0
+
+          if(req.body.coupon != ''){
+            couponDiscount = parseInt(req.body.coupon) / 2
+          } 
+
        let orderDetails = req.body.orderDetails
 
          const userAddress = await address.findOne({UserID:req.session.user_id},{userAddress:{$elemMatch:{Code:req.body.addressCode}}})
@@ -646,10 +654,12 @@ const orderConfirm = async (req,res)=>{
 
              const ProductData = await productData.findOne({_id:orderDetails[i].productId})
             
+              let tot = orderDetails[i].total - couponDiscount
+
             let productOBJ = {
                 item:ProductData,
                 quantity:orderDetails[i].quantity,
-                cash:orderDetails[i].total,
+                cash:tot,
                 Dates:{
                     ordered:currentDate,
                     delivery:addDays(currentDate, 5)
@@ -728,7 +738,7 @@ const orderConfirm = async (req,res)=>{
                paymentMethod: newOrder.paymentMethod,
                billingAddress: newOrder.items[0].address,
                orderDetails: orderDetails,
-               subtotal: req.body.subtotal,
+               subtotal: req.body.subtotal - couponDiscount,
                razo:order,
                razoID:razo_ID,
                RazPay:RazPay})
@@ -751,7 +761,7 @@ const orderConfirm = async (req,res)=>{
                         const transaction = {
                           date:formattedDate,
                           type:"withdrawal",
-                          money:req.body.subtotal
+                          money:req.body.subtotal - couponDiscount
                         }
 
                          await wallet.updateOne({user:req.session.user_id},{$push:{history:transaction},$inc:{amount:-req.body.subtotal}})
@@ -835,8 +845,9 @@ const showCoupon = async(req,res)=>{
         let offer = total * (25 / 100)
         const currentDate = new Date();
 
-        let data = await Coupon.find({ endDate: { $gt: currentDate.toISOString().split('T')[0] }, discount: { $lt: offer } });
+        let data = await Coupon.find({ endDate: { $gt: currentDate.toISOString().split('T')[0] }, discount: { $lt: offer }, count: { $gt: 0 } });
 
+        
             if(data){
                 res.send({data})
             }else{

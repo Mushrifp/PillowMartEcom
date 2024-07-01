@@ -58,12 +58,38 @@ const loadDash = async (req, res) => {
             number += orderNumber[i].items.length;
         }
 
-        const Datas = await order.find({}).sort({ _id: -1 });
-
         let orders = [];
 
+        const revenue = await order.aggregate([
+            {$unwind: "$items"},{$match: {"items.paymentMethod": { $in: ["wallet", "razorpay"] }}},{ $group: {_id: null,totalRevenue: { $sum: "$items.cash" }}}])
 
+        let totalRevenue = revenue[0].totalRevenue
 
+        const latestUsers = await userData.find().sort({ _id: -1 }).limit(5)
+
+        const latestProduct = await productData.find().sort({ _id: -1 }).limit(5)
+
+        const topSellingProducts = await order.aggregate([
+            { $unwind: "$items" },{
+              $group: {
+                _id: "$items.item.productTitle",
+                totalQuantitySold: { $sum: "$items.quantity" },
+                orderCount: { $sum: 1 },
+                image: { $first: { $arrayElemAt: ["$items.item.image", 0] } }
+              }},
+            { $sort: { totalQuantitySold: -1 } },
+            { $limit: 6 }])
+
+        const topSellingCategories = await order.aggregate([
+              { $unwind: "$items" },{ 
+                $group: {
+                  _id: "$items.item.category",
+                  totalQuantitySold: { $sum: "$items.quantity" },
+                  orderCount: { $sum: 1 }
+                }
+              },
+              { $sort: { totalQuantitySold: -1 } },
+              { $limit: 3 }]);
 
 
         res.render('dash',{
@@ -71,6 +97,11 @@ const loadDash = async (req, res) => {
             userCount: userNumber,
             number,
             orders,
+            totalRevenue,
+            latestUsers,
+            latestProduct,
+            topSellingProducts,
+            topSellingCategories 
         });
 
     } catch (error) {
