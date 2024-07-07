@@ -346,14 +346,24 @@
                                                         <div>
                                                             <% if(Data[i].percentage && Data[i].percentage != 0){ %>
 
-                                                                <h2 class="ms-2 badge bg-success text-white   "><%= Data[i].percentage %>% Offer</h2>
+                                                                <h2 class="ms-2 badge bg-success text-white">
+                                                                    <span style="font-size: 10px; ">&#8595;</span> <%= Data[i].percentage %>% Offer
+                                                                </h2>
+                                                                
                                                             <% }  %>
                                                         </div>
                                                         <div class="mt-4">
-                                                            <a id="detailBtn" href="/single-product?id=<%= Data[i]._id %>"><button class="btn_3">&nbsp;Details</button></a>
-                                                            <br>
-                                                            <br>
-                                                            <button class="btn_3 wishButton" type="button" data-id="<%= Data[i]._id %>">Wishlist</button>
+
+                                                            <% if (Data[i].stock === 0) { %>
+                                                                <button class="btn_3 " id="detailBtn" onclick="outOfStock()" >Add Cart</button>
+                                                                <br><br>
+                                                            <% } else  { %>
+                                                                <button class="btn_3 " id="detailBtn" onclick="addCart('<%= Data[i]._id %>')" >Add Cart</button>
+                                                                <br><br>
+                                                            <% } %>
+
+                                                            
+                                                            <button class="btn_3 wishButton" type="button" data-id="<%= Data[i]._id %>">&nbsp;Wishlist</button>
                                                             <input type="hidden" id="SendID" value="<%= Data[i]._id %>">
                                                         </div>
                                                     </div>
@@ -541,35 +551,7 @@
 
     <!--::footer_part start::-->
     <footer class="footer_part">
-            <div class="footer_iner">
-                <div class="container">
-                    <div class="row justify-content-between align-items-center">
-                        <div class="col-lg-8">
-                            <div class="footer_menu">
-                                <div class="footer_logo">
-                                    <a href="index.html"><img src="img/logo.png" alt="#"></a>
-                                </div>
-                                <div class="footer_menu_item">
-                                    <a href="index.html">Home</a>
-                                    <a href="about.html">About</a>
-                                    <a href="product_list.html">Products</a>
-                                    <a href="#">Pages</a>
-                                    <a href="blog.html">Blog</a>
-                                    <a href="contact.html">Contact</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="social_icon">
-                                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#"><i class="fab fa-instagram"></i></a>
-                                <a href="#"><i class="fab fa-google-plus-g"></i></a>
-                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
             
             <div class="copyright_part">
                 <div class="container">
@@ -604,7 +586,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                 axios.post(`/cart/addToWishlist?id=${id}`)
                     .then(function(response) {
                         if (response.data.added) {
-                            notyf.success('Added Success');
+                            notyf.success('Added To Wishlist');
                         } else if (response.data.notAdded) {
                             notyf.error('You Need To Login');
                         } else if (response.data.failed) {
@@ -617,7 +599,26 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
             });
         };
     
-    
+    function addCart (q){
+        axios.post(`/cart/addCart?id=${q}`)
+          .then(function(response) {
+            if (response.data.added) {
+              notyf.success('Added To Cart');
+            } else if (response.data.failed) {
+              notyf.error('Not Added');
+            } else if (response.data.notAdded) {
+              notyf.error('You Need To Login');
+            }
+          })
+          .catch(function(error) {
+            console.error('Error:', error);
+          });
+    }
+
+    function outOfStock(){
+
+               notyf.error("Sorry ! out of Stock")                                                                  
+      }
     </script>
 
 

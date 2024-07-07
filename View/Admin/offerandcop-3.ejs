@@ -1,112 +1,201 @@
+<style>
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #ffffff;
+    }
+    .table th,
+    .table td {
+        padding: 1rem;
+        vertical-align: top;
+        border-top: 1px solid #000000;
+    }
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #8cff00;
+        background-color: #343a40;
+        color: #ffffff;
+    }
+    .table-bordered {
+        border: 1px solid #000000;
+    }
+    .table-bordered th,
+    .table-bordered td {
+        border: 1px solid #dee2e6;
+    }
+    .table-bordered thead th,
+    .table-bordered thead td {
+        border-bottom-width: 2px;
+    }
+    .table th,
+    .table td {
+        text-align: center;
+    }
+    #filterButtons {
+        background-color: #3BB77E;
+        color: white;
+        transition: 0.5s;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        border: none;
+        cursor: pointer;
+    }
+    #filterButtons:hover {
+        background-color: #004424;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    }
+    .btn-primary {
+        background-color: #3BB77E;
+        border: none;
+        transition: 0.5s;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        cursor: pointer;
+    }
+    .btn-primary:hover {
+        background-color: #004424;
+    }
+    .content-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .content-title a {
+        margin-left: auto;
+    }
+    .card {
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .no-data {
+        color: red;
+        text-align: center;
+    }
+</style>
+
 <%- include('./layouts/header.ejs') %>
 <main class="main-wrap">
     <section class="content-main">
-        <div class="row">
+        <div class="content-header">
+            <h2 class="content-title">Offers and Coupons</h2>
+            <% if (typeof message !== 'undefined') { %>
+                <h3 class="text-danger">Deleted</h3>
+            <% } %>
+        </div>
+
+        <div class="row mb-4">
             <div class="col-lg-12">
-                <h2 class="content-title">Offers and Coupons</h2>
-                <br>
-                <% if (typeof message !== 'undefined') { %>
-                    <h3 style="color: red;">Deleted</h3>
-                <% } %>  
-                <br>
-                <div class="card mb-4">
+                <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
                             <h3>Existing Coupons</h3>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Code</th>
-                                        <th>Description</th>
-                                        <th>Discount</th>
-                                        <th>Count</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for (let i = 0; i < coupons.length; i++) { %>
-                                        <tr>
-                                            <td><%= coupons[i].name %></td>
-                                            <td><%= coupons[i].code %></td>
-                                            <td><%= coupons[i].description %></td>
-                                            <td><%= coupons[i].discount %></td>
-                                            <td><%= coupons[i].count %></td>
-                                            <td><%= coupons[i].startDate %></td>
-                                            <td><%= coupons[i].endDate %></td>
-                                            <td>
-                                                <a href="/admin/editCoupon?id=<%= coupons[i]._id %>" class="btn btn-sm btn-primary">Edit</a>
-                                                <a href="/admin/deleteCoupon?id=<%= coupons[i]._id %>" class="btn btn-sm btn-danger">Delete</a>
-                                            </td> 
-                                        </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
+                            <a href="/admin/addcoupon" class="btn btn-primary">Add New Coupon</a>
                         </div>
-                        <a href="/admin/addcoupon"><button class="btn btn-primary">Add New Coupon</button></a>
+                        <div class="table-responsive">
+                            <% if (coupons.length > 0) { %>
+                                <table class="table table-hover table-striped table-bordered">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Code</th>
+                                            <th>Description</th>
+                                            <th>Discount</th>
+                                            <th>Count</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% for (let i = 0; i < coupons.length; i++) { %>
+                                            <tr>
+                                                <td><%= coupons[i].name %></td>
+                                                <td><%= coupons[i].code %></td>
+                                                <td><%= coupons[i].description %></td>
+                                                <td><%= coupons[i].discount %></td>
+                                                <td><%= coupons[i].count %></td>
+                                                <td><%= coupons[i].startDate %></td>
+                                                <td><%= coupons[i].endDate %></td>
+                                                <td>
+                                                    <a href="/admin/editCoupon?id=<%= coupons[i]._id %>" class="btn btn-sm btn-primary">Edit</a>
+                                                    <a href="/admin/deleteCoupon?id=<%= coupons[i]._id %>" class="btn btn-sm btn-danger">Delete</a>
+                                                </td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            <% } else { %>
+                                <h2 class="no-data">No Coupons Available</h2>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-lg-12">
-                <div class="card mb-4">
+                <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
                             <h3>Existing Offers</h3>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>Discount</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for (let i = 0; i < offers.length; i++) { %>
-                                        <tr>
-                                            <td><%= offers[i].name %></td>
-                                            <td><%= offers[i].description %></td>
-                                            <td><%= offers[i].discount %></td>
-                                            <td><%= offers[i].startDate %></td>
-                                            <td><%= offers[i].endDate %></td>
-                                            <td>
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        Actions
-                                                    </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a class="dropdown-item" href="/admin/editoffer?id=<%= offers[i]._id %>">Edit</a></li>
-                                                        <li><a class="dropdown-item text-danger" href="/admin/deleteOffer?id=<%= offers[i]._id %>">Delete</a></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        Add to
-                                                    </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a class="dropdown-item" href="/admin/OffApply?id=<%= offers[i]._id %>">Product</a></li>
-                                                        <li><a class="dropdown-item" href="/admin/addOfferTOCategory?id=<%= offers[i]._id %>">Category</a></li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
+                            <a href="/admin/addoffer" class="btn btn-primary">Add New Offer</a>
                         </div>
-                        <a href="/admin/addoffer"><button class="btn btn-primary">Add New Offer</button></a>
+                        <div class="table-responsive">
+                            <% if (offers.length > 0) { %>
+                                <table class="table table-hover table-striped table-bordered">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Discount</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% for (let i = 0; i < offers.length; i++) { %>
+                                            <tr>
+                                                <td><%= offers[i].name %></td>
+                                                <td><%= offers[i].description %></td>
+                                                <td><%= offers[i].discount %></td>
+                                                <td><%= offers[i].startDate %></td>
+                                                <td><%= offers[i].endDate %></td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            Actions
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item" href="/admin/editoffer?id=<%= offers[i]._id %>">Edit</a></li>
+                                                            <li><a class="dropdown-item text-danger" href="/admin/deleteOffer?id=<%= offers[i]._id %>">Delete</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            Add to
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item" href="/admin/OffApply?id=<%= offers[i]._id %>">Product</a></li>
+                                                            <li><a class="dropdown-item" href="/admin/addOfferTOCategory?id=<%= offers[i]._id %>">Category</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            <% } else { %>
+                                <h2 class="no-data">No Offers Available</h2>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <footer class="main-footer font-xs">
         <div class="row pb-30 pt-15">
             <div class="col-sm-6">
@@ -116,7 +205,7 @@
                 &copy; Nest - HTML Ecommerce Template.
             </div>
             <div class="col-sm-6 text-sm-end">
-                All rights reserved
+                All rights reserved.
             </div>
         </div>
     </footer>

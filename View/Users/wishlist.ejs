@@ -37,33 +37,42 @@
                     
                         <% if (typeof wishlist != 'undefined') { %>
                             <tbody>
-                            <% for (var i = 0; i < wishlist.length; i++) { %>
-                                <tr>
-                                    <td>
-                                        <div class="media">
-                                            <div class="d-flex">
-                                              <a href="/single-product?id=<%= wishlist[i]._id %>"><img src="/productImages/<%= wishlist[i].image[0] %>"  alt="image" /></a>
+                                <% for (var i = 0; i < wishlist.length; i++) { %>
+                                    <tr>
+                                        <td>
+                                            <div class="media">
+                                                <div class="d-flex">
+                                                    <a href="/single-product?id=<%= wishlist[i]._id %>"><img src="/productImages/<%= wishlist[i].image[0] %>" alt="image" class="img-thumbnail" /></a>
+                                                </div>
+                                                <div class="media-body">
+                                                    <p><%= wishlist[i].productTitle %></p>
+                                                </div>
                                             </div>
-                                            <div class="media-body">
-                                                <p><%= wishlist[i].productTitle %></p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <h5>$<%= wishlist[i].price %></h5>
-                                    </td>
-                                    <td>
-                                        <% if (wishlist[i].stock === 0) { %>
-                                            <button style="background-color: rgb(163, 5, 5); color: #ffffff;" class="btn_3" disabled>Out of Stock</button>
-                                          <% } else { %>
-                                            <button class="btn_3 addToCartButton" value="<%= wishlist[i]._id %>">Add to cart</button>
-                                          <% } %>
-                                    </td>
-                                    <td>
-                                      <a class="btn_1" href="/cart/wishDelete?id=<%= wishlist[i].id %>">Remove</a>
-                                   </td>
-                                </tr>
-                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (wishlist[i].offPrice && wishlist[i].offPrice != 0) { %>
+                                                <div class="d-flex align-items-center">
+                                                    <h4 class="mb-1" style="margin-right: 10px;">$<%= wishlist[i].offPrice %></h4>
+                                                    <del class="text-muted" style="font-size: 16px; margin-right: 10px;">$<%= wishlist[i].price %></del>
+                                                    <span class="badge bg-success" style="font-size: 14px; padding: 5px 10px; color: white;">$<%= wishlist[i].percentage %>% Offer</span>
+                                                </div>
+                                            <% } else { %>
+                                                <h4 class="mb-1">$<%= wishlist[i].price %></h4>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (wishlist[i].stock === 0) { %>
+                                                <button style="background-color: rgb(163, 5, 5); color: #ffffff;" class="btn_3" disabled>Out of Stock</button>
+                                            <% } else { %>
+                                                <button class="btn_3 addToCartButton" value="<%= wishlist[i]._id %>">Add to cart</button>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <a class="btn_1" href="/cart/wishDelete?id=<%= wishlist[i].id %>">Remove</a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                                
                         </tbody>
                         <% }else if(typeof empty != 'undefined'){ %>
                                 <h2>Your wishlist is empty</h2>
@@ -81,35 +90,7 @@
 
 <!--::footer_part start::-->
 <footer class="footer_part">
-    <div class="footer_iner section_bg">
-        <div class="container">
-            <div class="row justify-content-between align-items-center">
-                <div class="col-lg-8">
-                    <div class="footer_menu">
-                        <div class="footer_logo">
-                            <a href="index.html"><img src="img/logo.png" alt="#"></a>
-                        </div>
-                        <div class="footer_menu_item">
-                            <a href="index.html">Home</a>
-                            <a href="about.html">About</a>
-                            <a href="product_list.html">Products</a>
-                            <a href="#">Pages</a>
-                            <a href="blog.html">Blog</a>
-                            <a href="contact.html">Contact</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="social_icon">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-google-plus-g"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     
     <div class="copyright_part">
         <div class="container">

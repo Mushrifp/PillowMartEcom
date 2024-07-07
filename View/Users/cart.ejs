@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 <%- include('./layout/header.ejs') %>
 <!--::header part start::-->
 <%- include('./layout/navbar.ejs') %>
@@ -10,7 +9,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="breadcrumb_iner ">
-                    <h2  id="RvText">Cart</h2>
+                    <h2 id="RvText">Cart</h2>
                 </div>
             </div>
         </div>
@@ -22,9 +21,9 @@
 <section class="cart_area section_padding">
     <div class="container">
         <div class="cart_inner">
-          <form action="/checkout" method="POST">
-            <table class="table">
-                    <% if(typeof carts != 'undefined' ){ %>
+            <form action="/checkout" method="POST">
+                <table class="table">
+                    <% if (typeof carts !== 'undefined') { %>
                         <thead>
                             <tr>
                                 <th scope="col">Product</th>
@@ -35,116 +34,99 @@
                             </tr>
                         </thead>
                         <tbody>
-                    <% carts.forEach(cart => { %>
-                    <tr>
-                        <td>
-                            <div class="media">
-                                <div class="d-flex">
-                                    <a href="/single-product?id=<%= cart?._id %>"><img src="/productImages/<%= cart?.image[0] %>" alt="image" /></a>
-                                </div>
-                                <div class="media-body">
-                                    <p><%= cart.productTitle %></p>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <h5>$<%= cart.price %></h5>
-                        </td>
-                        <td>
-                            <div class="product_count">
-                                <button type="button" class="btn btn-decrement" data-id="<%= cart._id %>">-</button>
-                               <input type="text" name="products[<%= cart._id %>][quantity]" class="quantity-input form-control border-0 bg-transparent text-center" value="1" min="1" max="<%= cart.stock %>" data-id="<%= cart._id %>" data-price="<%= cart.price %>" readonly>
-                               <button type="button" class="btn btn-increment" data-id="<%= cart._id %>">+</button>
-                            </div>
-                        </td>
-                        <td>
-                            <h5 class="product-total" data-id="<%= cart._id %>">$<%= cart.price %></h5>
-                        </td>
-                        <td>
-                            <a class="btn_1" href="/cart/cartDelete?id=<%= cart._id %>">Remove Item</a>
-                        </td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-                    <% } else if(typeof emptyCart != 'undefined') { %>
-                    <tr>
-                        <td colspan="5">
-                            <h3>Your cart is empty</h3>
-                        </td>
-                    </tr>
+                            <% carts.forEach(cart => { %>
+                                <tr>
+                                    <td>
+                                        <div class="media">
+                                            <div class="d-flex">
+                                                <a href="/single-product?id=<%= cart.productInfos._id %>">
+                                                    <img src="/productImages/<%= cart.productInfos.image[0] %>" alt="image" />
+                                                </a>
+                                            </div>
+                                            <div class="media-body">
+                                                <p><%= cart.productInfos.productTitle %></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <% if (cart.productInfos.offPrice && cart.productInfos.offPrice != 0) { %>
+                                            <span class="mb-1" style="margin-right: 10px;">$<%= cart.productInfos.offPrice %></span>
+                                            <del class="text-muted" style="font-size: 16px; margin-right: 10px;">$<%= cart.productInfos.price %></del>
+                                            <span class="badge bg-success" style="font-size: 14px; padding: 5px 10px; color: white;">$<%= cart.productInfos.percentage %>% Offer</span>
+                                        <% } else { %>
+                                            <span>$<%= cart.productInfos.price %></span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; border-radius: 5px; overflow: hidden;">
+                                            <button type="button" onclick="decrement('<%= cart.productInfos._id %>','<%= cart.quantity %>')" style="background-color: #ddd; color: #000000; border: none; font-size: 18px; padding: 8px 12px; cursor: pointer; border-radius: 5px 0 0 5px; transition: background-color 0.3s, transform 0.2s; outline: none;">
+                                                -
+                                            </button>
+                                            <span class="quantity" data-id="<%= cart.productInfos._id %>" style="font-size: 18px; padding: 8px 12px; color: #000000; background: #fff; border-left: 1px solid #ccc; border-right: 1px solid #ccc;">
+                                                <%= cart.quantity %>
+                                            </span>
+                                            <button type="button" onclick="increment('<%= cart.productInfos._id %>','<%= cart.quantity %>')" style="background-color: #ddd; color: #000000; border: none; font-size: 18px; padding: 8px 12px; cursor: pointer; border-radius: 0 5px 5px 0; transition: background-color 0.3s, transform 0.2s; outline: none;">
+                                                +
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h4 class="total" data-id="<%= cart.productInfos._id %>">
+                                                $<%= cart.total %>
+                                        </h4>
+                                    </td>
+                                    <td>
+                                        <button class="btn_1" onclick="removeCart('<%= cart.productInfos._id %>')">Remove Item</button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>
+                                    <h3>Subtotal</h3>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <span style="font-size: x-large;">$<span class="subtotal" id="changeSubtotal"><%= total %></span></span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    <% } else if (typeof emptyCart !== 'undefined') { %>
+                        <tr>
+                            <td colspan="5">
+                                <h3>Your cart is empty</h3>
+                            </td>
+                        </tr>
                     <% } %>
-                    <% if (typeof carts != 'undefined') { %>
-                    <tr>
-                        <td>
-                            <h5>Subtotal</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                            <h5 class="subtotal">$<%= carts.reduce((acc, item) => acc + item.price, 0) %></h5>
-                        </td>
-                    </tr>
+                </table>
+                
+                <div class="checkout_btn_inner float-right">
+                    <% if (typeof carts !== 'undefined') { %>
+                        <a class="btn_1" href="/product">Continue Shopping</a>
+                        <button type="submit" class="btn_1 checkout_btn_1">Proceed to checkout</button>
+                    <% } else if (typeof emptyCart !== 'undefined') { %>
+                        <a class="btn_1" href="/product">Add Product</a>
+                        <button style="background-color: rgb(220, 43, 43);" id="cantWithoutCartEmpty" class="btn_1 checkout_btn_1" disabled>Empty Cart</button>
                     <% } %>
-            </table>
-            <div class="checkout_btn_inner float-right">
-                <% if (typeof carts != 'undefined' ) { %>
-
-                <a class="btn_1" href="/product">Continue Shopping</a>
-                <button type="submit" class="btn_1 checkout_btn_1">Proceed to checkout</button>
-
-                <% }else if(typeof emptyCart != 'undefined'){ %>
-                    <a class="btn_1" href="/product">Add Product</a>
-                    <button style="background-color: rgb(220, 43, 43);"  id="cantWithoutCartEmpty" class="btn_1 checkout_btn_1" disabled >Empty Cart</button>
-
-                    <% } %>
-            </div>
-        </form>
+                </div>
+            </form>
         </div>
     </div>
 </section>
 <!--================End Cart Area =================-->
+
 <!--::footer_part start::-->
 <footer class="footer_part">
-    <div class="footer_iner section_bg">
-        <div class="container">
-            <div class="row justify-content-between align-items-center">
-                <div class="col-lg-8">
-                    <div class="footer_menu">
-                        <div class="footer_logo">
-                            <a href="index.html"><img src="/img/logo.png" alt="#"></a>
-                        </div>
-                        <div class="footer_menu_item">
-                            <a href="index.html">Home</a>
-                            <a href="about.html">About</a>
-                            <a href="product_list.html">Products</a>
-                            <a href="#">Pages</a>
-                            <a href="blog.html">Blog</a>
-                            <a href="contact.html">Contact</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="social_icon">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-google-plus-g"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="copyright_part">
         <div class="container">
-            <div class="row ">
+            <div class="row">
                 <div class="col-lg-12">
                     <div class="copyright_text">
-                        <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                            Copyright &copy;<script>
-                                document.write(new Date().getFullYear());
-                            </script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        </p>
+                        <p>Copyright &copy;<script>
+                            document.write(new Date().getFullYear());
+                        </script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
                         <div class="copyright_link">
                             <a href="#">Terms & Conditions</a>
                             <a href="#">FAQ</a>
@@ -156,90 +138,102 @@
     </div>
 </footer>
 <!--::footer_part end::-->
-<script>
-    
-    const quantityInputs = document.querySelectorAll('.quantity-input');
-    const subtotalElement = document.querySelector('.subtotal');
-    
-    
-    let subtotal = calculateSubtotal();
-    updateSubtotal(subtotal);
-    
 
-        quantityInputs.forEach((input) =>{
-          const productId = input.dataset.id;
-          const price = parseFloat(input.dataset.price);
-          const totalElement = document.querySelector(`.product-total[data-id="${productId}"]`);
-        
-          const minusBtn = input.parentElement.querySelector('.btn-decrement');
-          const plusBtn = input.parentElement.querySelector('.btn-increment');
-        
-          minusBtn.addEventListener('click', () => {
-            const currentValue = parseInt(input.value);
-            const minValue = parseInt(input.min);
-            if (currentValue > minValue) {
-              input.value = currentValue - 1;
-              updateTotal(price, input.value, totalElement);
-              subtotal = calculateSubtotal();
-              updateSubtotal(subtotal);
-              updateHiddenInputs();
-            }
-          });
-        
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
+   <script>
+    var notyf = new Notyf();
 
+    function removeCart(removeID) {
+        axios.get(`/cart/cartDelete?id=${removeID}`)
+            .then((response) => {
+                if (response.data.done) {
+                    window.location.reload();
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
-          plusBtn.addEventListener('click', () => {
-            const currentValue = parseInt(input.value);
-            const maxValue = parseInt(input.max);
-            if (currentValue < maxValue) {
-              input.value = currentValue + 1;
-              updateTotal(price, input.value, totalElement);
-              subtotal = calculateSubtotal();
-              updateSubtotal(subtotal);
-              updateHiddenInputs();
-            }
-          });
-        
-          input.addEventListener('input', () => {
-            updateTotal(price, input.value, totalElement);
-            subtotal = calculateSubtotal();
-            updateSubtotal(subtotal);
-            updateHiddenInputs();
-          });
-        });
-        
+    function increment(id,qty) {
 
-        function updateTotal(price, quantity, totalElement) {
-          const total = price * quantity;
-          totalElement.textContent = `$${total.toFixed(2)}`;
-        }        
-        
-        function calculateSubtotal() {
-          const totals = Array.from(document.querySelectorAll('.product-total'))
-            .map(el => parseFloat(el.textContent.replace('$', '')));
-          return totals.reduce((acc, val) => acc + val, 0);
-        }       
-
-        function updateSubtotal(subtotal) {
-          subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
+        if (qty >= 10) {
+            notyf.error("Maximum Quantity is 10")
+            return;
         }
 
-        function updateHiddenInputs() {
-          const form = document.querySelector('form');
-          form.querySelectorAll('input[type="hidden"]').forEach(input => input.remove());
+let body= { id: id, action: "increment" }
 
-          quantityInputs.forEach(input => {
-            const productId = input.dataset.id;
-            const quantity = input.value;
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = `products[${productId}]`;
-            hiddenInput.value = quantity;
-            form.appendChild(hiddenInput);
-          });
-        }
+        axios.post("/cart/qtyCart",body)
+            .then((response) => {
+                if (response.data.dataToSend) {
+                     let data = response.data.dataToSend
+               document.getElementById("changeSubtotal").innerHTML = data.subtotal
+
+               const quantityElement = document.querySelector(`.quantity[data-id="${id}"]`);
+                if (quantityElement) {
+                    quantityElement.innerHTML = data.qyt;
+                }
+
+
+                const totalElement = document.querySelector(`.total[data-id="${id}"]`);
+                if (totalElement) {
+                    totalElement.innerHTML = `$${data.total}`;
+                }
+
+                } else if(response.data.max) {
+                    notyf.error("Maximum Stock Reached")
+                } else {
+                    notyf.error("Maximum order Quantity is 10")
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+    
+    
+    
+    
+
+    function decrement(id,qty) {
+
+let body= { id: id, action: "decrement" }        
+
+        axios.post("/cart/qtyCart", body)
+            .then((response) => {
+
+                    if (response.data.dataToSend) {
+
+                     let data = response.data.dataToSend
+
+                    document.getElementById("changeSubtotal").innerHTML = data.subtotal
+
+                    const quantityElement = document.querySelector(`.quantity[data-id="${id}"]`);
+                     if (quantityElement) {
+                         quantityElement.innerHTML = data.qyt;
+                     }
+
+
+                     const totalElement = document.querySelector(`.total[data-id="${id}"]`);
+                     if (totalElement) {
+                         totalElement.innerHTML = `$${data.total}`;
+                     }
+
+                     } else {
+                         notyf.error("Minimum order Quantity is 1")
+                     }
+               
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
 </script>
+
 <!-- jquery plugins here-->
 <script src="/js/jquery-1.12.1.min.js"></script>
 <!-- popper js -->
@@ -250,7 +244,7 @@
 <script src="/js/jquery.magnific-popup.js"></script>
 <!-- swiper js -->
 <script src="/js/swiper.min.js"></script>
-<!-- swiper js -->
+<!-- mixitup js -->
 <script src="/js/mixitup.min.js"></script>
 <!-- particles js -->
 <script src="/js/owl.carousel.min.js"></script>

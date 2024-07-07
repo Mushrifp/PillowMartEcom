@@ -587,36 +587,35 @@ const loadCheckout = async (req,res)=>{
     try {
         const userSession = await userData.findOne({_id:req.session.user_id});
         const addresss = await address.findOne({UserID:req.session.user_id})
-        const productsData = req.body.products;
         const walletMoney = await wallet.findOne({user:req.session.user_id})
-        
-        const productsArray = Object.keys(productsData).map(productId =>([
-          productId,
-           parseInt(productsData[productId].quantity)
-        ]));
-
-        await cart.updateOne({user:req.session.user_id},{$set:{product:[]}});
-
-        await cart.updateOne({user:req.session.user_id},{$push:{product:{$each:productsArray}}});
 
         const UserCart = await cart.findOne({user:req.session.user_id});
   
         
    const arrayOfID = UserCart.product
    const CheckOutData = [];
+   let subtotal =  0;
 
-     for(let i=0;i<UserCart.product.length;i++){
-         let product = [];
-         let PData = await productData.findOne({_id:arrayOfID[i][i-i]})
-         product.push(PData,arrayOfID[i][1])
-         CheckOutData.push(product)
+     for(let i=0;i<arrayOfID.length;i++){
+
+         let PData = await productData.findOne({_id:arrayOfID[i].id})
+         let cartTotal = UserCart.product.find(item => item.id === arrayOfID[i].id)
+         let data ={
+            productInfo:PData,
+            productTotal:cartTotal.total,
+            quantity:cartTotal.quantity
+         }
+         subtotal+=cartTotal.total
+
+         CheckOutData.push(data)
      }
+
 
      if(addresss&&addresss.userAddress){
         const userAddresses  = addresss.userAddress
-        res.render("checkout",{userData: userSession,Products:CheckOutData,userAddresses,walletMoney:walletMoney.amount });
+        res.render("checkout",{userData: userSession,Products:CheckOutData,userAddresses,walletMoney:walletMoney.amount,subtotal });
      }else{
-        res.render("checkout",{userData: userSession,Products:CheckOutData,walletMoney:walletMoney.amount});
+        res.render("checkout",{userData: userSession,Products:CheckOutData,walletMoney:walletMoney.amount,subtotal});
       
      }
     } catch (error) {
@@ -628,13 +627,18 @@ const loadCheckout = async (req,res)=>{
 const orderConfirm = async (req,res)=>{
     try {
 
-         console.log("+++",req.body)
-
          let couponDiscount=0
 
           if(req.body.coupon != ''){
-            couponDiscount = parseInt(req.body.coupon) / 2
+            
+            if(req.body.orderDetails.length == 1){
+                couponDiscount = parseInt(req.body.coupon)
+            }else{
+                let couponDiscountOne = parseInt(req.body.coupon) / req.body.orderDetails.length
+                couponDiscount = parseInt(couponDiscountOne) 
+            }
           } 
+
 
        let orderDetails = req.body.orderDetails
 
@@ -738,7 +742,7 @@ const orderConfirm = async (req,res)=>{
                paymentMethod: newOrder.paymentMethod,
                billingAddress: newOrder.items[0].address,
                orderDetails: orderDetails,
-               subtotal: req.body.subtotal - couponDiscount,
+               subtotal: req.body.subtotal ,
                razo:order,
                razoID:razo_ID,
                RazPay:RazPay})

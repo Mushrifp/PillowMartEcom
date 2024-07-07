@@ -17,6 +17,7 @@ cart_router.set("views", "./View/Users");
 cart_router.get("/cart", auth.isLogin, cartController.loadCart);
 cart_router.post("/addCart", cartController.addCart);
 cart_router.get("/cartDelete", cartController.cartDelete);
+cart_router.post("/qtyCart", cartController.qtyCart);
 
 // Wishlist
 cart_router.get("/wishlist", auth.isLogin, cartController.loadWish);

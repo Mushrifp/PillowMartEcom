@@ -6,10 +6,10 @@ const cart = new mongoose.Schema({
       type:ObjectId,
       required:true
    },
-    product:[{
+    product:{
       type:[],
-      required:true  
-    }]
+      required:true
+    }
 });
 
 module.exports = mongoose.model("cart", cart);  
