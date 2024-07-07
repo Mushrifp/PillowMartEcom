@@ -546,11 +546,11 @@ const passChanging = async (req,res)=>{
          }
 
     } catch (error) {
-        console.log(error)
+       console.log(error)
     }
 }
 
-
+ 
 // logout
 const userLogout = async (req,res)=>{
     try {
