@@ -206,11 +206,15 @@
                                 <span>Coupon Discount :</span>
                                 <span id="couponDiscount">$ 0</span>
                             </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px;">
+                                <span>Shipping Fee :</span>
+                                <span id="couponDiscount">$ 50</span>
+                            </div>
                             <hr>
                             <div style="display: flex; justify-content: space-between; padding: 10px;">
                                 <span><h4 style="font-weight: bolder;">Total :</h4></span>
                                 <input type="hidden" value="" id="couponToSend">
-                                <span id="totalAfterDiscount"><h4 style="font-weight: bolder;">$ <%= subtotal %></h4></span>
+                                <span id="totalAfterDiscount"><h4 style="font-weight: bolder;">$ <%= subtotal + 50 %></h4></span>
                             </div>
                             <input type="hidden" id="subtotal" value="<%= subtotal %>">
                             <input type="hidden" id="walletMoney" value="<%= walletMoney %>">
@@ -330,6 +334,13 @@
     var couponToSend = document.getElementById('couponToSend').value
 
     console.log(paymentMethod,subtotal,walletMoney)
+
+    if(paymentMethod.value == "CashOnDelivery" && subtotal > 1000 ){
+        Swal.fire({
+        icon: "error",
+         text:"Cash on Delivery (COD) is not available for orders exceeding $1000. Please choose an alternate payment method"
+            })
+    }else{
     
     if(selectedAddress){
         if(paymentMethod){
@@ -372,12 +383,11 @@
                             productId: productId,
                         });
                     });
-
                     const data = {
                         addressCode: addressCode,
                         paymentMethod: paymentMethod.value,
                         orderDetails: orderDetails,
-                        subtotal: subtotal,
+                        subtotal: parseInt(subtotal)+50,
                         coupon:couponToSend
                     };
 
@@ -450,6 +460,9 @@
     }else{
         notyf.error("Select an address");
     }
+    }
+// 
+
 }
 
 function showOrderConfirmationModal(orderData){
@@ -681,9 +694,10 @@ document.getElementById("couponApply").addEventListener("click", function(event)
                 
                 document.getElementById("subShow").innerHTML = `$ ${subtotal.toFixed(2)}`;
                 document.getElementById("couponDiscount").innerHTML = `$ ${discountAmount.toFixed(2)}`;
-                document.getElementById("totalAfterDiscount").innerHTML = `$ ${response.data.answer.toFixed(2)}`;
+                let h = response.data.answer + 50
+                document.getElementById("totalAfterDiscount").innerHTML = `$ ${h.toFixed(2)}`;
 
-                document.getElementById("subtotal").value = response.data.answer;
+                document.getElementById("subtotal").value = response.data.answer + 50;
                 
                  document.getElementById('couponToSend').value = discountAmount
     

@@ -665,10 +665,8 @@ const payLaterWallet = async (req,res)=>{
 // pay later razorpay order confirmation 
 const razpayOrderPlace = async (req,res)=>{
   try{
-    console.log("89",req.body)
-       const d =  await Order.updateOne({ userID: req.session.user_id, "items._id": req.body.id }, { $set: { "items.$.paymentStatus": true } });
 
-console.log(d)
+       const d =  await Order.updateOne({ userID: req.session.user_id, "items._id": req.body.id }, { $set: { "items.$.paymentStatus": true } });
        
         res.send({done:"done"})
         
