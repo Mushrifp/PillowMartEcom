@@ -489,6 +489,7 @@ const viewDetails = async (req,res)=>{
      const ordered = done[0].Dates.ordered.toLocaleDateString('en-US',options);
      const delivery = done[0].Dates.delivery.toLocaleDateString('en-US',options);  
      let obj = {
+      id:done[0]._id,
        ordered : ordered,
        delivery : delivery,
        title : done[0].item.productTitle,

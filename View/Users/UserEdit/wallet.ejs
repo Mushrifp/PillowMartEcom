@@ -90,7 +90,18 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-
+.sidebar {
+        position: sticky;
+        top: 100px;
+        background: #f8f8f8;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-left: -50px;
+        
+        width: 350px;
+        height: 470px;
+    }
 </style>
 <%- include('../layout/header.ejs') %>
 <!--::header part start::-->
@@ -159,9 +170,11 @@
 <!--================ Area =================-->
 <div class="wide-container">
     <div class="container">
+        
         <div class="sidebar">
+            <h2>Welcome <span style="color: rgb(23, 102, 133);" ><%= userDatas?.name  %></span> </h2>
             <div class="user-profile">
-                <h2>Welcome <span style="color: rgb(23, 102, 133);" ><%= userDatas?.name  %></span> </h2>
+                
                 <ul>
                     <li class="Hove"><a href="/user/profile">Edit Profile</a></li>
                     <li class="Hove" ><a href="/user/address">Edit Address</a></li>
@@ -171,6 +184,7 @@
                 </ul>
             </div>
         </div>
+        <div class="col-lg-9">
         <div class="content">
             <div class="form-container">
                 <h2>Wallet</h2>
@@ -180,6 +194,7 @@
                    <button id="getHistory" style="background-color: rgb(0, 0, 0); margin-left: 10px;" class="btnef" >History</button>
             </div>
         </div>
+</div>
     </div>
 </div>
 

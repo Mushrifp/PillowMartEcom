@@ -398,6 +398,7 @@ const loginVerify = async (req, res) => {
                     if (passwordMatch){
                         
                        let sessionStoring  = req.session.user_id = userDatas._id
+                       console.log("Session Stored :",sessionStoring)
                        if(sessionStoring){
                         
                         const exist = await wallet.findOne({user:req.session.user_id})
@@ -1004,7 +1005,14 @@ const dashboardOrderChart = async (req, res) => {
     }
 };
 
-
+// invoice 
+const invoiceView = async (req,res)=>{
+    try{
+        console.log(req.query.data)
+    }catch(error){
+        console.log(error)
+    }
+}
 
 module.exports = {
     loadHome,
@@ -1032,5 +1040,6 @@ module.exports = {
     applyCoupon,
     filterProduct,
     searchSuggestions,
-    dashboardOrderChart
+    dashboardOrderChart,
+    invoiceView
 }

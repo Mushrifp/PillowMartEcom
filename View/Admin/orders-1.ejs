@@ -62,7 +62,7 @@
                                                style="background-color: #6c757d; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none;">
                                                Edit
                                             </a>
-                                            <% if (order.Status === 'Pending') { %>
+                                            <% if (order.Status == "Pending")  { %>
                                                 <div class="dropdown-menu" style="padding: 0; border-radius: 5px; overflow: hidden;">
                                                     <a class="dropdown-item" href="#" data-action="Delivered" data-order-id="<%= order.ID %>" data-user-id="<%= order.user %>"
                                                         style="background-color: #00a800; color: white; padding: 10px 15px; display: block; text-align: center; text-decoration: none;">
@@ -77,6 +77,7 @@
                                                         Shipped
                                                     </a>
                                                 </div>
+                                                
                                             <% } %>
                                         </div>
                                     </td>

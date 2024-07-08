@@ -24,7 +24,18 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     margin-right: 5px;
 }
-
+.sidebar {
+        position: sticky;
+        top: 100px;
+        background: #f8f8f8;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-left: -50px;
+        
+        width: 350px;
+        height: 470px;
+    }
 
 
 </style>
@@ -96,10 +107,10 @@
 <div class="wide-container">
     <div class="container">
         <div class="sidebar">
+            <% if(typeof userDatas != 'undefined'){ %>
+                <h2>Welcome <span style="color: rgb(23, 102, 133);" ><%= userDatas?.name  %></span> </h2>
+                <% } %>
             <div class="user-profile">
-                <% if(typeof userDatas != 'undefined'){ %>
-                    <h2>Welcome <span style="color: rgb(23, 102, 133);" ><%= userDatas?.name  %></span> </h2>
-                    <% } %>
                 <ul>
                     <li class="Hove"><a href="/user/profile">Edit Profile</a></li>
                     <li class="active Hove"><a href="/user/address">Edit Address</a></li>
@@ -109,6 +120,7 @@
                 </ul>
             </div>
         </div>
+        <div class="col-lg-9">
         <div class="content">
             <div class="form-container">
 
@@ -136,6 +148,7 @@
 
             </div>
         </div>
+</div>
     </div>
 </div>
 <!--================end =================-->

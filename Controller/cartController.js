@@ -65,9 +65,12 @@ const loadCart = async (req, res) => {
 // Add Cart
 const addCart = async (req,res)=>{
      try{ 
+
            if(req.session.user_id){
+
                      const cartDB = await cart.findOne({user:req.session.user_id})
                const pr = await  productData.findOne({_id:req.query.id})
+
                let price = 0;
                if(pr.offPrice != 0){
                 price=pr.offPrice
@@ -75,6 +78,8 @@ const addCart = async (req,res)=>{
                 price=pr.price
                }
                      if(cartDB){
+                         // TODO
+            console.log("Entered True")
                           const newCarts = {
                             id:req.query.id,
                             quantity:1,
@@ -83,15 +88,23 @@ const addCart = async (req,res)=>{
                               const done =  await cart.findOneAndUpdate({user:req.session.user_id},{$addToSet:{product:newCarts}})
                               done ? res.send({added:"Added"}) : res.send({failed:"Not Added"})
                      }else{
+                         // TODO
+            console.log("Entered False")
+            console.log("Check 1",req.query)
                            
                               let h = {
                                   id:req.query.id,
                                   quantity:1,
                                   total:price
                               }
+            console.log("Check 2",h)
+
                          const NewCart = new cart ({
+                              user:req.session.user_id,
                               product:h
                          })
+            console.log("Check 3",NewCart)
+
                        const done = await NewCart.save();
                         done ? res.send({added:"Added"}) : res.send({failed:"Not Added"})
                      }
