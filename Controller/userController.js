@@ -1005,14 +1005,6 @@ const dashboardOrderChart = async (req, res) => {
     }
 };
 
-// invoice 
-const invoiceView = async (req,res)=>{
-    try{
-        console.log(req.query.data)
-    }catch(error){
-        console.log(error)
-    }
-}
 
 module.exports = {
     loadHome,
@@ -1040,6 +1032,5 @@ module.exports = {
     applyCoupon,
     filterProduct,
     searchSuggestions,
-    dashboardOrderChart,
-    invoiceView
+    dashboardOrderChart
 }

@@ -37,5 +37,18 @@ user.post("/returnOrder",userProfileController.returnOrder)
 user.post("/walletAddMoney",userProfileController.walletAddMoney)
 user.post("/getWalletHistory",userProfileController.getWalletHistory)
 
-  
+
+// order Pay later with razorpay 
+user.post("/payLaterOnline",userProfileController.payLaterOnline)
+
+// order Pay later with wallet 
+user.post("/payLaterWallet",userProfileController.payLaterWallet)
+
+//  razorpay paylater confirm
+user.post("/razpayOrderPlace",userProfileController.razpayOrderPlace)
+
+
+
+
+
 module.exports = user; 

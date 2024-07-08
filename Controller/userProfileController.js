@@ -1,3 +1,4 @@
+require('dotenv').config()
 const mongoose = require('mongoose');
 const userData = require("../Model/userData");
 const productData = require("../Model/product");
@@ -6,7 +7,7 @@ const address = require("../Model/address")
 const Order = require("../Model/order")
 const wallet = require("../Model/wallet")
 const orderReturned = require("../Model/returnOrder")
-
+const Razorpay = require('razorpay');
 
 
 
@@ -554,8 +555,6 @@ const getWalletHistory = async(req,res)=>{
 
     const data = await wallet.findOne({user:req.session.user_id})
 
-    console.log(data)
-
     const sortedHistory = data.history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     res.send({data:sortedHistory})
@@ -593,6 +592,92 @@ const returnOrder = async (req,res)=>{
   }
 }
 
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_ID,
+  key_secret:  process.env.RAZORPAY_SECRET
+});
+
+
+// pay later
+const payLaterOnline = async (req,res)=>{
+  try{    
+      
+    let razo_ID = process.env.RAZORPAY_ID;
+    let razo_SECRET = process.env.RAZORPAY_SECRET;
+
+    const orderInfo = await Order.findOne({userID:req.session.user_id,"items._id":req.body.iD})
+
+    const options = {
+      amount: orderInfo.items[0].cash * 100, 
+      currency: 'INR',
+      receipt: 'order_rcptid_11'
+   };
+    
+   const order = await razorpayInstance.orders.create(options);
+    
+   res.send({     
+    razo:order,
+    razoID:razo_ID,
+    orderInfo:req.body.iD
+    })
+   
+    
+  }catch(error){
+    console.log(error)
+  }
+}
+
+// pay later wallet 
+const payLaterWallet = async (req,res)=>{
+  try{
+
+           const wall = await wallet.findOne({user:req.session.user_id})
+           const orderInfo = await Order.findOne({userID:req.session.user_id,"items._id":req.body.iD})
+
+            if(orderInfo.items[0].cash <= wall.amount){
+
+
+              await Order.updateOne({ userID: req.session.user_id, "items._id": req.body.iD }, { $set: { "items.$.paymentStatus": true } });
+              const date = new Date();
+              const formattedDate = date.toLocaleString();
+                        const transaction = {
+                          date:formattedDate,
+                          type:"withdrawal",
+                          money:orderInfo.items[0].cash
+                        }
+              await wallet.updateOne({user:req.session.user_id},{$push:{history:transaction},$inc:{amount:-orderInfo.items[0].cash}})
+
+          res.send({done:"Done"})
+
+            }else{
+              let info ={
+                  userBalance:wall.amount,
+                  orderTot:orderInfo.items[0].cash
+              }
+              res.send({failed:info})
+            }
+
+  }catch(error){
+    console.log(error)
+  }
+}
+
+// pay later razorpay order confirmation 
+const razpayOrderPlace = async (req,res)=>{
+  try{
+    console.log("89",req.body)
+       const d =  await Order.updateOne({ userID: req.session.user_id, "items._id": req.body.id }, { $set: { "items.$.paymentStatus": true } });
+
+console.log(d)
+       
+        res.send({done:"done"})
+        
+  }catch(error){
+
+  }
+}
+
+
 module.exports = {
   profile,
   password,
@@ -604,12 +689,15 @@ module.exports = {
   addAddress,
   loadAddAddress,
   removeAddress,
-  editAddress,
+  editAddress, 
   updateAddress,
   addressAddCheckout,
   cancelOrder,
   viewDetails,
   walletAddMoney,
   getWalletHistory,
-  returnOrder
+  returnOrder,
+  payLaterOnline,
+  payLaterWallet,
+  razpayOrderPlace
 };
