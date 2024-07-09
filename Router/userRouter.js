@@ -73,6 +73,7 @@ user_router.post("/applyCoupon",userController.applyCoupon)
 
 // chart in admin dashboard
 user_router.get("/dashboardOrderChart",userController.dashboardOrderChart)
+user_router.get("/dashboardOrderChartMonthly",userController.dashboardOrderChartMonthly)
 
 
 module.exports = user_router;

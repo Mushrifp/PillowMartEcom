@@ -102,6 +102,7 @@ admin_router.post("/editCouponSave",adminController.editCouponSave);
 // sales filter
 admin_router.post("/filterSales",adminController.filterSales);
 admin_router.get("/filterSales2",adminController.filterSales2);
+admin_router.post("/filterSalesByDateRange",adminController.filterSalesByDateRange);
 
 // offer
 admin_router.post("/createOffer",adminController.createOffer)

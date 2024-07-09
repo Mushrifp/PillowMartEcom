@@ -675,6 +675,32 @@ const SalesDatas = async () => {
     }
 };
 
+// filter by date range
+const filterSalesByDateRange = async (req, res) => {
+    try {
+        let { startDate, endDate } = req.body;
+let {s,e} = req.body;
+        startDate = new Date(startDate);
+        endDate = new Date(endDate);
+
+        let dataToSend = await SalesDatas();
+
+        let filteredData = dataToSend.filter(item => {
+            let itemDate = new Date(item._id.orderedDate);
+            return itemDate >= startDate && itemDate <= endDate;
+        });
+
+        if (filteredData.length === 0) {
+            res.render("sales", { message: "no data", s, e });
+        } else {
+            res.render("sales", { salesData: filteredData, s, e });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+
 
 // filter based on month and today and week 
 const filterSales2 = async (req,res)=>{
@@ -694,19 +720,6 @@ const filterSales2 = async (req,res)=>{
             send = dataToSend.filter(item => {
                 let itemDate = new Date(item._id.orderedDate);
                 return itemDate >= startOfMonth && itemDate <= endOfMonth;
-            });
-        } else if (query == "Weekly") {
-
-            let currentDate = new Date();
-            let startOfWeek = new Date(currentDate);
-            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); 
-        
-            let endOfWeek = new Date(currentDate);
-            endOfWeek.setDate(startOfWeek.getDate() + 6);
-        
-            send = dataToSend.filter(item => {
-                let itemDate = new Date(item._id.orderedDate);
-                return itemDate >= startOfWeek && itemDate <= endOfWeek;
             });
         } else {
 
@@ -1145,5 +1158,6 @@ module.exports={
     addOfferTOCategory,
     currentOfferCategory,
     removeOfferCategory,
-    returnOrder
+    returnOrder,
+    filterSalesByDateRange
 }

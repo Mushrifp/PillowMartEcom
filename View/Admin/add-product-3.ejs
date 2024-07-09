@@ -10,7 +10,61 @@
         width: 100%;
         height: auto;
     }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding-top: 100px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px; 
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+   
+    .cropper-container {
+        max-width: 100%;
+        max-height: 400px;
+        margin: 0 auto; 
+    }
+
+    #imageToCrop {
+        max-width: 100%;
+        max-height: 300px;
+    }
 </style>
+
+
+<link href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet">
+<script src="https://unpkg.com/cropperjs/dist/cropper.js"></script>
+
 <%- include('./layouts/header.ejs') %>
 
 <main class="main-wrap">
@@ -37,17 +91,17 @@
                             </div>
                             <div>
                                 <label class="form-label">Images 1</label>
-                                <input class="form-control" type="file" name="images"  accept="image/*" required data-preview-id="imagePreview1" />
+                                <input class="form-control" type="file" name="images" accept="image/*" required data-preview-id="imagePreview1" />
                                 <div class="image-preview" id="imagePreview1"></div>
                             </div>
                             <div>
                                 <label class="form-label">Images 2</label>
-                                <input class="form-control" type="file" name="images"  accept="image/*" required data-preview-id="imagePreview2" />
+                                <input class="form-control" type="file" name="images" accept="image/*" required data-preview-id="imagePreview2" />
                                 <div class="image-preview" id="imagePreview2"></div>
                             </div>
                             <div>
                                 <label class="form-label">Images 3</label>
-                                <input class="form-control" type="file" name="images"  accept="image/*"  required data-preview-id="imagePreview3" />
+                                <input class="form-control" type="file" name="images" accept="image/*" required data-preview-id="imagePreview3" />
                                 <div class="image-preview" id="imagePreview3"></div>
                             </div>
 
@@ -112,36 +166,92 @@
     </footer>
 </main>
 
+<!-- Cropper Modal -->
+<div id="cropperModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Crop Image</h2>
+        <div>
+            <img id="imageToCrop" style="max-width: 100%;">
+        </div>
+        <button id="cropImageBtn" class="btn btn-primary mt-3">Crop & Save</button>
+    </div>
+</div>
+
 <script>
+    let cropper;
+    let currentFileInput;
+
     document.querySelectorAll('input[type="file"]').forEach(function(input){
-        input.addEventListener('change',function(event){
-            const imagePreviewId = this.getAttribute('data-preview-id');
-            previewImage(event,imagePreviewId);
+        input.addEventListener('change', function(event){
+            currentFileInput = this;
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e){
+                const image = document.getElementById('imageToCrop');
+                image.src = e.target.result;
+                showCropperModal();
+            };
+            
+            reader.readAsDataURL(file);
         });
     });
 
-    function previewImage(event,imagePreviewId){
-        const fileInput = event.target;
-        const file = fileInput.files[0];
-        const imagePreview = document.getElementById(imagePreviewId);
+    function showCropperModal() {
+        const modal = document.getElementById('cropperModal');
+        modal.style.display = "block";
 
-        if (file){
-            const reader = new FileReader();
-
-            reader.readAsDataURL(file);
-
-            reader.onload = function (){
-                const imgElement = document.createElement('img');
-                imgElement.src = reader.result;
-                imgElement.className = 'preview-image';
-                imagePreview.innerHTML = '';
-                imagePreview.appendChild(imgElement);
-            };
-        }else{
-            imagePreview.innerHTML = '';
-        }
+        const image = document.getElementById('imageToCrop');
+        cropper = new Cropper(image, {
+            aspectRatio: 1,
+            viewMode: 2
+        });
     }
+
+    function closeCropperModal() {
+        const modal = document.getElementById('cropperModal');
+        modal.style.display = "none";
+        cropper.destroy();
+        cropper = null;
+    }
+
+    document.getElementsByClassName('close')[0].onclick = function() {
+        closeCropperModal();
+    };
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('cropperModal');
+        if (event.target == modal) {
+            closeCropperModal();
+        }
+    };
+
+    document.getElementById('cropImageBtn').onclick = function() {
+        const canvas = cropper.getCroppedCanvas({
+            width: 200,
+            height: 200,
+        });
+        
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const imagePreviewId = currentFileInput.getAttribute('data-preview-id');
+            const imagePreview = document.getElementById(imagePreviewId);
+            const imgElement = document.createElement('img');
+            imgElement.src = url;
+            imgElement.className = 'preview-image';
+            imagePreview.innerHTML = '';
+            imagePreview.appendChild(imgElement);
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(new File([blob], 'cropped_image.png'));
+            currentFileInput.files = dataTransfer.files;
+
+            closeCropperModal();
+        });
+    };
 </script>
+
 <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
 <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
 <script src="/assets/js/vendors/select2.min.js"></script>

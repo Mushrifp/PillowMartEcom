@@ -1005,6 +1005,50 @@ const dashboardOrderChart = async (req, res) => {
     }
 };
 
+// chart with monthly data
+const dashboardOrderChartMonthly = async (req, res) => {
+    try {
+        const currentYear = new Date().getFullYear();
+        const startOfYear = new Date(currentYear, 0, 1);
+        const endOfYear = new Date(currentYear, 11, 31, 23, 59, 59, 999);
+
+        const orderData = await order.aggregate([
+            { $unwind: "$items" },
+            {
+                $match: {
+                    "items.Dates.ordered": { $gte: startOfYear, $lte: endOfYear }
+                }
+            },
+            { 
+                $group: {
+                    _id: { $month: "$items.Dates.ordered" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id": 1 } }
+        ]);
+
+             const allMonths = [
+                 { _id: 1, count: 0 }, { _id: 2, count: 0 }, { _id: 3, count: 0 },
+                 { _id: 4, count: 0 }, { _id: 5, count: 0 }, { _id: 6, count: 0 },
+                 { _id: 7, count: 0 }, { _id: 8, count: 0 }, { _id: 9, count: 0 },
+                 { _id: 10, count: 0 }, { _id: 11, count: 0 }, { _id: 12, count: 0 }
+             ];
+             
+
+             for (let item of orderData) {
+                 let monthIndex = item._id - 1;  
+                 allMonths[monthIndex].count = item.count;
+             };
+
+        res.json(allMonths);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
 
 module.exports = {
     loadHome,
@@ -1032,5 +1076,6 @@ module.exports = {
     applyCoupon,
     filterProduct,
     searchSuggestions,
-    dashboardOrderChart
+    dashboardOrderChart,
+    dashboardOrderChartMonthly
 }
