@@ -945,7 +945,8 @@ const applyCoupon = async (req,res)=>{
           let data = await Coupon.findOne({code:req.body.code})
           if(!data){
             res.send({Nodata:"NodatFound"})
-          }
+          }else{
+         
           let dis = data.discount;
 
           let answer = parseInt(req.body.subtotal) - dis
@@ -953,7 +954,7 @@ const applyCoupon = async (req,res)=>{
           let done  =  await Coupon.updateOne({code:req.body.code},{$inc:{count:-1}})
 
            res.send({answer})
-          
+          }
     }catch(error){
         console.log(error)
     }
@@ -1121,7 +1122,21 @@ const dashboardOrderChartMonthly = async (req, res) => {
     }
 };
 
-
+// remove coupon
+const removeCoupon = async (req,res)=>{
+    try{
+    
+        const check = await Coupon.findOne({code:req.body.c})
+        if(check){
+        let done  =  await Coupon.updateOne({code:req.body.c},{$inc:{count:1}})
+         res.send({done})
+        }else{
+            res.send({NotFound:"failed"})
+        }
+    }catch(error){
+        console.log(error)
+    }
+}
 
 
 module.exports = {
@@ -1151,5 +1166,6 @@ module.exports = {
     filterProduct,
     searchSuggestions,
     dashboardOrderChart,
-    dashboardOrderChartMonthly
+    dashboardOrderChartMonthly,
+    removeCoupon
 }

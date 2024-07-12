@@ -72,6 +72,8 @@
             <input  id="couponCode" type="text" placeholder="Enter coupon code"/>
             <a id="couponApply" class="tp_btn" href="#">Apply Coupon</a>
             <a id="CouponShow" class="tp_btn" href="#">Show available Coupon</a>
+            <a onclick="rmvCupon()" class="tp_btn" href="#">Remove Coupon</a>
+
         </div>
         <hr>
         <div class="billing_details">
@@ -729,7 +731,26 @@ document.getElementById("couponApply").addEventListener("click", function(event)
 });
 
 
-
+function rmvCupon(){
+    
+    let code = document.getElementById("couponCode").value;
+    if(code == ''){
+        notyf.error("Invalid Code");
+    }else{
+   
+        let cod = {c:code}
+        axios.post("/removeCoupon",cod)
+        .then((response)=>{
+            if(response.data.done){
+                window.location.reload()
+            }else{
+                notyf.error("Invalid COde")
+            }
+        }).catch((error)=>{
+            console.log(error)
+        })
+    }
+}
 
 </script>
 <!-- jquery plugins here-->

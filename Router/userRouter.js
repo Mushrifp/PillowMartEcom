@@ -70,6 +70,7 @@ user_router.post("/razpayOrderPlace",userController.razpayOrderPlace)
 // coupon
 user_router.post("/showCoupon",userController.showCoupon)
 user_router.post("/applyCoupon",userController.applyCoupon)
+user_router.post("/removeCoupon",userController.removeCoupon)
 
 // chart in admin dashboard
 user_router.get("/dashboardOrderChart",userController.dashboardOrderChart)

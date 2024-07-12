@@ -517,7 +517,7 @@ const viewDetails = async (req,res)=>{
 
      }
 
-     res.render("orderView",{obj})
+     res.render("orderView",{obj}) 
 
   }catch (error){
     console.log(error)
