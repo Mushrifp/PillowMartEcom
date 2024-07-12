@@ -26,7 +26,7 @@ const passwordHash = async (password) => {
         const hashedPassword = hash.hash(password, 10);
         return hashedPassword
     } catch (error) {
-        console.log(error)
+        console.log(error)        
     }
 }
 
@@ -46,14 +46,33 @@ const StrongPassword = async (password) => {
 // Load Home Page 
 const loadHome = async (req, res) => {
     try {
-        console.log("reached controller")
+        console.log("Home !! ")
 
       const userSession  = await userData.findOne({_id:req.session.user_id})
+
+      let relate =  await order.aggregate([
+        { $unwind: "$items" },{
+          $group: {
+            _id: "$items.item._id",
+            totalQuantitySold: { $sum: "$items.quantity" },
+            orderCount: { $sum: 1 },
+            image: { $first: { $arrayElemAt: ["$items.item.image", 0] } }
+          }},
+        { $sort: { totalQuantitySold: -1 } }])
+        
+        let relateCategory = [];
+         
+            for(let i=0;i<relate.length;i++){
+                const data = await productData.findOne({_id:relate[i]._id});
+                relateCategory.push(data)
+            }
+        
+      let relatePrice =  await productData.find({price:{$lt:500}});
       
     if(userSession){ 
-        res.render("index",{userData:userSession})
+        res.render("index",{userData:userSession,relatePrice,relateCategory})
     }else{
-        res.render("index")
+        res.render("index",{relatePrice,relateCategory})
     }
 
 
@@ -161,10 +180,15 @@ const singleProduct = async (req, res) => {
 
         const userSession  = await userData.findOne({_id:req.session.user_id})
 
+
+          let relateCategory = await productData.find({category:singleData.category});
+          let relatePrice =  await productData.find({price:{$lte:singleData.price+500}});
+            
+          
         if(userSession){ 
-            res.render("single-product",{singleData:singleData,userData:userSession })
+            res.render("single-product",{singleData:singleData,userData:userSession,relateCategory,relatePrice })
         }else{
-            res.render('single-product',{singleData:singleData})
+            res.render('single-product',{singleData:singleData,relateCategory,relatePrice})
         }
     } catch (error) {
         console.log(error)
@@ -411,7 +435,26 @@ const loginVerify = async (req, res) => {
                           await newWallet.save()
                          } 
 
-                        res.render("index", { message: "Login Success",userData:sessionStoring })
+                         let relate =  await order.aggregate([
+                            { $unwind: "$items" },{
+                              $group: {
+                                _id: "$items.item._id",
+                                totalQuantitySold: { $sum: "$items.quantity" },
+                                orderCount: { $sum: 1 },
+                                image: { $first: { $arrayElemAt: ["$items.item.image", 0] } }
+                              }},
+                            { $sort: { totalQuantitySold: -1 } }])
+                            
+                            let relateCategory = [];
+                             
+                                for(let i=0;i<relate.length;i++){
+                                    const data = await productData.findOne({_id:relate[i]._id});
+                                    relateCategory.push(data)
+                                }
+                            
+                          let relatePrice =  await productData.find({price:{$lt:500}});
+
+                        res.render("index", { message: "Login Success",userData:sessionStoring,relateCategory,relatePrice })
                         
                        }else{
                          console.log("session not stored")
@@ -555,8 +598,29 @@ const passChanging = async (req,res)=>{
 // logout
 const userLogout = async (req,res)=>{
     try {
+        
          req.session.destroy();
-         res.render("index",{logoutMessage:"logout Done"})
+
+         let relate =  await order.aggregate([
+        { $unwind: "$items" },{
+          $group: {
+            _id: "$items.item._id",
+            totalQuantitySold: { $sum: "$items.quantity" },
+            orderCount: { $sum: 1 },
+            image: { $first: { $arrayElemAt: ["$items.item.image", 0] } }
+          }},
+        { $sort: { totalQuantitySold: -1 } }])
+        
+        let relateCategory = [];
+         
+            for(let i=0;i<relate.length;i++){
+                const data = await productData.findOne({_id:relate[i]._id});
+                relateCategory.push(data)
+            }
+        
+      let relatePrice =  await productData.find({price:{$lt:500}});
+         
+         res.render("index",{logoutMessage:"logout Done",relateCategory,relatePrice})
     } catch (error){
        console.log(error.message)
     }
@@ -586,6 +650,7 @@ const categoryLoad = async (req,res)=>{
 // Load Checkout page
 const loadCheckout = async (req,res)=>{
     try {
+        
         const userSession = await userData.findOne({_id:req.session.user_id});
         const addresss = await address.findOne({UserID:req.session.user_id})
         const walletMoney = await wallet.findOne({user:req.session.user_id})
@@ -627,11 +692,13 @@ const loadCheckout = async (req,res)=>{
 // Load confirmation 
 const orderConfirm = async (req,res)=>{
     try {
+        
+console.log(req.body)
 
          let couponDiscount=0
 
           if(req.body.coupon != ''){
-            
+
             if(req.body.orderDetails.length == 1){
                 couponDiscount = parseInt(req.body.coupon)
             }else{
@@ -671,7 +738,8 @@ const orderConfirm = async (req,res)=>{
                 },
                 address:userAddress.userAddress[0],
                 paymentMethod:req.body.paymentMethod,
-                paymentStatus:false
+                paymentStatus:false,
+                coupon:req.body.coupon
             }
             product.push(productOBJ)
             let pStock = {
@@ -687,8 +755,9 @@ const orderConfirm = async (req,res)=>{
                 items:product,
                 total:req.body.subtotal,
                 paymentMethod:req.body.paymentMethod,
+                
               })   
-              
+              console.log(newOrder)
             const RazPay = {
                 userID:req.session.user_id,
                 items:product,
@@ -697,6 +766,7 @@ const orderConfirm = async (req,res)=>{
 
             if(req.body.paymentMethod == "CashOnDelivery"){
 
+                
                 const done = await newOrder.save()
 
                 if(done){
@@ -713,7 +783,9 @@ const orderConfirm = async (req,res)=>{
                           paymentMethod: newOrder.paymentMethod,
                           billingAddress: newOrder.items[0].address,
                           orderDetails: orderDetails,
-                          subtotal: req.body.subtotal,
+                          subtotal:req.body.subtotal,
+                          coupon:req.body.coupon
+                          
                       });
                 }else{
                    res.send({failed:"Failed"})
@@ -744,6 +816,7 @@ const orderConfirm = async (req,res)=>{
                billingAddress: newOrder.items[0].address,
                orderDetails: orderDetails,
                subtotal: req.body.subtotal ,
+               coupon:req.body.coupon,
                razo:order,
                razoID:razo_ID,
                RazPay:RazPay})
@@ -780,6 +853,7 @@ const orderConfirm = async (req,res)=>{
                           billingAddress: newOrder.items[0].address,
                           orderDetails: orderDetails,
                           subtotal: req.body.subtotal,
+                          coupon:req.body.coupon
                       });
                 }else{
                    res.send({failed:"Failed"})
@@ -826,7 +900,7 @@ const razpayOrderPlace = async (req,res)=>{
         userID: req.body.RazPay.userID,
         items: req.body.RazPay.items,
         total: req.body.orderTotal,
-
+        coupon:req.body.coupon
     });
 
     for (let i = 0; i < newOrder.items.length; i++) {
@@ -889,26 +963,28 @@ const applyCoupon = async (req,res)=>{
 const filterProduct= async (req,res)=>{
     try{
 
-        // Initialize query and sort objects
+
         let query = {};
         let sortQuery = {};
+        
 console.log(req.query)
-        // Extract and set category filter
+
         if (req.query.category && req.query.category !== 'all') {
             let categoryCheck = await categoryDB.findOne({ name: req.query.category });
             
             if (!categoryCheck) {
-                // If not found by _id, try to find by name
+        
                 categoryss = await categoryDB.findOne({ _id: req.query.category });
                 query.category = categoryss.name;
+
             }
 
             if (categoryCheck) {
-                query.category = categoryCheck.name; // Use category _id in the query
+                query.category = categoryCheck.name; 
             }
         }
 
-        // Extract and set price filter
+
         if (req.query.price && req.query.price !== 'all') {
             switch (req.query.price) {
                 case '100-500':
@@ -925,22 +1001,20 @@ console.log(req.query)
             }
         }
 
-        // Extract and set sorting filter
+
         if (req.query.filter === 'lowToHigh') {
             sortQuery.price = 1;
         } else if (req.query.filter === 'highToLow') {
             sortQuery.price = -1;
         }
 
-        // Extract pagination info
+
         const page = parseInt(req.query.number) || 0;
         const itemsPerPage = 5;
         const skip = page * itemsPerPage;
 
-        // Fetch filtered and paginated data
         const products = await productData.find(query).sort(sortQuery).skip(skip).limit(itemsPerPage);
 
-        // Fetch additional data for rendering
         const userSession = await userData.findOne({ _id: req.session.user_id });
         const categoryData = await categoryDB.find({});
         const totalProduct = await productData.countDocuments(query);

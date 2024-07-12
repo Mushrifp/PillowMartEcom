@@ -505,6 +505,7 @@ const viewDetails = async (req,res)=>{
        cash : done[0].cash,
        paymentMethod:done[0].paymentMethod,
        paymentStatus:done[0].paymentStatus,
+       coupon:done[0].coupon,
        quantity : done[0].quantity,
        name : done[0].address.name,
        Bname : done[0].address.Bname,

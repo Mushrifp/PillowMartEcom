@@ -1,199 +1,181 @@
+<style>
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #ffffff;
+    }
+    .table th,
+    .table td {
+        padding: 1rem;
+        vertical-align: top;
+        border-top: 1px solid #000000;
+    }
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #8cff00;
+        background-color: #343a40;
+        color: #ffffff;
+    }
+    .table-bordered {
+        border: 1px solid #000000;
+    }
+    .table-bordered th,
+    .table-bordered td {
+        border: 1px solid #dee2e6;
+    }
+    .table-bordered thead th,
+    .table-bordered thead td {
+        border-bottom-width: 2px;
+    }
+    .table th,
+    .table td {
+        text-align: center;
+    }
+    #filterButtons {
+        background-color: #3BB77E;
+        color: white;
+        transition: 0.5s;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        border: none;
+        cursor: pointer;
+    }
+    #filterButtons:hover {
+        background-color: #004424;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    }
+    .btn-primary {
+        background-color: #3BB77E;
+        border: none;
+        transition: 0.5s;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        cursor: pointer;
+    }
+    .btn-primary:hover {
+        background-color: #004424;
+    }
+    .content-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .content-title a {
+        margin-left: auto;
+    }
+    .card {
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .no-data {
+        color: red;
+        text-align: center;
+    }
+</style>
+
 <%- include('./layouts/header.ejs') %>
 <main class="main-wrap">
     <section class="content-main">
         <div class="content-header">
-            <div>
-                <h2 class="content-title card-title">Welcome to Dashboard</h2>
-            </div>
+            <h2 class="content-title">
+                Sales Report 
+            </h2>
         </div>
-        <div class="row">
-            <!-- Total Revenue -->
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card card-body mb-4 shadow-sm">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-primary-light">
-                            <i class="text-primary material-icons md-monetization_on" style="margin-top: 13px;"></i>
-                        </span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Total Revenue</h6>
-                            <% if (typeof totalRevenue !== "undefined") { %>
-                                <span>$<%= totalRevenue %></span>
-                            <% } %>
-                        </div>
-                    </article>
-                </div>
+       
+        <div class="row align-items-center mb-4">
+            <div class="col-md-2 col-6">
+                <form action="/admin/filterSalesByDateRange" id="dateRangeForm" method="post">
+                    <input type="date" name="startDate" class="form-control" id="startDate" style="background-color: #3BB77E; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; color: #ffffff;" required/>
+                    <input type="date" name="endDate" class="form-control" id="endDate" style="background-color: #3BB77E; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; color: #ffffff; margin-top: 10px;" required/>
+                    <button type="submit" class="form-control" id="filterButtons" style="margin-top: 10px;">Filter</button>
+                </form>
             </div>
+            
+            <div class="col-md-2 col-6">
+                <form action="/admin/filterSales" id="formSub" method="post">
+                    <input type="date" name="date" class="form-control" value="<%= typeof selectedDate != 'undefined' ? selectedDate : ''  %>" id="dateForm" style="background-color: #3BB77E; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; color: #ffffff;" />
+                </form>
+            </div>           
+           
+            <% if(typeof query != 'undefined' && query == "Monthly"){ %>
+                <div class="col-md-2 col-6">
+                  <a href="/admin/filterSales2?filterBy=Monthly"><button class="form-control" id="filterButtons" style="background-color: #343a40; color: #ffffff;">Monthly</button></a>
+                </div>
+           <% }else { %>
+              <div class="col-md-2 col-6">
+                <a href="/admin/filterSales2?filterBy=Monthly"><button class="form-control" id="filterButtons" >Monthly</button></a>
+              </div>
+             <% } %>   
 
-            <!-- Orders -->
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card card-body mb-4 shadow-sm">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-success-light">
-                            <i class="text-success material-icons md-local_shipping" style="margin-top: 13px;"></i>
-                        </span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Orders</h6>
-                            <% if (typeof number !== "undefined") { %>
-                                <span><%= number %></span>
-                            <% } %>
-                        </div>
-                    </article>
+             <% if(typeof query != 'undefined' && query == "Today"){ %>
+                <div class="col-md-2 col-6">
+                  <a href="/admin/filterSales2?filterBy=Today"><button class="form-control" id="filterButtons" style="background-color: #343a40; color: #ffffff;">Today</button></a>
                 </div>
-            </div>
+           <% }else { %>
+              <div class="col-md-2 col-6">
+                <a href="/admin/filterSales2?filterBy=Today"><button class="form-control" id="filterButtons" >Today</button></a>
+              </div>
+             <% } %>
 
-            <!-- Products -->
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card card-body mb-4 shadow-sm">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-warning-light">
-                            <i class="text-warning material-icons md-qr_code" style="margin-top: 13px;"></i>
-                        </span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Products</h6>
-                            <% if (typeof ProductCount !== "undefined") { %>
-                                <span><%= ProductCount %></span>
-                            <% } %>
-                        </div>
-                    </article>
+             <div class="col-md-2 col-6">
+                <a href="/admin/sales"><button class="form-control" id="filterButtons"  style="background-color: #343a40; color: #ffffff ;">reset</button></a>
+             </div>   
+             
+             <div  class="col-md-2 col-6">
+                <a href="#" class="btn btn-primary btn-sm rounded" id="Export" style="background-color: #343a40; color: #ffffff ;">Export</a>
+                   
                 </div>
-            </div>
-
-            <!-- Users -->
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card card-body mb-4 shadow-sm">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-info-light">
-                            <i class="text-info material-icons md-shopping_basket" style="margin-top: 13px;"></i>
-                        </span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Users</h6>
-                            <% if (typeof userCount !== "undefined") { %>
-                                <span><%= userCount %></span>
-                            <% } %>
-                        </div>
-                    </article>
-                </div>
-            </div>
         </div>
-
-        <div class="row">
-            <!-- Sale Statistics -->
-            <div class="col-xl-8 col-lg-12 mb-4">
-                <div class="card shadow-sm">
-                    <article class="card-body">
-                        <h3 class="card-title">Sale Statistics</h3>
-                        <button id="filterMonthly" class="btn btn-primary">Monthly</button>
-                        <canvas id="dashboardChart" height="220"></canvas>
-                    </article>
-                </div>
-            </div>
-
-            <!-- New Members -->
-            <div class="col-xl-4 col-lg-12 mb-4" style="height: 500px;">
-                <div class="card shadow-sm">
-                    <article class="card-body">
-                        <h3 class="card-title">New Members</h3>
-                        <hr>
-                        <div class="new-member-list">
-                            <% if (latestUsers && latestUsers.length > 0) { %>
-                                <% for (let i = 0; i < latestUsers.length; i++) { %>
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <div class="d-flex align-items-center">
-                                            <div class="ml-3">
-                                                <h6><%= latestUsers[i].name %></h6>
-                                                <p class="text-muted font-xs">Phone no: <%= latestUsers[i].mobile %></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            <% } else { %>
-                                <p>No new members available.</p>
-                            <% } %>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- New Products -->
-                <div class="card shadow-sm" style="background-color: #6c757d00; border: 3px dotted #000000;">
-                    <article class="card-body">
-                        <h3 class="card-title">New Products</h3>
-                        <hr>
-                        <div class="new-member-list">
-                            <% if (latestProduct && latestProduct.length > 0) { %>
-                                <% for (let i = 0; i < latestProduct.length; i++) { %>
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <div class="d-flex align-items-center">
-                                            <img src="productImages/<%= latestProduct[i].image[0] %>" alt="" class="avatar" style="border: 1px solid #000000; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;" />
-                                            <div class="ml-3">
-                                                <h6><%= latestProduct[i].productTitle %></h6>
-                                                <p class="text-muted font-xs"><%= latestProduct[i].category %></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            <% } else { %>
-                                <p>No new products available.</p>
-                            <% } %>
-                        </div>
-                    </article>
-                </div>
-            </div>
-
-            <!-- Best Selling Categories -->
-            <div class="col-xl-8 col-lg-12 mb-4" style="width: 100%;">
-                <div class="card shadow-sm" style="border: none;">
-                    <article class="card-body">
-                        <h3 class="card-title text-center">Best Selling Categories</h3>
-                        <% if (topSellingCategories && topSellingCategories.length > 0) { %>
-                            <div class="d-flex flex-column">
-                                <% for (let i = 0; i < topSellingCategories.length; i++) { %>
-                                    <div class="mb-2">
-                                        <div class="card" style="border: 1px solid #ddd; border-radius: 8px;">
-                                            <div class="card-body">
-                                                <h5 class="card-title"><%= topSellingCategories[i]._id %></h5>
-                                                <p class="card-text">Quantity Sold: <%= topSellingCategories[i].totalQuantitySold %></p>
-                                                <p class="card-text">Orders: <%= topSellingCategories[i].orderCount %></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            </div>
-                        <% } else { %>
-                            <p class="text-center">No best selling categories available.</p>
-                        <% } %>
-                    </article>
-                </div>
-            </div>
-
-            <!-- Best Selling Products -->
-            <div class="col-xl-8 col-lg-12 mb-4" style="margin-top: -25px;">
-                <div class="card" style="background-color: #6c757d00; border: 3px dotted #000000;">
-                    <article class="card-body">
-                        <h3 class="card-title">Best Selling Products</h3>
-                        <% if (topSellingProducts && topSellingProducts.length > 0) { %>
-                            <div class="row" style="display: flex; flex-wrap: wrap;">
-                                <% for (let i = 0; i < topSellingProducts.length; i++) { %>
-                                    <div class="col-md-4 mb-3" style="display: flex; align-items: stretch;">
-                                        <div class="card" style="flex: 1; display: flex; flex-direction: column; height: 100%; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
-                                            <div style="text-align: center; background-color: #040404; color: #dee2e6;"><%= i+1 %></div>
-                                            <img src="productImages/<%= topSellingProducts[i].image %>" class="card-img-top" alt="<%= topSellingProducts[i]._id %>" style="object-fit: cover; width: 100%; height: 200px;" />
-                                            <div class="card-body" style="flex-grow: 1;">
-                                                <h5 class="card-title"><%= topSellingProducts[i]._id %></h5>
-                                                <p class="card-text">Quantity Sold: <%= topSellingProducts[i].totalQuantitySold %></p>
-                                                <p class="card-text">Orders: <%= topSellingProducts[i].orderCount %></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            </div>
-                        <% } else { %>
-                            <p>No best selling products available.</p>
-                        <% } %>
-                    </article>
+        
+        <div class="card mb-4" id="salesReport">   
+            <div class="card-body">
+                <div class="table-responsive">
+                    <% if(typeof salesData != 'undefined' && salesData.length != 0){ %>
+                    <table class="table table-hover table-striped table-bordered" id="tableData">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Order Count</th>
+                                <th>Razorpay</th>
+                                <th>COD</th>
+                                <th>Wallet</th>
+                                <th>Income</th>
+                            </tr>
+                        </thead>
+                        <tbody>             
+                            <% for (let i = 0; i < salesData.length; i++) { %>
+                                <tr>
+                                    <td><%= salesData[i]._id.orderedDate %></td>
+                                    <td><%= salesData[i].totalCount %></td>
+                                    <td><%= salesData[i].razorpay %></td>
+                                    <td><%= salesData[i].cod %></td>
+                                    <td><%= salesData[i].wallet %></td>
+                                    <td>$<%= salesData[i].totalRevenue %></td>
+                                </tr>
+                            <% } %> 
+                        </tbody>
+                    </table>
+                    <% } else { %>
+                    <h2 class="no-data">No Sales Data</h2>
+                    <% } %>
                 </div>
             </div>
         </div>
     </section>
+    
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template.
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
 </main>
 
 <%- include('./layouts/footer.ejs') %>
@@ -201,91 +183,57 @@
 <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
 <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        const ctx = document.getElementById('dashboardChart').getContext('2d');
+    var notyf = new Notyf();
 
-        async function fetchData(filterType) {
-            try {
-                const response = await fetch(`/dashboardOrderChart${filterType ? `?filter=${filterType}` : ''}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error fetching data:', error);
+    document.getElementById("Export").addEventListener("click", function(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Choose Download Format',
+            text: 'Would you like to download as PDF or Excel?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'PDF',
+            cancelButtonText: 'Excel',
+            showCloseButton: true,
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const invoiceElement = document.getElementById('salesReport');
+                html2pdf(invoiceElement, {
+                    margin: 1,
+                    filename: 'Pillow Mart Sales Report.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter' }
+                });
+                notyf.success("Downloading");
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                let tableData = document.getElementById('tableData');
+                const wb = XLSX.utils.table_to_book(tableData);
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                const wscols = [
+                    { wch: 20 }, 
+                    { wch: 15 }, 
+                    { wch: 15 }, 
+                    { wch: 15 }, 
+                    { wch: 15 }, 
+                    { wch: 20 }  
+                ];
+                ws['!cols'] = wscols;
+                XLSX.writeFile(wb, 'PillowMartSales-report-excel.xlsx');
+                notyf.success("Downloading");
             }
-        }
-
-        async function renderChart(filterType) {
-            const orderData = await fetchData(filterType);
-
-            const labels = orderData.map(entry => {
-                const { year, month } = entry._id;
-                return `${year}-${month.toString().padStart(2, '0')}`;
-            });
-            const counts = orderData.map(entry => entry.count);
-
-            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(0, 0, 0, 0.358)');
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.358)');
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Order',
-                        data: counts,
-                        fill: true,
-                        backgroundColor: gradient,
-                        borderColor: 'rgba(0, 0, 0, 1)',
-                        borderWidth: 2,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            labels: {
-                                usePointStyle: true,
-                                pointStyle: 'circle'
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: true,
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            },
-                            title: {
-                                display: true,
-                                text: filterType === 'Monthly' ? 'Month' : 'Year'
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                display: true,
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            },
-                            title: {
-                                display: true,
-                                text: 'Order Count'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Initial render
-        await renderChart();
-
-        // Add event listener for the monthly filter button
-        document.getElementById('filterMonthly').addEventListener('click', async () => {
-            await renderChart('Monthly');
         });
     });
+
+    document.getElementById("dateForm").addEventListener("change", function() {
+        document.getElementById("formSub").submit();
+    });
+
 </script>

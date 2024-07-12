@@ -94,31 +94,31 @@ admin_router.get("/viewOrder",auth.isLogin,adminController.viewOrder)
 admin_router.get("/statusChange",auth.isLogin,adminController.statusChange)
 
 // coupon adding 
-admin_router.post("/addCoupon",adminController.addCoupon);
-admin_router.get("/deleteCoupon",adminController.deleteCoupon);
-admin_router.get("/editCoupon",adminController.editCoupon);
-admin_router.post("/editCouponSave",adminController.editCouponSave);
+admin_router.post("/addCoupon",auth.isLogin,adminController.addCoupon);
+admin_router.get("/deleteCoupon",auth.isLogin,adminController.deleteCoupon);
+admin_router.get("/editCoupon",auth.isLogin,adminController.editCoupon);
+admin_router.post("/editCouponSave",auth.isLogin,adminController.editCouponSave);
 
 // sales filter
-admin_router.post("/filterSales",adminController.filterSales);
-admin_router.get("/filterSales2",adminController.filterSales2);
-admin_router.post("/filterSalesByDateRange",adminController.filterSalesByDateRange);
+admin_router.post("/filterSales",auth.isLogin,adminController.filterSales);
+admin_router.get("/filterSales2",auth.isLogin,adminController.filterSales2);
+admin_router.post("/filterSalesByDateRange",auth.isLogin,adminController.filterSalesByDateRange);
 
 // offer
-admin_router.post("/createOffer",adminController.createOffer)
-admin_router.get("/editOffer",adminController.editOffer);
-admin_router.get("/deleteOffer",adminController.deleteOffer);
-admin_router.post("/editOfferSave",adminController.editOfferSave);
-admin_router.get("/OffApply",adminController.OffApply);
-admin_router.get("/apply",adminController.apply);
-admin_router.get("/removeOfferProduct",adminController.removeOfferProduct);
-admin_router.get("/currentofferProduct",adminController.currentofferProduct);
-admin_router.get("/currentOfferCategory",adminController.currentOfferCategory);
-admin_router.get("/addOfferTOCategory",adminController.addOfferTOCategory);
-admin_router.get("/offApplyCategory",adminController.offApplyCategory);
-admin_router.post("/removeOfferCategory",adminController.removeOfferCategory);
+admin_router.post("/createOffer",auth.isLogin,adminController.createOffer)
+admin_router.get("/editOffer",auth.isLogin,adminController.editOffer);
+admin_router.get("/deleteOffer",auth.isLogin,adminController.deleteOffer);
+admin_router.post("/editOfferSave",auth.isLogin,adminController.editOfferSave);
+admin_router.get("/OffApply",auth.isLogin,adminController.OffApply);
+admin_router.get("/apply",auth.isLogin,adminController.apply);
+admin_router.get("/removeOfferProduct",auth.isLogin,adminController.removeOfferProduct);
+admin_router.get("/currentofferProduct",auth.isLogin,adminController.currentofferProduct);
+admin_router.get("/currentOfferCategory",auth.isLogin,adminController.currentOfferCategory);
+admin_router.get("/addOfferTOCategory",auth.isLogin,adminController.addOfferTOCategory);
+admin_router.get("/offApplyCategory",auth.isLogin,adminController.offApplyCategory);
+admin_router.post("/removeOfferCategory",auth.isLogin,adminController.removeOfferCategory);
 
 // order return 
-admin_router.get("/returnOrder",adminController.returnOrder)
+admin_router.get("/returnOrder",auth.isLogin,adminController.returnOrder)
 
 module.exports=admin_router;   

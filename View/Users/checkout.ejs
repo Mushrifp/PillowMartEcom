@@ -270,6 +270,14 @@
                                     <tbody id="orderDetailsTableBody"></tbody>
                                     <tfoot>
                                         <tr>
+                                            <th colspan="3" class="text-right">Coupon</th>
+                                            <th id="couponModal">No Coupon</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="text-right">Shipping Fee</th>
+                                            <th >$50</th>
+                                        </tr>
+                                        <tr>
                                             <th colspan="3" class="text-right">Subtotal</th>
                                             <th id="modalSubtotal"></th>
                                         </tr>
@@ -383,11 +391,13 @@
                             productId: productId,
                         });
                     });
+                    
+                    let subttl = parseInt(subtotal)+50;
                     const data = {
                         addressCode: addressCode,
                         paymentMethod: paymentMethod.value,
                         orderDetails: orderDetails,
-                        subtotal: parseInt(subtotal)+50,
+                        subtotal: subttl,
                         coupon:couponToSend
                     };
 
@@ -470,7 +480,7 @@ function showOrderConfirmationModal(orderData){
     document.getElementById('orderNumber').innerText = orderData.orderNumber;
     document.getElementById('orderDate').innerText = orderData.orderDate;
     document.getElementById('orderTotal').innerText = `$${orderData.orderTotal}`;
-    document.getElementById('paymentMethod').innerText = orderData.paymentMethod;
+    document.getElementById('paymentMethod').innerText = orderData.method;
 
     document.getElementById('billingAddress').innerText = orderData.billingAddress.address;
     document.getElementById('billingCity').innerText = orderData.billingAddress.town;
@@ -489,6 +499,11 @@ function showOrderConfirmationModal(orderData){
         `;
         orderDetailsTableBody.appendChild(row);
     });
+
+    // 
+    if(orderData.coupon != ''){
+        document.getElementById("couponModal").innerHTML=orderData.coupon
+    }
 
     document.getElementById('modalSubtotal').innerText = `$${orderData.subtotal}`;
 
@@ -697,7 +712,7 @@ document.getElementById("couponApply").addEventListener("click", function(event)
                 let h = response.data.answer + 50
                 document.getElementById("totalAfterDiscount").innerHTML = `$ ${h.toFixed(2)}`;
 
-                document.getElementById("subtotal").value = response.data.answer + 50;
+                document.getElementById("subtotal").value = response.data.answer ;
                 
                  document.getElementById('couponToSend').value = discountAmount
     

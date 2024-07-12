@@ -45,6 +45,10 @@ const order = new mongoose.Schema({
         paymentStatus:{
             type:Boolean,
             required:true
+        },
+        coupon:{
+            type:Number,
+            default:0
         }    
     }],
     total:{
