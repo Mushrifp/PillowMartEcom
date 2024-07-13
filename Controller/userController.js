@@ -954,6 +954,7 @@ const applyCoupon = async (req,res)=>{
           let done  =  await Coupon.updateOne({code:req.body.code},{$inc:{count:-1}})
 
            res.send({answer})
+           
           }
     }catch(error){
         console.log(error)
