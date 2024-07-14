@@ -1,48 +1,31 @@
 <style>
-         .carousel-item {
+       .product-carousel .card-deck {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
     }
-
-    .card-deck {
-        display: flex;
-        justify-content: space-between;
+    .product-carousel .card {
+        flex: 0 0 calc(25% - 1rem);
+        margin: 0.5rem;
     }
-
-    .card {
-        width: 18rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        border: 1px solid #ddd;
-        border-radius: 0.5rem;
-        overflow: hidden;
-        margin: 0 0.5rem; 
+    @media (max-width: 991.98px) {
+        .product-carousel .card {
+            flex: 0 0 calc(33.333% - 1rem);
+        }
     }
-
-    .card-img-top {
-        width: 100%;
+    @media (max-width: 767.98px) {
+        .product-carousel .card {
+            flex: 0 0 calc(50% - 1rem);
+        }
+    }
+    @media (max-width: 575.98px) {
+        .product-carousel .card {
+            flex: 0 0 100%;
+        }
+    }
+    .product-carousel .card-img-top {
         height: 200px;
-        object-fit: cover; 
-    }
-
-    .card-body {
-        padding: 1rem;
-        flex: 1; 
-    }
-
-    .card-title {
-        font-size: 1.25rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .card-text {
-        margin-bottom: 0;
-    }
-
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 5%;
+        object-fit: cover;
     }
 </style>
 <%- include('./layout/header.ejs') %>
@@ -151,11 +134,12 @@
         <!-- First Section: Carousel -->
         <% if(typeof relateCategory != 'undefined' && relateCategory.length != 0){ %>
     
-            <section id="carouselSection">
-                <h2 class="text-center mb-4">Best Selling Products</h2>
-                <div id="productCarousel" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <% 
+            <section id="carouselSection" class="py-5 bg-light product-carousel">
+                <div class="container">
+                    <h2 class="text-center mb-4">Best Selling Products</h2>
+                    <div id="productCarousel" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                            <% 
                             const itemsPerSlide = 4;
                             const totalItems = relateCategory.length;
                             const numberOfSlides = Math.ceil(totalItems / itemsPerSlide);
@@ -163,55 +147,50 @@
                             for (let slideIndex = 0; slideIndex < numberOfSlides; slideIndex++) {
                                 let startIndex = slideIndex * itemsPerSlide;
                                 let endIndex = Math.min(startIndex + itemsPerSlide, totalItems);
-                        %>
-                            <div class="carousel-item <%= slideIndex === 0 ? 'active' : '' %>">
-                                <div class="card-deck">
-                                    <% for (let i = startIndex; i < endIndex; i++) { %>
-                                        <div class="card" style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
-                                            <a href="/single-product?id=<%= relateCategory[i]._id %>">
-                                                <img src="/productImages/<%= relateCategory[i].image[0] %>" class="card-img-top" alt="<%= relateCategory[i].productTitle %>">
-                                            </a>
-                                            <div class="card-body" >
-                                                <h5 class="card-title"><%= relateCategory[i].productTitle %></h5>
-                                                <p class="card-text">
-                                                    <% if (relateCategory[i].offPrice != 0) { %>
-                                                        $<%= relateCategory[i].offPrice %>
-                                                        <del>$<%= relateCategory[i].price %></del>
-                                                        <span style="color: green;">%<%= relateCategory[i].percentage %> off</span>
-                                                    <% } else { %>
-                                                        $<%= relateCategory[i].price %>
-                                                    <% } %>
-                                                    
-                                                    <!-- Stock Information -->
-                                                    <% if (relateCategory[i].stock === 0) { %>
-                                                        <span style="float: right; font-weight: bold; padding: 2px 8px; border-radius: 4px; color: #fff; background-color: red;">
-                                                            Out of Stock
-                                                        </span>
-                                                    <% } else if (relateCategory[i].stock < 5) { %>
-                                                        <span style="float: right; font-weight: bold; padding: 2px 8px; border-radius: 4px; color: #fff; background-color: orange;">
-                                                            Few Left
-                                                        </span>
-                                                    <% } else { %>
-                                                        <span style="float: right; font-weight: bold; padding: 2px 8px; border-radius: 4px; color: #fff; background-color: green;">
-                                                            In Stock
-                                                        </span>
-                                                    <% } %>
-                                                </p>
+                            %>
+                                <div class="carousel-item <%= slideIndex === 0 ? 'active' : '' %>">
+                                    <div class="card-deck">
+                                        <% for (let i = startIndex; i < endIndex; i++) { %>
+                                            <div class="card shadow-sm">
+                                                <a href="/single-product?id=<%= relateCategory[i]._id %>">
+                                                    <img src="/productImages/<%= relateCategory[i].image[0] %>" class="card-img-top" alt="<%= relateCategory[i].productTitle %>">
+                                                </a>
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><%= relateCategory[i].productTitle %></h5>
+                                                    <p class="card-text">
+                                                        <% if (relateCategory[i].offPrice != 0) { %>
+                                                            $<%= relateCategory[i].offPrice %>
+                                                            <del class="text-muted">$<%= relateCategory[i].price %></del>
+                                                            <span class="text-success">%<%= relateCategory[i].percentage %> off</span>
+                                                        <% } else { %>
+                                                            $<%= relateCategory[i].price %>
+                                                        <% } %>
+                                                        
+                                                        <!-- Stock Information -->
+                                                        <% if (relateCategory[i].stock === 0) { %>
+                                                            <span class="badge badge-danger float-right">Out of Stock</span>
+                                                        <% } else if (relateCategory[i].stock < 5) { %>
+                                                            <span class="badge badge-warning float-right">Few Left</span>
+                                                        <% } else { %>
+                                                            <span class="badge badge-success float-right">In Stock</span>
+                                                        <% } %>
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    <% } %>
+                                        <% } %>
+                                    </div>
                                 </div>
-                            </div>
-                        <% } %>
+                            <% } %>
+                        </div>
+                        <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#productCarousel" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
                     </div>
-                    <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#productCarousel" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
                 </div>
             </section>
             
@@ -222,67 +201,63 @@
     
     <br><br><hr>
         <!-- Second Section: Grid of Cards -->
-        <section id="relatedPriceSection">
-            <h2 class="text-center mb-4">Under $500 Products</h2>
-            <div id="priceCarousel" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                    <% 
-                        const itemsPerSlide = 4;  // Number of items per slide
-                        const totalItems = relatePrice.length;
-                        const numberOfSlides = Math.ceil(totalItems / itemsPerSlide);
+        <section id="relatedPriceSection" class="py-5 product-carousel">
+            <div class="container">
+                <h2 class="text-center mb-4">Under $500 Products</h2>
+                <div id="priceCarousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <% 
+                        const priceItemsPerSlide = 4;
+                        const priceTotalItems = relatePrice.length;
+                        const priceNumberOfSlides = Math.ceil(priceTotalItems / priceItemsPerSlide);
         
-                        for (let slideIndex = 0; slideIndex < numberOfSlides; slideIndex++) {
-                            let startIndex = slideIndex * itemsPerSlide;
-                            let endIndex = Math.min(startIndex + itemsPerSlide, totalItems);
-                    %>
-                        <div class="carousel-item <%= slideIndex === 0 ? 'active' : '' %>">
-                            <div class="card-deck">
-                                <% for (let i = startIndex; i < endIndex; i++) { %>
-                                    <div class="card" style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
-                                        <a href="/single-product?id=<%= relatePrice[i]._id %>">
-                                            <img src="/productImages/<%= relatePrice[i].image[0] %>" class="card-img-top" alt="<%= relatePrice[i].productTitle %>">
-                                        </a>
-                                        <div class="card-body">
-                                            <h5 class="card-title"><%= relatePrice[i].productTitle %></h5>
-                                            <p class="card-text">
-                                                <% if (relatePrice[i].offPrice != 0) { %>
-                                                    $<%= relatePrice[i].offPrice %>
-                                                    <del>$<%= relatePrice[i].price %></del>
-                                                    <span style="color: green;">%<%= relatePrice[i].percentage %> off</span>
-                                                <% } else { %>
-                                                    $<%= relatePrice[i].price %>
-                                                <% } %>
-                                                
-                                                <!-- Stock Information -->
-                                                <% if (relatePrice[i].stock === 0) { %>
-                                                    <span style="float: right; font-weight: bold; padding: 2px 8px; border-radius: 4px; color: #fff; background-color: red;">
-                                                        Out of Stock
-                                                    </span>
-                                                <% } else if (relatePrice[i].stock < 5) { %>
-                                                    <span style="float: right; font-weight: bold; padding: 2px 8px; border-radius: 4px; color: #fff; background-color: orange;">
-                                                        Few Left
-                                                    </span>
-                                                <% } else { %>
-                                                    <span style="float: right; font-weight: bold; padding: 2px 8px; border-radius: 4px; color: #fff; background-color: green;">
-                                                        In Stock
-                                                    </span>
-                                                <% } %>
-                                            </p>
+                        for (let priceSlideIndex = 0; priceSlideIndex < priceNumberOfSlides; priceSlideIndex++) {
+                            let priceStartIndex = priceSlideIndex * priceItemsPerSlide;
+                            let priceEndIndex = Math.min(priceStartIndex + priceItemsPerSlide, priceTotalItems);
+                        %>
+                            <div class="carousel-item <%= priceSlideIndex === 0 ? 'active' : '' %>">
+                                <div class="card-deck">
+                                    <% for (let i = priceStartIndex; i < priceEndIndex; i++) { %>
+                                        <div class="card shadow-sm">
+                                            <a href="/single-product?id=<%= relatePrice[i]._id %>">
+                                                <img src="/productImages/<%= relatePrice[i].image[0] %>" class="card-img-top" alt="<%= relatePrice[i].productTitle %>">
+                                            </a>
+                                            <div class="card-body">
+                                                <h5 class="card-title"><%= relatePrice[i].productTitle %></h5>
+                                                <p class="card-text">
+                                                    <% if (relatePrice[i].offPrice != 0) { %>
+                                                        $<%= relatePrice[i].offPrice %>
+                                                        <del class="text-muted">$<%= relatePrice[i].price %></del>
+                                                        <span class="text-success">%<%= relatePrice[i].percentage %> off</span>
+                                                    <% } else { %>
+                                                        $<%= relatePrice[i].price %>
+                                                    <% } %>
+                                                    
+                                                    <!-- Stock Information -->
+                                                    <% if (relatePrice[i].stock === 0) { %>
+                                                        <span class="badge badge-danger float-right">Out of Stock</span>
+                                                    <% } else if (relatePrice[i].stock < 5) { %>
+                                                        <span class="badge badge-warning float-right">Few Left</span>
+                                                    <% } else { %>
+                                                        <span class="badge badge-success float-right">In Stock</span>
+                                                    <% } %>
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                <% } %>
+                                    <% } %>
+                                </div>
                             </div>
-                        </div>
-                    <% } %>
+                        <% } %>
+                    </div>
+                    <a class="carousel-control-prev" href="#priceCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#priceCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
                 </div>
-                <a class="carousel-control-prev" href="#priceCarousel" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#priceCarousel" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
             </div>
         </section>
         
