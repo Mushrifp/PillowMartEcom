@@ -952,7 +952,7 @@ const applyCoupon = async (req,res)=>{
           let answer = parseInt(req.body.subtotal) - dis
 
           let done  =  await Coupon.updateOne({code:req.body.code},{$inc:{count:-1}})
-
+ 
            res.send({answer})
            
           }
