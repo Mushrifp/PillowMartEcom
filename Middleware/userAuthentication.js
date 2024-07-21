@@ -7,7 +7,7 @@ const isLogin = async (req, res, next) => {
       console.log("continue with next");
     } else {
       console.log("no session");
-       res.redirect("/login");
+      res.redirect("/login");
     }
   } catch (error) {
     console.log(error.message);

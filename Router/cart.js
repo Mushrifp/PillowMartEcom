@@ -1,16 +1,18 @@
-const express = require('express');
+const express = require("express");
 const cart_router = express();
 const cartController = require("../Controller/cartController");
-const auth = require('../Middleware/userAuthentication');
-const session = require('express-session');
+const auth = require("../Middleware/userAuthentication");
+const session = require("express-session");
 
-cart_router.use(session({
+cart_router.use(
+  session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false, 
-  }));
+    saveUninitialized: false,
+  })
+);
 
-cart_router.set("view engine","ejs");
+cart_router.set("view engine", "ejs");
 cart_router.set("views", "./View/Users");
 
 // Cart

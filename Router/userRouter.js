@@ -1,38 +1,37 @@
-require('dotenv').config()
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
 const user_router = express();
 const userController = require("../Controller/userController");
-const auth = require('../Middleware/userAuthentication');
-const session = require('express-session');
+const auth = require("../Middleware/userAuthentication");
+const session = require("express-session");
 
-
-
-user_router.set("view engine","ejs");
+user_router.set("view engine", "ejs");
 user_router.set("views", "./View/Users");
 
-
-user_router.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false, 
-}));
+user_router.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 // Load pages
 user_router.get("/", userController.loadHome);
 user_router.get("/home", userController.loadHome);
 user_router.get("/about", userController.loadAbout);
 user_router.get("/product", userController.loadProduct);
-user_router.get("/login", auth.isLogout, userController.loadLogin); 
-user_router.get("/register", auth.isLogout, userController.loadRegister); 
-user_router.get("/contact", userController.loadContact)
-user_router.get("/wishlist",  auth.isLogin, userController.loadWishlist);
+user_router.get("/login", auth.isLogout, userController.loadLogin);
+user_router.get("/register", auth.isLogout, userController.loadRegister);
+user_router.get("/contact", userController.loadContact);
+user_router.get("/wishlist", auth.isLogin, userController.loadWishlist);
 user_router.get("/single-product", userController.singleProduct);
-user_router.get("/logout",auth.isLogin, userController.userLogout)
- 
-// User register  
-user_router.post("/registerPost", userController.insertUser); 
+user_router.get("/logout", auth.isLogin, userController.userLogout);
 
-// OTP verification and OTP resend 
+// User register
+user_router.post("/registerPost", userController.insertUser);
+
+// OTP verification and OTP resend
 user_router.post("/otpVerification", userController.otpVerification);
 user_router.post("/otpResend", userController.otpResend);
 
@@ -40,41 +39,46 @@ user_router.post("/otpResend", userController.otpResend);
 user_router.post("/loginVerify", userController.loginVerify);
 
 // Forget password otp mail sending and resetting
-user_router.post("/forgetEmail",userController.forgetEmail)
-user_router.get("/otpResend",userController.otpResend)  
-user_router.post("/otpVerificationForget",userController.otpVerificationForget)  
-user_router.get('/otpForgetPass', (req,res) =>{
-    const {email,name}=req.query;
-    res.render('otpForgetPass',{email,name});
-  });
-user_router.get("/forgetPass",(req,res)=>{
-  const {email}=req.query;
-  res.render('forgetPass',{mail:email});
-})
-user_router.post("/passChanging",userController.passChanging)
+user_router.post("/forgetEmail", userController.forgetEmail);
+user_router.get("/otpResend", userController.otpResend);
+user_router.post(
+  "/otpVerificationForget",
+  userController.otpVerificationForget
+);
+user_router.get("/otpForgetPass", (req, res) => {
+  const { email, name } = req.query;
+  res.render("otpForgetPass", { email, name });
+});
+user_router.get("/forgetPass", (req, res) => {
+  const { email } = req.query;
+  res.render("forgetPass", { mail: email });
+});
+user_router.post("/passChanging", userController.passChanging);
 
 // category load
-user_router.get("/categoryLoad",userController.categoryLoad)
+user_router.get("/categoryLoad", userController.categoryLoad);
 
 // Sort and filter
-user_router.get("/filterProduct",userController.filterProduct)
+user_router.get("/filterProduct", userController.filterProduct);
 
-user_router.get("/search",userController.searchSuggestions )
+user_router.get("/search", userController.searchSuggestions);
 
 // checkout and order
-user_router.post("/checkout",userController.loadCheckout)
-user_router.post("/orderConfirm",userController.orderConfirm)
-user_router.get("/pagination",userController.pagination)
-user_router.post("/razpayOrderPlace",userController.razpayOrderPlace)
+user_router.post("/checkout", userController.loadCheckout);
+user_router.post("/orderConfirm", userController.orderConfirm);
+user_router.get("/pagination", userController.pagination);
+user_router.post("/razpayOrderPlace", userController.razpayOrderPlace);
 
 // coupon
-user_router.post("/showCoupon",userController.showCoupon)
-user_router.post("/applyCoupon",userController.applyCoupon)
-user_router.post("/removeCoupon",userController.removeCoupon)
+user_router.post("/showCoupon", userController.showCoupon);
+user_router.post("/applyCoupon", userController.applyCoupon);
+user_router.post("/removeCoupon", userController.removeCoupon);
 
 // chart in admin dashboard
-user_router.get("/dashboardOrderChart",userController.dashboardOrderChart)
-user_router.get("/dashboardOrderChartMonthly",userController.dashboardOrderChartMonthly)
-
+user_router.get("/dashboardOrderChart", userController.dashboardOrderChart);
+user_router.get(
+  "/dashboardOrderChartMonthly",
+  userController.dashboardOrderChartMonthly
+);
 
 module.exports = user_router;
