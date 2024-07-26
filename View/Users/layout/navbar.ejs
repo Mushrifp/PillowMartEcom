@@ -1,7 +1,8 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-
         .dropdown-menu {
             left: 0;
         }
@@ -41,9 +42,56 @@
             align-items: center;
             width: 100%;
         }
+
+        /* New Preloader CSS */
+        #preloader {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .loader {
+            width: 50px;
+            aspect-ratio: 1;
+            display: grid;
+        }
+        .loader::before,
+        .loader::after {    
+            content: "";
+            grid-area: 1/1;
+            --c: no-repeat radial-gradient(farthest-side, #000000 92%, #00000000);
+            background: 
+                var(--c) 50% 0, 
+                var(--c) 50% 100%, 
+                var(--c) 100% 50%, 
+                var(--c) 0 50%;
+            background-size: 12px 12px;
+            animation: l12 1s infinite;
+        }
+        .loader::before {
+            margin: 4px;
+            filter: hue-rotate(45deg);
+            background-size: 8px 8px;
+            animation-timing-function: linear;
+        }
+
+        @keyframes l12 { 
+            100% { transform: rotate(.5turn); }
+        }
     </style>
 </head>
 <body>
+    <!-- New Preloader HTML -->
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
     <%- include('../layout/header.ejs') %>
 
     <header class="main_menu home_menu navcolor" style="background-color: rgb(248, 248, 248);">
@@ -111,7 +159,8 @@
                     </nav>
                 </div>
             </div>
-        </div>
+        </div>        
+        
         <div class="search_input" id="search_input_box">
             <div class="container position-relative">
                 <form class="d-flex justify-content-between search-inner" action="#" method="#" id="searchForm">
@@ -224,6 +273,12 @@
                     suggestionList.appendChild(li);
                 });
             }
+
+            // Hide preloader once the page is fully loaded
+            window.addEventListener('load', function() {
+                var preloader = document.getElementById('preloader');
+                preloader.style.display = 'none';
+            });
         });
     </script>
 </body>
