@@ -9,6 +9,21 @@ const loadCart = async (req, res) => {
     const userSession = await userData.findOne({ _id: req.session.user_id });
 
     if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wish.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
       const cartDat = await cart.findOne({ user: req.session.user_id });
 
       if (cartDat && cartDat.product && cartDat.product.length != 0) {
@@ -47,9 +62,9 @@ const loadCart = async (req, res) => {
           }
         }
 
-        res.render("cart", { userData: userSession, carts, total });
+        res.render("cart", { userData: userSession, carts, total, data });
       } else {
-        res.render("cart", { userData: userSession, emptyCart: "empty" });
+        res.render("cart", { userData: userSession, emptyCart: "empty", data });
       }
     } else {
       res.render("cart");
@@ -84,20 +99,16 @@ const addCart = async (req, res) => {
         );
         done ? res.send({ added: "Added" }) : res.send({ failed: "Not Added" });
       } else {
-        console.log("Check 1", req.query);
-
         let h = {
           id: req.query.id,
           quantity: 1,
           total: price,
         };
-        console.log("Check 2", h);
 
         const NewCart = new cart({
           user: req.session.user_id,
           product: h,
         });
-        console.log("Check 3", NewCart);
 
         const done = await NewCart.save();
         done ? res.send({ added: "Added" }) : res.send({ failed: "Not Added" });
@@ -131,6 +142,21 @@ const loadWish = async (req, res) => {
     const userSession = await userData.findOne({ _id: req.session.user_id });
 
     if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wish.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
       const wishDat = await wish.findOne({ user: req.session.user_id });
 
       if (wishDat && wishDat.product && wishDat.product.length != 0) {
@@ -143,9 +169,9 @@ const loadWish = async (req, res) => {
           wishlist.push(productdata);
         }
 
-        res.render("wishlist", { userData: userSession, wishlist });
+        res.render("wishlist", { userData: userSession, wishlist, data });
       } else {
-        res.render("wishlist", { userData: userSession, empty: "empty" });
+        res.render("wishlist", { userData: userSession, empty: "empty", data });
       }
     } else {
       res.render("wishlist");
@@ -200,7 +226,22 @@ const wishDelete = async (req, res) => {
         });
         wishlist.push(productdata);
       }
-      res.render("wishlist", { userData: userSession, wishlist });
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wish.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
+      res.render("wishlist", { userData: userSession, wishlist, data });
     }
   } catch (error) {
     console.log(error);

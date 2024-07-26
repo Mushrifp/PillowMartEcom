@@ -11,6 +11,7 @@ const order = require("../Model/order");
 const Razorpay = require("razorpay");
 const wallet = require("../Model/wallet");
 const Coupon = require("../Model/coupons");
+const wishlist = require("../Model/wish");
 
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_ID,
@@ -71,10 +72,27 @@ const loadHome = async (req, res) => {
     let relatePrice = await productData.find({ price: { $lt: 500 } });
 
     if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
+
       res.render("index", {
         userData: userSession,
         relatePrice,
         relateCategory,
+        data,
       });
     } else {
       res.render("index", { relatePrice, relateCategory });
@@ -90,7 +108,22 @@ const loadAbout = async (req, res) => {
     const userSession = await userData.findOne({ _id: req.session.user_id });
 
     if (userSession) {
-      res.render("about", { userData: userSession });
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
+      res.render("about", { userData: userSession, data });
     } else {
       res.render("about");
     }
@@ -115,6 +148,21 @@ const loadProduct = async (req, res) => {
     let number = 0;
 
     if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
       res.render("product_list", {
         Data: DataProduct,
         userData: userSession,
@@ -124,6 +172,7 @@ const loadProduct = async (req, res) => {
         selectedCategory: req.query.category || "all",
         selectedPrice: req.query.price || "all",
         selectedFilter: req.query.filter || "all",
+        data,
       });
     } else {
       res.render("product_list", {
@@ -155,7 +204,22 @@ const loadContact = async (req, res) => {
     const userSession = await userData.findOne({ _id: req.session.user_id });
 
     if (userSession) {
-      res.render("contact", { userData: userSession });
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
+      res.render("contact", { userData: userSession, data });
     } else {
       res.render("contact");
     }
@@ -188,11 +252,27 @@ const singleProduct = async (req, res) => {
     });
 
     if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
       res.render("single-product", {
         singleData: singleData,
         userData: userSession,
         relateCategory,
         relatePrice,
+        data,
       });
     } else {
       res.render("single-product", {
@@ -212,7 +292,22 @@ const loadWishlist = async (req, res) => {
     const userSession = await userData.findOne({ _id: req.session.user_id });
 
     if (userSession) {
-      res.render("wishlist", { userData: userSession });
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
+      res.render("wishlist", { userData: userSession, data });
     } else {
       res.render("wishlist");
     }
@@ -521,12 +616,29 @@ const loginVerify = async (req, res) => {
               }
 
               let relatePrice = await productData.find({ price: { $lt: 500 } });
+              let cartCnt = await cart.findOne({ user: req.session.user_id });
+              let wishCnt = await wishlist.findOne({
+                user: req.session.user_id,
+              });
+              let data;
+              if (cartCnt && wishCnt) {
+                data = {
+                  wish: wishCnt.product.length,
+                  cart: cartCnt.product.length,
+                };
+              } else {
+                data = {
+                  wish: 0,
+                  cart: 0,
+                };
+              }
 
               res.render("index", {
                 message: "Login Success",
                 userData: sessionStoring,
                 relateCategory,
                 relatePrice,
+                data,
               });
             } else {
               console.log("session not stored");
@@ -743,10 +855,26 @@ const categoryLoad = async (req, res) => {
     const categoryData = await categoryDB.find({});
 
     if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
       res.render("product_list", {
         Data: allData,
         userData: userSession,
         cate: categoryData,
+        data,
       });
     } else {
       res.render("product_list", { Data: allData, cate: categoryData });
@@ -786,12 +914,28 @@ const loadCheckout = async (req, res) => {
 
     if (addresss && addresss.userAddress) {
       const userAddresses = addresss.userAddress;
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
       res.render("checkout", {
         userData: userSession,
         Products: CheckOutData,
         userAddresses,
         walletMoney: walletMoney.amount,
         subtotal,
+        data,
       });
     } else {
       res.render("checkout", {
@@ -1014,12 +1158,28 @@ const pagination = async (req, res) => {
     const answer = Math.ceil(totalProduct / pageNUmber) - 1;
 
     if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
       res.render("product_list", {
         Data: DataProduct,
         userData: userSession,
         cate: categoryData,
         answer,
         number: page,
+        data,
       });
     } else {
       res.render("product_list", {
@@ -1167,6 +1327,21 @@ const filterProduct = async (req, res) => {
     const totalPages = Math.ceil(totalProduct / itemsPerPage) - 1;
 
     if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
       res.render("product_list", {
         Data: products,
         userData: userSession,
@@ -1176,6 +1351,7 @@ const filterProduct = async (req, res) => {
         selectedCategory: query.category || "all",
         selectedPrice: req.query.price || "all",
         selectedFilter: req.query.filter || "all",
+        data,
       });
     } else {
       res.render("product_list", {

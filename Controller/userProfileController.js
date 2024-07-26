@@ -8,6 +8,8 @@ const Order = require("../Model/order");
 const wallet = require("../Model/wallet");
 const orderReturned = require("../Model/returnOrder");
 const Razorpay = require("razorpay");
+const cart = require("../Model/cart");
+const wish = require("../Model/wish");
 
 // Password hashing
 const passwordHash = async (password) => {
@@ -37,7 +39,22 @@ const StrongPassword = async (password) => {
 const profile = async (req, res) => {
   try {
     const userDatas = await userData.findOne({ _id: req.session.user_id });
-    res.render("profile", { user: userDatas });
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
+
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
+    res.render("profile", { user: userDatas, data });
   } catch (error) {
     console.log(error);
   }
@@ -47,7 +64,22 @@ const profile = async (req, res) => {
 const password = async (req, res) => {
   try {
     const userDatas = await userData.findOne({ _id: req.session.user_id });
-    res.render("password", { userDatas });
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
+
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
+    res.render("password", { userDatas, data });
   } catch (error) {
     console.log(error);
   }
@@ -58,15 +90,29 @@ const LoadAddress = async (req, res) => {
   try {
     const addressData = await address.findOne({ UserID: req.session.user_id });
     const userDatas = await userData.findOne({ _id: req.session.user_id });
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
     if (addressData) {
       const Data = [];
       for (let i = 0; i < addressData.userAddress.length; i++) {
         Data.push(addressData.userAddress[i]);
       }
-      res.render("address", { Data, userDatas });
+      res.render("address", { Data, userDatas, data });
     } else {
-      res.render("address", { NoData: "No Adress", userDatas });
+      res.render("address", { NoData: "No Adress", userDatas, data });
     }
   } catch (error) {
     console.log(error);
@@ -81,7 +127,21 @@ const order = async (req, res) => {
     const Datas = await Order.find({ userID: req.session.user_id }).sort({
       _id: -1,
     });
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
     let orders = [];
 
     for (let i = 0; i < Datas.length; i++) {
@@ -116,7 +176,7 @@ const order = async (req, res) => {
       }
     }
 
-    res.render("order", { Data: orders, userDatas });
+    res.render("order", { Data: orders, userDatas, data });
   } catch (error) {
     console.log(error);
   }
@@ -127,9 +187,23 @@ const loadWallet = async (req, res) => {
   try {
     const userDatas = await userData.findOne({ _id: req.session.user_id });
     const exist = await wallet.findOne({ user: req.session.user_id });
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
     if (exist) {
-      res.render("wallet", { userDatas, exist });
+      res.render("wallet", { userDatas, exist, data });
     } else {
       const newWallet = new wallet({
         user: req.session.user_id,
@@ -139,7 +213,7 @@ const loadWallet = async (req, res) => {
       await newWallet.save();
 
       const exist = await wallet.findOne({ user: req.session.user_id });
-      res.render("wallet", { userDatas, exist });
+      res.render("wallet", { userDatas, exist, data });
     }
   } catch (error) {
     console.log(error);
@@ -153,11 +227,29 @@ const profileEdit = async (req, res) => {
     if (!user) {
       res.status(404).send("User not found");
     }
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
     if (req.body.name && req.body.name !== user.name) {
       const existName = await userData.findOne({ name: req.body.name });
       if (existName) {
-        res.render("profile", { message: "This name is already in use", user });
+        res.render("profile", {
+          message: "This name is already in use",
+          user,
+          data,
+        });
       } else {
         await userData.updateOne(
           { _id: req.session.user_id },
@@ -173,6 +265,7 @@ const profileEdit = async (req, res) => {
         res.render("profile", {
           message: "This email is already in use",
           user,
+          data,
         });
       } else {
         await userData.updateOne(
@@ -189,6 +282,7 @@ const profileEdit = async (req, res) => {
         res.render("profile", {
           message: "This phone number is already in use",
           user,
+          data,
         });
       } else {
         await userData.updateOne(
@@ -198,7 +292,7 @@ const profileEdit = async (req, res) => {
         res.redirect("/user/profile");
       }
     } else {
-      res.render("profile", { message: "Enter a valid NUmber", user });
+      res.render("profile", { message: "Enter a valid NUmber", user, data });
     }
   } catch (error) {
     console.log(error);
@@ -210,7 +304,21 @@ const profileEdit = async (req, res) => {
 const profilePasswordEdit = async (req, res) => {
   try {
     let passwordCheck = await StrongPassword(req.body.new);
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
     if (passwordCheck) {
       if (req.body.new == req.body.confirm) {
         const hPassword = await passwordHash(req.body.new);
@@ -222,10 +330,13 @@ const profilePasswordEdit = async (req, res) => {
 
         if (done) {
           console.log("password changed");
-          res.render("password", { message: "Password Changed" });
+          res.render("password", { message: "Password Changed", data });
         } else {
           console.log("password not changed");
-          res.render("password", { message: "Failed to Change Password" });
+          res.render("password", {
+            message: "Failed to Change Password",
+            data,
+          });
         }
       } else {
         res.render("password", {
@@ -240,6 +351,7 @@ const profilePasswordEdit = async (req, res) => {
           "minimum of 8 characters,one uppercase ,lowercase letter one number, and one special character.",
         newpass: req.body.new,
         confirm: req.body.confirm,
+        data,
       });
     }
   } catch (error) {
@@ -268,13 +380,27 @@ const addAddress = async (req, res) => {
       town: req.body.town,
       pincode: req.body.pincode,
     };
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
     if (req.body.phone.length != 10) {
-      res.render("addAddress", { message: "Enter Valid Number", Data });
+      res.render("addAddress", { message: "Enter Valid Number", Data, data });
     }
 
     if (req.body.pincode.length != 6) {
-      res.render("addAddress", { message: "Enter Valid pincode", Data });
+      res.render("addAddress", { message: "Enter Valid pincode", Data, data });
     }
 
     const addressData = await address.findOne({ UserID: req.session.user_id });
@@ -285,9 +411,9 @@ const addAddress = async (req, res) => {
         { $addToSet: { userAddress: Data } }
       );
       if (done) {
-        res.render("addAddress", { doneMessage: "Created Successfully" });
+        res.render("addAddress", { doneMessage: "Created Successfully", data });
       } else {
-        res.render("addAddress", { message: "failed Try again " });
+        res.render("addAddress", { message: "failed Try again ", data });
       }
     } else {
       const NewAddress = new address({
@@ -296,9 +422,9 @@ const addAddress = async (req, res) => {
       });
       const save = NewAddress.save();
       if (save) {
-        res.render("addAddress", { doneMessage: "Created Successfully" });
+        res.render("addAddress", { doneMessage: "Created Successfully", data });
       } else {
-        res.render("addAddress", { message: "failed Try again " });
+        res.render("addAddress", { message: "failed Try again ", data });
       }
     }
   } catch (error) {
@@ -310,8 +436,22 @@ const addAddress = async (req, res) => {
 const loadAddAddress = async (req, res) => {
   try {
     const userDatas = await userData.findOne({ _id: req.session.user_id });
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
-    res.render("addAddress", { userDatas });
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
+    res.render("addAddress", { userDatas, data });
   } catch (error) {
     console.log(error);
   }
@@ -334,7 +474,23 @@ const removeAddress = async (req, res) => {
         Data.push(addressData.userAddress[i]);
       }
 
-      res.render("address", { Data });
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wish.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
+
+      res.render("address", { Data, data });
     } else {
       const addressData = await address.findOne({
         UserID: req.session.user_id,
@@ -345,7 +501,7 @@ const removeAddress = async (req, res) => {
         Data.push(addressData.userAddress[i]);
       }
 
-      res.render("address", { Data });
+      res.render("address", { Data, data });
     }
   } catch (error) {
     console.log(error);
@@ -357,15 +513,29 @@ const editAddress = async (req, res) => {
   try {
     const addressData = await address.findOne({ UserID: req.session.user_id });
 
-    let data = addressData.userAddress;
+    let datas = addressData.userAddress;
     let dataToSend = {};
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].Code == req.query.Code) {
-        dataToSend = data[i];
+    for (let i = 0; i < datas.length; i++) {
+      if (datas[i].Code == req.query.Code) {
+        dataToSend = datas[i];
       }
     }
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
-    res.render("editAddress", { Data: dataToSend });
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
+    res.render("editAddress", { Data: dataToSend, data });
   } catch (error) {
     console.log(error);
   }
@@ -383,12 +553,27 @@ const updateAddress = async (req, res) => {
       town: req.body.town,
       pincode: req.body.pincode,
     };
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
+
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
     if (req.body.phone.length !== 10) {
-      res.render("editAddress", { message: "Enter Valid Number", Data });
+      res.render("editAddress", { message: "Enter Valid Number", Data, data });
     }
 
     if (req.body.pincode.length !== 6) {
-      res.render("editAddress", { message: "Enter Valid pincode", Data });
+      res.render("editAddress", { message: "Enter Valid pincode", Data, data });
     }
 
     const updateFields = {
@@ -406,7 +591,7 @@ const updateAddress = async (req, res) => {
       { $set: updateFields }
     );
     done ? console.log("update Adsress") : console.log("Not updated");
-    res.render("editAddress", { doneMessage: "Saved Changes", Data });
+    res.render("editAddress", { doneMessage: "Saved Changes", Data, data });
   } catch (error) {
     console.log(error);
   }
@@ -560,8 +745,22 @@ const viewDetails = async (req, res) => {
       town: done[0].address.town,
       pincode: done[0].address.pincode,
     };
+    let cartCnt = await cart.findOne({ user: req.session.user_id });
+    let wishCnt = await wish.findOne({ user: req.session.user_id });
 
-    res.render("orderView", { obj });
+    let data;
+    if (cartCnt && wishCnt) {
+      data = {
+        wish: wishCnt.product.length,
+        cart: cartCnt.product.length,
+      };
+    } else {
+      data = {
+        wish: 0,
+        cart: 0,
+      };
+    }
+    res.render("orderView", { obj, data });
   } catch (error) {
     console.log(error);
   }

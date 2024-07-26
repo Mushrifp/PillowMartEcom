@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .dropdown-menu {
@@ -123,7 +121,29 @@
                                     <a class="nav-link" href="/contact">Contact</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/cart/wishlist">Wishlist</a>
+                                    <% if (typeof data !== "undefined" && data.wish !== undefined) { %>
+                                        <a class="nav-link" href="/cart/wishlist">
+                                            Wishlist 
+                                            <span style="
+                                                display: inline-block;
+                                                background-color: #000000; 
+                                                color: white; 
+                                                padding: 2px 8px; 
+                                                border-radius: 12px; 
+                                                font-weight: bold; 
+                                                font-size: 14px; 
+                                                line-height: 1; 
+                                                vertical-align: middle;
+                                                margin-left: 5px; 
+                                                "> 
+                                                <%= data.wish %>
+                                            </span>
+                                        </a>
+                                    <% }else{ %>
+                                       <a class="nav-link" href="/cart/wishlist">Wishlist</a>
+                                    
+                                    <% } %>
+                                   
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="search_1" href="javascript:void(0)">Search</a>
@@ -132,9 +152,30 @@
                         </div>
                         
                         <div class="header_icon d-flex align-items-center">
-                            <a href="/cart/cart">
-                                <i class="flaticon-shopping-cart-black-shape"></i>
+                            <a href="/cart/cart" style="position: relative; display: inline-block;">
+                                <i class="flaticon-shopping-cart-black-shape" style="font-size: 24px; color: #000;"></i>
+                                <% if (typeof data !== "undefined" && data.cart !== undefined) { %>
+                                    <span style="
+                                        position: absolute;
+                                        top: -5px;
+                                        right: -10px; 
+                                        background-color: #4B3049 ;
+                                        color: white; 
+                                        padding: 2px 8px; 
+                                        border-radius: 12px; 
+                                        font-weight: bold; 
+                                        font-size: 12px; 
+                                        line-height: 1; 
+                                        vertical-align: middle; 
+                                        min-width: 20px; 
+                                        text-align: center;
+                                        z-index: 1; 
+                                    ">
+                                        <%= data.cart %>
+                                    </span>
+                                <% } %>
                             </a>
+                            
                             <% if(typeof userData != 'undefined'){ %>
                             <div class="dropdown">
                                 <a class="dropdown-toggle profile-dropdown" href="#" role="button" id="profileDropdownTrigger">
