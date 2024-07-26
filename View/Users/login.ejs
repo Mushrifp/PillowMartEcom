@@ -2,6 +2,8 @@
 
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!-- Include Font Awesome for the eye icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <style>
     .modals {
@@ -75,6 +77,26 @@
         color: #ffffff;
         border-color: #0056b3;
     }
+    .position-relative {
+    position: relative;
+}
+
+.btn-eye {
+    position: absolute;
+    right: 10px;
+    top: 45%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #000000;
+    font-size: 20px;
+}
+
+.btn-eye:hover {
+    color: #6b6b6b;
+}
+
 </style>
 
 <%- include('./layout/navbar.ejs') %>
@@ -103,13 +125,16 @@
                         <% } %>
 
                         <form class="contact_form" action="/loginVerify" method="post">
-                            <div class="form-group">
+                            <div class="form-group position-relative">
                                 <input type="text" class="form-control" id="name" name="name" value="<%= typeof currentName !== "undefined" ? currentName : "" %>"
                                     placeholder="Username or Email " required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group position-relative">
                                 <input type="password" class="form-control" id="password" name="password" value="<%= typeof currentPass !== "undefined" ? currentPass : "" %>"
                                     placeholder="Password" required>
+                                <button type="button" class="btn-eye" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="eyeIcon"></i>
+                                </button>
                             </div>
                             <div class="form-group">
                                 <button type="submit" value="submit" class="btn_3">
@@ -226,6 +251,21 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     forgetPassEmail.addEventListener('input', function() {
         forgetErrModal.style.display = 'none';
     });
+
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
 </script>
 
 </body>
