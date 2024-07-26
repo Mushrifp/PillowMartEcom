@@ -11,7 +11,35 @@
         width: 350px;
         height: 470px;
     }
+    #preloader {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    .loader {
+        border: 8px solid rgb(255, 255, 255);
+        border-radius: 50%;
+        border-top: 8px solid #000000;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
+<!-- Preloader HTML -->
+<div id="preloader">
+    <div class="loader"></div>
+</div>
 <%- include('../layout/header.ejs') %>
 <!--::header part start::-->
 <header class="main_menu home_menu  navcolor" style="background-color: rgb(248, 248, 248);" >
@@ -167,7 +195,12 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         </div>
     </footer>
     <!--::footer_part end::-->
-
+<script>
+    window.addEventListener('load', function() {
+    // Hide preloader once the page is fully loaded
+    document.getElementById('preloader').style.display = 'none';
+});
+</script>
     <!-- jquery plugins here-->
     <script src="/js/jquery-1.12.1.min.js"></script>
     <!-- popper js -->

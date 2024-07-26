@@ -33,13 +33,42 @@
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         margin-left: -50px;
-        
         width: 350px;
         height: 470px;
     }
-
-    
+    /* Preloader CSS */
+    #preloader {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    .loader {
+        border: 8px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 8px solid #000000;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
+</head>
+<body>
+<!-- Preloader HTML -->
+<div id="preloader">
+    <div class="loader"></div>
+</div>
+
 <%- include('../layout/header.ejs') %>
 <!--::header part start::-->
 <header class="main_menu home_menu  navcolor" style="background-color: rgb(248, 248, 248);" >
@@ -196,55 +225,54 @@
     </div>
 </div>
 <!--================end =================-->
-  <!--::footer_part start::-->
-    <footer class="footer_part">
-        <div class="footer_iner section_bg">
-            <div class="container">
-                <div class="row justify-content-between align-items-center">
-                    <div class="col-lg-8">
-                        <div class="footer_menu">
-                            <div class="footer_logo">
-                                <a href="index.html"><img src="/img/logo.png" alt="#"></a>
-                            </div>
+<!--::footer_part start::-->
+<footer class="footer_part">
+    <div class="footer_iner section_bg">
+        <div class="container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-lg-8">
+                    <div class="footer_menu">
+                        <div class="footer_logo">
+                            <a href="index.html"><img src="/img<a href="index.html"><img src="/img/logo.png" alt="#"></a>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="social_icon">
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-google-plus-g"></i></a>
-                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <div class="col-lg-4">
+                    <div class="social_icon">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-google-plus-g"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="copyright_part">
+        <div class="container">
+            <div class="row ">
+                <div class="col-lg-12">    
+                    <div class="copyright_text">
+                        <P><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                         Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P>
+                        <div class="copyright_link">
+                            <a href="#">Turms & Conditions</a>
+                            <a href="#">FAQ</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="copyright_part">
-            <div class="container">
-                <div class="row ">
-                    <div class="col-lg-12">    
-                        <div class="copyright_text">
-                            <P><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                             Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P>
-                            <div class="copyright_link">
-                                <a href="#">Turms & Conditions</a>
-                                <a href="#">FAQ</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!--::footer_part end::-->
+    </div>
+</footer>
+<!--::footer_part end::-->
 
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
-    <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
-    <script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
+<script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script>
 const buttons = document.querySelectorAll('.cancelOrderBtn');
 
 for (let i = 0; i < buttons.length; i++) {
@@ -288,8 +316,6 @@ for (let i = 0; i < buttons.length; i++) {
         });
     });
 }
-
-
 
 const returnButtons = document.querySelectorAll('#returnBTN');
 
@@ -346,35 +372,37 @@ for (let i = 0; i < returnButtons.length; i++) {
         });
     });
 }
-    </script>
-    <!-- jquery plugins here-->
-    <script src="/js/jquery-1.12.1.min.js"></script>
-    <!-- popper js -->
-    <script src="/js/popper.min.js"></script>
-    <!-- bootstrap js -->
-    <script src="/js/bootstrap.min.js"></script>
-    <!-- easing js -->
-    <script src="/js/jquery.magnific-popup.js"></script>
-    <!-- swiper js -->
-    <script src="/js/swiper.min.js"></script>
-    <!-- swiper js -->
-    <script src="/js/mixitup.min.js"></script>
-    <!-- particles js -->
-    <script src="/js/owl.carousel.min.js"></script>
-    <script src="/js/jquery.nice-select.min.js"></script>
-    <!-- slick js -->
-    <script src="/js/slick.min.js"></script>
-    <script src="/js/jquery.counterup.min.js"></script>
-    <script src="/js/waypoints.min.js"></script>
-    <script src="/js/contact.js"></script>
-    <script src="/js/jquery.ajaxchimp.min.js"></script>
-    <script src="/js/jquery.form.js"></script>
-    <script src="/js/jquery.validate.min.js"></script>
-    <script src="/js/mail-script.js"></script>
-    <!-- custom js -->
-    <script src="/js/custom.js"></script>
 
-
+window.addEventListener('load', function() {
+    // Hide preloader once the page is fully loaded
+    document.getElementById('preloader').style.display = 'none';
+});
+</script>
+<!-- jquery plugins here-->
+<script src="/js/jquery-1.12.1.min.js"></script>
+<!-- popper js -->
+<script src="/js/popper.min.js"></script>
+<!-- bootstrap js -->
+<script src="/js/bootstrap.min.js"></script>
+<!-- easing js -->
+<script src="/js/jquery.magnific-popup.js"></script>
+<!-- swiper js -->
+<script src="/js/swiper.min.js"></script>
+<!-- swiper js -->
+<script src="/js/mixitup.min.js"></script>
+<!-- particles js -->
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/jquery.nice-select.min.js"></script>
+<!-- slick js -->
+<script src="/js/slick.min.js"></script>
+<script src="/js/jquery.counterup.min.js"></script>
+<script src="/js/waypoints.min.js"></script>
+<script src="/js/contact.js"></script>
+<script src="/js/jquery.ajaxchimp.min.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script src="/js/jquery.validate.min.js"></script>
+<script src="/js/mail-script.js"></script>
+<!-- custom js -->
+<script src="/js/custom.js"></script>
 </body>
-
 </html>
