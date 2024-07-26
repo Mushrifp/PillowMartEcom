@@ -428,6 +428,9 @@
                           >
                           <% } %>
                         </span>
+                        <p>
+                           <strong>Category</strong> :<%= Data[i].category %>
+                        </p>
                         <p class="text mb-4 mb-md-0">
                           <%= Data[i].description %>
                         </p>
@@ -751,7 +754,7 @@
           if (response.data.added) {
             notyf.success("Added To Wishlist");
           } else if (response.data.notAdded) {
-            notyf.error("You Need To Login");
+            window.location.href = '/login'
           } else if (response.data.failed) {
             notyf.error("Not Added");
           }
@@ -771,7 +774,7 @@
         } else if (response.data.failed) {
           notyf.error("Not Added");
         } else if (response.data.notAdded) {
-          notyf.error("You Need To Login");
+          window.location.href = '/login'
         }
       })
       .catch(function (error) {

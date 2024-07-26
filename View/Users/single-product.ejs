@@ -779,7 +779,7 @@ document.getElementById("wishButton").addEventListener("click",function(event){
             }else if(response.data.failed){
                  notyf.error('Not Added');
             }else if(response.data.notAdded){
-                 notyf.error('You Need To Login');
+                 window.location.href = '/login'
             }
           })
           .catch(function(error){
@@ -796,7 +796,7 @@ document.getElementById("cartButton").addEventListener("click",function(event){
            }else if(response.data.failed){
                 notyf.error('Not Added');
            }else if(response.data.notAdded){
-                notyf.error('You Need To Login');
+                window.location.href = '/login'
            }
          })
          .catch(function(error){
