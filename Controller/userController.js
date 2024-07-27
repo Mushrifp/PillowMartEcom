@@ -408,6 +408,7 @@ const otpVerification = async (req, res) => {
 // User register and otp sending
 const insertUser = async (req, res) => {
   try {
+  
     const hPassword = await passwordHash(req.body.password);
 
     let existing = await userData.findOne({ email: req.body.email });
@@ -506,6 +507,7 @@ const insertUser = async (req, res) => {
                   currentEmail: req.body.email,
                   currentPass: req.body.password,
                   currentPhone: req.body.number,
+                  retypePassword:req.body.retypePassword
                 });
               }
             } else {
@@ -515,6 +517,7 @@ const insertUser = async (req, res) => {
                 currentName: req.body.name,
                 currentEmail: req.body.email,
                 currentPass: req.body.password,
+                retypePassword:req.body.retypePassword,
                 currentPhone: req.body.number,
               });
             }
@@ -525,6 +528,7 @@ const insertUser = async (req, res) => {
               currentEmail: req.body.email,
               currentPass: req.body.password,
               currentPhone: req.body.number,
+              retypePassword:req.body.retypePassword
             });
           }
         } else {
@@ -534,6 +538,7 @@ const insertUser = async (req, res) => {
             currentEmail: req.body.email,
             currentPass: req.body.password,
             currentPhone: req.body.number,
+            retypePassword:req.body.retypePassword
           });
         }
       } else {
@@ -543,6 +548,7 @@ const insertUser = async (req, res) => {
           currentEmail: req.body.email,
           currentPass: req.body.password,
           currentPhone: req.body.number,
+          retypePassword:req.body.retypePassword
         });
       }
     } else {
@@ -552,6 +558,8 @@ const insertUser = async (req, res) => {
         currentEmail: req.body.email,
         currentPass: req.body.password,
         currentPhone: req.body.number,
+        retypePassword:req.body.retypePassword
+
       });
     }
   } catch (error) {
