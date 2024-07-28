@@ -374,7 +374,17 @@
 
       <!-- Right side for product listing -->
       <div class="col-lg-9">
-        <div class="row justify-content-center" style="margin-top: 50px">
+        <form id="filter-form" action="/searchFilter" method="post" class="mb-4">
+          <div class="input-group" style="margin-top: 20px;">
+            <input type="text"  class="form-control" name="query" value="<%= typeof searchQuery != 'undefined' ? searchQuery : '' %>" placeholder="Search products" aria-label="Search products">
+            <input type="hidden" name="selectedCategory" value="<%=selectedCategory %>">
+            <input type="hidden" name="selectedPrice"    value="<%=selectedPrice %>">
+            <input type="hidden" name="selectedFilter"   value="<%=selectedFilter %>">
+            
+            <button class="btn " style="color: #ffffff; background-color: #b08ead;" type="submit">Search</button>
+          </div>
+        </form>
+        <div class="row justify-content-center" style="margin-top: 20px">
           <div class="col-lg-12">
             <% if (Data.length != 0) { %> <% for (let i = 0; i < Data.length;
             i++) { %>

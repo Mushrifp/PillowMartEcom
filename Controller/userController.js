@@ -1274,13 +1274,120 @@ const applyCoupon = async (req, res) => {
   }
 };
 
+// product filter search 
+const searchFilter = async (req,res)=>{
+  try {
+    const { query, selectedCategory, selectedPrice, selectedFilter } = req.body;
+    let searchQuery = {};
+    let sortQuery = {};
+
+    console.log("line 1284 usereCntrl ==", req.body);
+
+    if (query && query.trim() !== '') {
+      searchQuery.productTitle = { $regex: new RegExp(query, 'i') }; 
+    }
+
+    if (selectedCategory && selectedCategory !== "all") {
+      let categoryCheck = await categoryDB.findOne({
+        name: selectedCategory,
+      });
+
+      if (!categoryCheck) {
+        let categoryss = await categoryDB.findOne({ _id: selectedCategory });
+        searchQuery.category = categoryss.name;
+      } else {
+        searchQuery.category = categoryCheck.name;
+      }
+    }
+
+    if (selectedPrice && selectedPrice !== "all") {
+      switch (selectedPrice) {
+        case "100-500":
+          searchQuery.price = { $gte: 100, $lte: 500 };
+          break;
+        case "500-1000":
+          searchQuery.price = { $gte: 500, $lte: 1000 };
+          break;
+        case "1000-1500":
+          searchQuery.price = { $gte: 1000, $lte: 1500 };
+          break;
+        default:
+          break;
+      }
+    }
+    if (selectedFilter === "lowToHigh") {
+      sortQuery.price = 1;
+    } else if (selectedFilter === "highToLow") {
+      sortQuery.price = -1;
+    }
+
+    const page = parseInt(req.query.number) || 0;
+    const itemsPerPage = 5;
+    const skip = page * itemsPerPage;
+
+    const products = await productData
+      .find(searchQuery)
+      .sort(sortQuery)
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    const userSession = await userData.findOne({ _id: req.session.user_id });
+    const categoryData = await categoryDB.find({});
+    const totalProduct = await productData.countDocuments(searchQuery);
+    const totalPages = Math.ceil(totalProduct / itemsPerPage) - 1;
+
+    if (userSession) {
+      let cartCnt = await cart.findOne({ user: req.session.user_id });
+      let wishCnt = await wishlist.findOne({ user: req.session.user_id });
+
+      let data;
+      if (cartCnt && wishCnt) {
+        data = {
+          wish: wishCnt.product.length,
+          cart: cartCnt.product.length,
+        };
+      } else {
+        data = {
+          wish: 0,
+          cart: 0,
+        };
+      }
+
+      res.render("product_list", {
+        Data: products,
+        userData: userSession,
+        cate: categoryData,
+        answer: totalPages,
+        number: page,
+        selectedCategory: selectedCategory || "all",
+        selectedPrice: selectedPrice || "all",
+        selectedFilter: selectedFilter || "all",
+        searchQuery: query || '',
+        data,
+      });
+    } else {
+      res.render("product_list", {
+        Data: products,
+        cate: categoryData,
+        answer: totalPages,
+        number: page,
+        selectedCategory: selectedCategory || "all",
+        selectedPrice: selectedPrice || "all",
+        selectedFilter: selectedFilter || "all",
+        searchQuery: query || '',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
 // product filter and sort
 const filterProduct = async (req, res) => {
   try {
     let query = {};
     let sortQuery = {};
-
-    console.log(req.query);
 
     if (req.query.category && req.query.category !== "all") {
       let categoryCheck = await categoryDB.findOne({
@@ -1509,4 +1616,5 @@ module.exports = {
   dashboardOrderChart,
   dashboardOrderChartMonthly,
   removeCoupon,
+  searchFilter
 };

@@ -60,6 +60,7 @@ user_router.get("/categoryLoad", userController.categoryLoad);
 
 // Sort and filter
 user_router.get("/filterProduct", userController.filterProduct);
+user_router.post("/searchFilter", userController.searchFilter);
 
 user_router.get("/search", userController.searchSuggestions);
 
