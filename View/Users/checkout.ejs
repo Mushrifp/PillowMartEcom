@@ -333,7 +333,8 @@
 <script>
      var notyf = new Notyf();
     document.getElementById('addAddressButton').addEventListener('click', function() {
-        document.querySelector('.address_form_fields').style.display = 'block';
+        // document.querySelector('.address_form_fields').style.display = 'block';
+             window.location.href='/user/address'
     });
 
     function proceed(){
@@ -395,6 +396,7 @@
                     });
                     
                     let subttl = parseInt(subtotal)+50;
+                    console.log("this is the one",subttl)
                     const data = {
                         addressCode: addressCode,
                         paymentMethod: paymentMethod.value,

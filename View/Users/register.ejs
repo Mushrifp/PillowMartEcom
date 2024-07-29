@@ -81,8 +81,25 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <!--::footer_part end::-->
 
 <script>
+
+
+       document.getElementById('password').addEventListener('input', function() {
+            let h = document.getElementById('password').value;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+            let answer = passwordRegex.test(h)
+
+            if(answer){
+                document.getElementById('password').style.color = 'green'
+            }else{
+                document.getElementById('password').style.color = 'red'
+            }
+        });
+
+
+
     function register() {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
         const email = document.getElementById('email').value;
         const number = document.getElementById('number').value;
         const name = document.getElementById('name').value;
@@ -107,6 +124,11 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
             return false;
         }
 
+        if (!passwordRegex.test(password)) {
+            errorElement.innerHTML = 'Password must be at least 8 characters long and include uppercase, lowercase, numeric, and special characters.';
+            return false;
+        }
+
         if (password !== retypePassword) {
             errorElement.innerHTML = 'Passwords do not match.';
             return false;
@@ -115,6 +137,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         document.getElementById('formForReg').submit();
     }
 </script>
+
 
 <!-- jquery plugins here-->
 <script src="js/jquery-1.12.1.min.js"></script>

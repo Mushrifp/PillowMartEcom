@@ -961,7 +961,6 @@ const loadCheckout = async (req, res) => {
 // Load confirmation
 const orderConfirm = async (req, res) => {
   try {
-    console.log(req.body);
 
     let couponDiscount = 0;
 
@@ -997,8 +996,7 @@ const orderConfirm = async (req, res) => {
         _id: orderDetails[i].productId,
       });
 
-      let tot = orderDetails[i].total - couponDiscount;
-
+      let tot = (orderDetails[i].total - couponDiscount)+50;
       let productOBJ = {
         item: ProductData,
         quantity: orderDetails[i].quantity,
@@ -1026,7 +1024,7 @@ const orderConfirm = async (req, res) => {
       total: req.body.subtotal,
       paymentMethod: req.body.paymentMethod,
     });
-    console.log(newOrder);
+
     const RazPay = {
       userID: req.session.user_id,
       items: product,
