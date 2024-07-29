@@ -1277,12 +1277,11 @@ const applyCoupon = async (req, res) => {
 // product filter search 
 const searchFilter = async (req,res)=>{
   try {
-    console.log('ksksksksk')
+
     const { query, selectedCategory, selectedPrice, selectedFilter } = req.body;
     let searchQuery = {};
     let sortQuery = {};
 
-    console.log("line 1284 usereCntrl ==", req.body);
 
     if (query && query.trim() !== '') {
       searchQuery.productTitle = { $regex: new RegExp(query, 'i') }; 
